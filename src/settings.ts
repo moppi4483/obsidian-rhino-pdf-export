@@ -519,11 +519,11 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       desc: "Additional content on the front page",
     });
     
-    this.addText(containerEl, "Cover Background", () => theme.coverBackgroundPath, (v) => { theme.coverBackgroundPath = v.trim(); }, {
+    this.addText(c, "Cover Background", () => theme.coverBackgroundPath, (v) => { theme.coverBackgroundPath = v.trim(); }, {
       desc: "Relative path in vault (e.g. assets/background.png)\nuse pictures in with the same form-factor of the document-format",
       placeholder: "assets/background.png",
     });
-    this.addText(containerEl, "Cover Image", () => theme.coverImagePath, (v) => { theme.coverImagePath = v.trim(); }, {
+    this.addText(c, "Cover Image", () => theme.coverImagePath, (v) => { theme.coverImagePath = v.trim(); }, {
       desc: "Relative path in vault (e.g. assets/coverImage.png)",
       placeholder: "assets/coverImage.png",
     });
