@@ -513,7 +513,21 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     new Setting(c).setName("Cover and contents").setHeading();
 
     this.addToggle(c, "Cover page", () => theme.showCover, (v) => { theme.showCover = v; });
+    this.addText(c, "Title", () => theme.title, (v) => { theme.title = v; });
     this.addText(c, "Subtitle", () => theme.subtitle, (v) => { theme.subtitle = v; });
+    this.addText(c, "Additional Content", () => theme.additionContent, (v) => { theme.additionContent = v; }, {
+      desc: "Additional content on the front page",
+    });
+    
+    this.addText(containerEl, "Cover Background", () => theme.coverBackgroundPath, (v) => { theme.coverBackgroundPath = v.trim(); }, {
+      desc: "Relative path in vault (e.g. assets/background.png)\nuse pictures in with the same form-factor of the document-format",
+      placeholder: "assets/background.png",
+    });
+    this.addText(containerEl, "Cover Image", () => theme.coverImagePath, (v) => { theme.coverImagePath = v.trim(); }, {
+      desc: "Relative path in vault (e.g. assets/coverImage.png)",
+      placeholder: "assets/coverImage.png",
+    });
+    this.addText(c, "Width of the cover-image", () => theme.coverImageWidth, (v) => { theme.coverImageWidth = v; });
     this.addText(
       c,
       "Cover info block",
