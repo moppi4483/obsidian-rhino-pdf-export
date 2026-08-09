@@ -32,6 +32,7 @@ const FIELD_SPECS: Partial<Record<keyof PdfTheme, FieldSpec>> = {
   additionalContent: { kind: "text" },
   coverBackgroundPath: { kind: "text" },
   coverImagePath: { kind: "text" },
+  coverImageWidth: {kind: "number", min: 0, max: 800 },
   showHeaderLogo: { kind: "boolean" },
   headerLogoHeight: { kind: "length" },
   headerText: { kind: "text" },
