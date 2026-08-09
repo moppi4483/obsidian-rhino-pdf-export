@@ -24,11 +24,13 @@ function bundledFontFaces(theme: PdfTheme): string {
  */
 export interface RenderAssets {
   logoDataUri: string;
+  coverBackgroundDataUri: string;
+  coverImageDataUri: string;
   /** @font-face rules for the theme's vault fonts, from buildCustomFontCss(). */
   fontFaceCss: string;
 }
 
-export const NO_ASSETS: RenderAssets = { logoDataUri: "", fontFaceCss: "" };
+export const NO_ASSETS: RenderAssets = { logoDataUri: "", loadCoverBackgroundDataUri: "", coverImageDataUri: "", fontFaceCss: "" };
 
 /**
  * Build the CSS for PDF rendering from a theme.
@@ -173,8 +175,16 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
   border-bottom: 3px solid ${p};
 }
 .cover img {
-  width: 60mm;
-  margin-bottom: 8mm;
+  /*width: 60mm;
+  margin-bottom: 8mm;*/
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  z-index: -100;
+  margin: 0;
+  padding: 0;
 }
 .cover h1 {
   font-size: 22pt;
@@ -598,10 +608,14 @@ function buildCover(
   theme: PdfTheme,
   title: string,
   logoDataUri: string,
+  coverBackgroundDataUri: string,
+  coverImageDataUri: string,
   coverInfo: InfoRow[] = []
 ): string {
   if (!theme.showCover) return "";
   const coverLogo = logoDataUri ? `<img src="${logoDataUri}" alt="Logo">` : "";
+  const coverBackground = coverBackgroundDataUri ? `<img src="${coverBackgroundDataUri}" alt="Background">` : "";
+  const coverimage = coverImageDataUri ? `<img src="${coverImageDataUri}" alt="Cover Image">` : "";
   const subtitle = theme.subtitle ? `<div class="subtitle">${escapeHtml(theme.subtitle)}</div>` : "";
   let infoTable = "";
   if (coverInfo.length > 0) {
@@ -615,7 +629,9 @@ function buildCover(
   }
   return `
     <div class="cover">
-      ${coverLogo}
+      <div class="bg">
+        ${coverBackground}
+      </div>
       <h1>${escapeHtml(title)}</h1>
       ${subtitle}
       ${infoTable}
@@ -714,6 +730,8 @@ export function buildHtml(
   coverInfo: InfoRow[] = []
 ): string {
   const { logoDataUri } = assets;
+  const { coverBackgroundDataUri } = assets;
+  const { coverImageDataUri } = assets;
   const css = buildCss(theme, assets.fontFaceCss);
 
   // Table of contents (extract headings + inject anchor IDs into the body)
@@ -730,7 +748,7 @@ export function buildHtml(
     buildRunningHeader(theme, vars, logoDataUri),
     buildRunningFooter(theme, vars),
     buildClassification(theme, vars),
-    buildCover(theme, title, logoDataUri, coverInfo),
+    buildCover(theme, title, logoDataUri, coverBackgroundDataUri, coverImageDataUri, coverInfo),
     toc,
     processedBody,
     buildLegal(theme),
@@ -779,6 +797,8 @@ export function buildMergedHtml(
   vars: DocVars
 ): string {
   const { logoDataUri } = assets;
+  const { coverBackgroundDataUri } = assets;
+  const { coverImageDataUri } = assets;
   // Neutralize the global break rules; each section carries its own below.
   const cssTheme: PdfTheme = {
     ...theme,
@@ -828,7 +848,7 @@ export function buildMergedHtml(
     buildRunningHeader(theme, vars, logoDataUri),
     buildRunningFooter(theme, vars),
     buildClassification(theme, vars),
-    buildCover(theme, mergedTitle, logoDataUri),
+    buildCover(theme, mergedTitle, logoDataUri, coverBackgroundDataUri, coverImageDataUri),
     toc,
     sectionsHtml,
     buildLegal(theme),
