@@ -71,6 +71,8 @@ export function createBlankTheme(): PdfTheme {
     showToc: false,
     tocTitle: "Table of Contents",
     subtitle: "",
+    coverBackground: "",
+    coverPicturePath: "",
     coverInfoFields: [],
     showHeaderLogo: false,
     headerLogoHeight: "12mm",
