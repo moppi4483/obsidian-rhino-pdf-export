@@ -12,6 +12,8 @@ export const BUILTIN_THEMES: PdfTheme[] = [
     showToc: false,
     tocTitle: "Table of Contents",
     subtitle: "",
+    coverBackground: "",
+    coverPicturePath: "",
     coverInfoFields: [],
     showHeaderLogo: false,
     headerLogoHeight: "10mm",
