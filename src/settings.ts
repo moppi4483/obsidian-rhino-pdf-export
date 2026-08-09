@@ -612,11 +612,22 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
   }
 
   private renderLegalSection(c: HTMLElement, theme: PdfTheme) {
-    new Setting(c).setName("Legal notice").setHeading();
+    new Setting(c).setName("Legal notice / Impressum").setHeading();
 
     this.addToggle(c, "Legal notice", () => theme.showLegal, (v) => { theme.showLegal = v; });
     this.addText(c, "Legal notice title", () => theme.legalTitle, (v) => { theme.legalTitle = v; });
     this.addTextArea(c, "Legal notice text", () => theme.legalText, (v) => { theme.legalText = v; });
+    this.addText(c, "Legal Company", () => theme.legalCompany, (v) => { theme.legalCompany = v; });
+    this.addText(c, "Legal Department (Main)", () => theme.legalDepartment1, (v) => { theme.legalDepartment1 = v; });
+    this.addText(c, "Legal Department (Sub)", () => theme.legalDepartment2, (v) => { theme.legalDepartment2 = v; });
+    this.addText(c, "Legal Department Street", () => theme.legalStreet, (v) => { theme.legalStreet = v; });
+    this.addText(c, "Legal Department City", () => theme.legalCity, (v) => { theme.legalCity = v; });
+    this.addText(c, "Legal Department Telephone", () => theme.legalTelephone, (v) => { theme.legalTelephone = v; });
+    this.addText(c, "Legal Department E-Mail", () => theme.legalMail, (v) => { theme.legalMail = v; });
+    this.addText(c, "Legal Department Link", () => theme.legalWebLink, (v) => { theme.legalWebLink = v; });
+    this.addText(c, "Legal Department Link (Alt-Text)", () => theme.legalWebLinkAlt, (v) => { theme.legalWebLinkAlt = v; });
+    
+    
   }
 
   private renderMetadataSection(c: HTMLElement, theme: PdfTheme) {
