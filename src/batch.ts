@@ -251,13 +251,19 @@ export class BatchExportModal extends Modal {
     const mdContent = await this.app.vault.cachedRead(firstFile);
     if (gen !== this.previewGen) return;
 
-    const title = extractTitle(mdContent, firstFile.basename);
+    let title = extractTitle(mdContent, firstFile.basename);
     const bodyHtml = await renderNoteHtml(this.app, mdContent, firstFile.path);
     const assets = await this.assetCache.get(theme, false);
     if (gen !== this.previewGen) return;
 
     const fm = this.app.metadataCache.getFileCache(firstFile)?.frontmatter ?? {};
     const vars = makeDocVars(title, firstFile.basename, fm);
+
+     
+    if (escapeHtml(resolveTextVariables(theme.title, vars)) != "") {
+      title = escapeHtml(resolveTextVariables(theme.title, vars));
+    }
+
     const coverInfo = coverInfoRows(fm, resolveCoverInfoKeys(theme, docConfig));
     const html = buildHtml(bodyHtml, title, theme, assets, vars, coverInfo);
 

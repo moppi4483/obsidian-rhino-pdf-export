@@ -7,10 +7,12 @@ import { frontmatterToString } from "./render";
 export type DocField =
   | "subtitle"
   | "showCover"
+  | "coverImagePath"
   | "showToc"
   | "headerText"
   | "footerText"
   | "watermarkText"
+  | "legalText"
   | "classificationText";
 
 interface FieldUI {
@@ -22,10 +24,12 @@ interface FieldUI {
 const FIELD_UI: Record<DocField, FieldUI> = {
   subtitle: { name: "Subtitle", type: "text", desc: "Shown under the title on the cover" },
   showCover: { name: "Cover page", type: "toggle" },
+  coverImagePath: { name: "Cover Image", type: "text" },
   showToc: { name: "Table of contents", type: "toggle" },
   headerText: { name: "Header text", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
   footerText: { name: "Footer text", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
   watermarkText: { name: "Watermark", type: "text", desc: "Leave empty to disable" },
+  legalText: { name: "Legal notice text", type: "text" },
   classificationText: { name: "Classification banner", type: "text", desc: "Centered on every page. Leave empty to disable." },
 };
 

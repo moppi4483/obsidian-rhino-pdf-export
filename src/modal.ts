@@ -32,8 +32,10 @@ import electron from "electron";
 const MODAL_FIELDS: DocField[] = [
   "subtitle",
   "showCover",
+  "coverImagePath",
   "showToc",
   "watermarkText",
+  "legalText",
   "classificationText",
 ];
 

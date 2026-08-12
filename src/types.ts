@@ -31,13 +31,17 @@ export interface PdfTheme {
   showToc: boolean;
   tocTitle: string;
   subtitle: string;
+  additionalContent: string;
   // Frontmatter keys listed by default in the cover info block
+  coverBackgroundPath: string,
+  coverImagePath: string,
   coverInfoFields: string[];
 
   // Header (page 2+)
   showHeaderLogo: boolean;
   headerLogoHeight: string; // CSS value, e.g. "12mm"
   headerText: string; // supports {title}, {date}
+  headerText2: string;
 
   // Footer
   showPagination: boolean;
@@ -54,6 +58,18 @@ export interface PdfTheme {
   showLegal: boolean;
   legalTitle: string;
   legalText: string;
+  legalCompany: string;
+  legalDepartment1: string;
+  legalDepartment2: string;
+  legalStreet: string;
+  legalCity: string;
+  legalTelephone: string;
+  legalMail: string;
+  legalWebLink: string;
+  legalWebLinkAlt: string;
+  legalEditorial: string;
+  legalAuthor: string;
+  legalPhotoCredit: string;
 
   // Typography
   bodyFont: string;

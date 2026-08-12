@@ -56,8 +56,11 @@ ${fontFaceCss}
   @top-center {
     content: element(classification);
   }` : ""}
-  @bottom-center {
-    content: element(footerblock);
+  @bottom-left {
+    content: element(footertext);
+  }
+  @bottom-right {
+    content: element(footerpagination);
   }
 }
 
@@ -65,7 +68,8 @@ ${fontFaceCss}
   margin-top: 15mm;
   @top-left { content: none; }
   @top-right { content: none; }
-  @bottom-center { content: none; }${theme.classificationText ? `
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }${theme.classificationText ? `
   @top-center { content: element(classification); }` : ""}
 }
 
@@ -75,7 +79,7 @@ body {
   font-family: ${theme.bodyFont};
   font-size: ${theme.bodyFontSize};
   line-height: 1.6;
-  color: #2c2c2c;
+  color: ${p};
   background: #ffffff;
 }
 
@@ -83,32 +87,52 @@ body {
 .running-header-text {
   position: running(headertext);
   font-family: ${theme.bodyFont};
-  font-size: 9px;
-  color: #999;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1;
+  color: ${p};
+  height: 58px;
+  padding-top: 35px;
+  border-bottom: 1px solid ${p};
 }
 
 /* --- Running header: logo (right) --- */
 .running-header-logo {
   position: running(headerlogo);
+  border-bottom: 1px solid ${p};
+  height: 56px;
 }
 .running-header-logo img {
   height: ${theme.headerLogoHeight};
-  opacity: 0.8;
+  margin-top: -2px;
 }
 
 /* --- Running footer: pagination --- */
-.running-footer {
-  position: running(footerblock);
+.running-footer-pagination {
+  position: running(footerpagination);
   font-family: ${theme.bodyFont};
-  font-size: 9px;
-  color: #999;
-  text-align: center;
+  font-size: 7pt;
+  color: ${p};
+  text-align: right;
+  border-top: 1px solid ${p};
+  height: 11px;
+  padding-top: 3px; 
 }
-.running-footer .page-num::after {
+.running-footer-pagination .page-num::after {
   content: counter(page);
 }
-.running-footer .page-total::after {
+.running-footer-pagination .page-total::after {
   content: counter(pages);
+}
+.running-footer-text {
+  position: running(footertext);
+  font-family: ${theme.bodyFont};
+  font-size: 11pt;
+  line-height: 1;
+  color: ${p};
+  border-top: 1px solid ${p};
+  height: 11px;
+  padding-top: 3px;
 }
 
 /* --- Classification banner (centered, every page) --- */
@@ -116,7 +140,7 @@ body {
   position: running(classification);
   font-family: ${theme.bodyFont};
   font-size: 8.5px;
-  font-weight: 700;
+  font-weight: bold;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   text-align: center;
@@ -131,14 +155,14 @@ body {
 
 /* --- External link rendering --- */
 .rhino-url {
-  color: #666;
+  color: ${p};
   font-size: 0.85em;
   word-break: break-all;
 }
 .rhino-footnote {
   float: footnote;
   font-size: 8px;
-  color: #555;
+  color: ${p};
   word-break: break-all;
 }
 /* in-text call marker: small superscript with a little space before */
@@ -172,32 +196,83 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
   text-align: center;
   padding: 20mm 0 10mm 0;
   margin-bottom: 8mm;
-  border-bottom: 3px solid ${p};
+  /* border-bottom: 3px solid ${p}; */
 }
-.cover img {
-  /*width: 60mm;
-  margin-bottom: 8mm;*/
 
-  position: fixed;
-  top: 0;
-  left: 0;
-  object-fit: cover;
-  z-index: -100;
-  margin: 0;
+.cover img {
+  display: inline-block;
+  height: 100%;
+}
+.coverTitleContainer {
+    display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Richtet den Inhalt nach unten aus */
+  align-items: flex-start; 
+  height: 27mm;
+  padding: 0;
+  margin: 0mm;
+}
+.coverTitleContainer h1 {
+  text-align: left;
+  font-size: 23pt;
+  line-height: 1.05;
+  font-weight: bold;
+  color: ${p};
+  margin-top: outo;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
   padding: 0;
 }
-.cover h1 {
-  font-size: 22pt;
-  font-weight: 700;
+.coverSubtitleContainer {
+    display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start; 
+  height: 14mm;
+  padding: 0;
+  margin: 0mm;
+}
+
+.coverSubtitleContainer h2 {
+  text-align: left;
+  font-size: 21pt;
+  line-height: 1.05;
+  font-weight: normal;
   color: ${p};
   margin: 0;
   padding: 0;
 }
-.cover .subtitle {
+.coverAdditionalContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start; 
+  height: 8mm;
+  padding: 0;
+  margin: 0mm;
+}
+.coverAdditionalContainer h3 {
+  text-align: left;
   font-size: 11pt;
-  color: ${a};
-  font-weight: 600;
-  margin-top: 3mm;
+  line-height: 1.05;
+  font-weight: normal;
+  color: ${p};
+  margin: 0;
+  padding: 0;
+}
+.coverImageContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Richtet den Inhalt nach unten aus */
+  align-items: center; 
+  height: 165mm;
+  padding: 0;
+  margin-top: 8mm;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  text-align: center;
 }
 .cover-info {
   margin: 10mm auto 0 auto;
@@ -212,7 +287,7 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
 }
 .cover-info th {
   color: ${p};
-  font-weight: 600;
+  font-weight: bold;
   white-space: nowrap;
 }
 .cover-info td {
@@ -227,19 +302,35 @@ img {
 
 /* --- Headings --- */
 h2 {
-  font-size: 14pt;
-  font-weight: 700;
+  font-size: 18pt;
+  font-weight: bold;
   color: ${p};
-  border-bottom: 2px solid ${a};
-  padding-bottom: 3mm;
-  margin-top: 10mm;
-  margin-bottom: 5mm;
+  /* border-bottom: 2px solid ${a}; */
+  /*padding-bottom: 3mm;*/
+  margin-top: 0mm;
+  margin-bottom: 3mm;
   page-break-after: avoid;
 }
 h3 {
+  font-size: 14pt;
+  font-weight: bold;
+  color: ${p};
+  margin-top: 7mm;
+  margin-bottom: 3mm;
+  page-break-after: avoid;
+}
+h4 {
   font-size: 11pt;
-  font-weight: 600;
-  color: ${a};
+  font-weight: bold;
+  color: ${p};
+  margin-top: 7mm;
+  margin-bottom: 3mm;
+  page-break-after: avoid;
+}
+h5 {
+  font-size: 11pt;
+  font-weight: bold;
+  color: #B5D3EB;
   margin-top: 7mm;
   margin-bottom: 3mm;
   page-break-after: avoid;
@@ -276,7 +367,7 @@ code {
   padding: 0.5mm 1.5mm;
   border-radius: 3px;
   font-size: 8.5pt;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 .copy-code-button, .code-block-flair {
@@ -310,7 +401,7 @@ table {
   page-break-inside: avoid;
 }
 thead { background: ${p}; color: white; }
-th { padding: 2.5mm 3mm; text-align: left; font-weight: 600; font-size: 9pt; }
+th { padding: 2.5mm 3mm; text-align: left; font-weight: bold; font-size: 9pt; }
 td { padding: 2mm 3mm; border-bottom: 1px solid #e0e0e0; }
 tr:nth-child(even) { background: #f7f9fc; }
 
@@ -322,7 +413,7 @@ hr {
   opacity: 0.4;
 }
 
-strong { font-weight: 700; color: #1a1a1a; }
+strong { font-weight: bold; color: #1a1a1a; }
 
 /* --- Callouts (Obsidian built-in + Callout Manager) --- */
 .callout {
@@ -341,7 +432,7 @@ strong { font-weight: 700; color: #1a1a1a; }
   align-items: center;
   gap: 2mm;
   padding: 2.5mm 4mm;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 9.5pt;
   color: var(--callout-color, ${p});
   background: var(--callout-title-bg, rgba(0,0,0,0.03));
@@ -461,40 +552,74 @@ strong { font-weight: 700; color: #1a1a1a; }
 .toc {
   page-break-before: always;
   page-break-after: always;
+  width: 100%;
 }
 .toc h2 {
   border-bottom: none;
-  margin-bottom: 8mm;
+  margin-bottom: 3mm;
+  margin-top: 0mm;
 }
 .toc ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
 }
 .toc li {
   margin: 0;
-  padding: 2mm 0;
-  border-bottom: 1px dotted #ddd;
+  padding: 1mm 0;
   font-size: 10pt;
-  color: #333;
+  color: #003F57;
+  width: 100%;
+  font-weight: bold;
 }
 .toc li.toc-h3 {
   padding-left: 8mm;
-  font-size: 9pt;
-  color: #666;
+  font-size: 10pt;
+  color: ${p};
+  width: 100%;
+  font-weight: normal;
 }
 .toc li a {
-  color: inherit;
+  display: flex;
+  align-items: baseline;
+  width: 100%;
   text-decoration: none;
+  color: inherit;
 }
 .toc li a::after {
   content: target-counter(attr(href), page);
-  float: right;
-  color: ${a};
-  font-weight: 600;
+  /*float: right;*/
+  /*color: ${p};*/
+  /*font-weight: bold;*/
+  order: 3;
+  flex: 0 0 auto;
+}
+.toc li a::before {
+  content: "";
+  flex: 1;
+  border-bottom: 1px dotted currentColor;
+  margin: 0 0.5em;
+  order: 2;
 }
 
+
 /* --- Legal notice --- */
+.legalDepartment {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: ${a};
+}
+.legalLink {
+    font-weight: bold;
+    color: #4E95B9;
+    text-decoration: none;
+}
+.legalInformation p {
+    padding: 0;
+    margin: 0;
+    line-height: 1.15;
+}
 .legal-footer {
   margin-top: 15mm;
   padding-top: 5mm;
@@ -505,10 +630,14 @@ strong { font-weight: 700; color: #1a1a1a; }
   line-height: 1.5;
 }
 .legal-footer .legal-title {
-  font-weight: 700;
+  font-weight: bold;
   color: #666;
   text-align: center;
   margin-bottom: 2mm;
+}
+a {
+  color: ${a};
+  text-decoration: underline;
 }
 ${theme.watermarkText ? `
 /* --- Watermark --- */
@@ -523,7 +652,7 @@ ${theme.watermarkText ? `
   pointer-events: none;
   z-index: 1000;
   white-space: nowrap;
-  font-weight: 700;
+  font-weight: bold;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -541,7 +670,9 @@ function buildRunningHeader(theme: PdfTheme, vars: DocVars, logoDataUri: string)
       ? `<div class="running-header-logo">${logoImg}</div>`
       : "";
   const headerText = theme.headerText
-    ? `<div class="running-header-text">${escapeHtml(resolveTextVariables(theme.headerText, vars))}</div>`
+    ? `<div class="running-header-text">
+      <span>${escapeHtml(resolveTextVariables(theme.headerText, vars))}</span><br/>
+      <span style="font-weight:normal;font-size: 9pt;">${escapeHtml(resolveTextVariables(theme.headerText2, vars))}</span></div>`
     : "";
   return `${headerText}\n  ${headerLogo}`;
 }
@@ -550,15 +681,13 @@ function buildRunningHeader(theme: PdfTheme, vars: DocVars, logoDataUri: string)
  * Build the running footer markup (pagination counters + optional text).
  */
 function buildRunningFooter(theme: PdfTheme, vars: DocVars): string {
-  let footerContent = "";
-  if (theme.showPagination) {
-    footerContent = buildPagination(theme.paginationFormat);
-  }
-  if (theme.footerText) {
-    const resolvedFooter = escapeHtml(resolveTextVariables(theme.footerText, vars));
-    footerContent += footerContent ? ` — ${resolvedFooter}` : resolvedFooter;
-  }
-  return footerContent ? `<div class="running-footer">${footerContent}</div>` : "";
+  const footerContentPage = theme.showPagination
+    ? `<div class="running-footer-pagination">${buildPagination(theme.paginationFormat)}</div>`
+    : "";
+  const footerContentText = theme.footerText
+    ? `<div class="running-footer-text"><span style="font-size: 7pt;">Projektname: </span>${escapeHtml(resolveTextVariables(theme.footerText, vars))}</div>`
+    : "";
+  return `${footerContentPage}\n ${footerContentText}`;
 }
 
 /**
@@ -610,43 +739,137 @@ function buildCover(
   logoDataUri: string,
   coverBackgroundDataUri: string,
   coverImageDataUri: string,
+  vars: DocVars,
   coverInfo: InfoRow[] = []
 ): string {
   if (!theme.showCover) return "";
   const coverLogo = logoDataUri ? `<img src="${logoDataUri}" alt="Logo">` : "";
   const coverBackground = coverBackgroundDataUri ? `<img src="${coverBackgroundDataUri}" alt="Background">` : "";
-  const coverimage = coverImageDataUri ? `<img src="${coverImageDataUri}" alt="Cover Image">` : "";
-  const subtitle = theme.subtitle ? `<div class="subtitle">${escapeHtml(theme.subtitle)}</div>` : "";
+  const coverImage = coverImageDataUri ? `<img src="${coverImageDataUri}" alt="Cover Image">` : "";
+  const subtitle = theme.subtitle ? `<div class="subtitle">${escapeHtml(resolveTextVariables(theme.subtitle, vars))}</div>` : "";
+  const additional = theme.additionalContent ? `${escapeHtml(resolveTextVariables(theme.additionalContent, vars))}` : "";
   let infoTable = "";
   if (coverInfo.length > 0) {
-    const rows = coverInfo
-      .map((r) => `<tr><th>${escapeHtml(r.label)}</th><td>${escapeHtml(r.value)}</td></tr>`)
-      .join("\n        ");
+    const rows = coverInfo.map((r) => `<tr><th>${escapeHtml(r.label)}</th><td>${escapeHtml(r.value)}</td></tr>`).join("\n        ");
     infoTable = `
       <table class="cover-info">
         ${rows}
       </table>`;
   }
+  
+  
+  if(coverImage != "") {
+      infoTable = coverImage;
+  }
+  
+  let background = "";
+  let logo = "";
+  if (coverBackground != "") {
+      background = `
+    <style>  
+      .pagedjs_page:first-child {
+          position: relative;
+      }
+
+      .pagedjs_page:first-child::before {
+          content: "";
+          position: absolute;
+          top: 0mm;
+          left: 0mm;
+          width: 210mm;
+          height: 297mm;
+
+          background: url("${coverBackgroundDataUri}") center / cover no-repeat;
+          z-index: -1;
+      }
+    </style>
+      `;
+  } else {
+      logo = coverLogo;
+  }
+  
+  
   return `
+    ${background}
     <div class="cover">
-      <div class="bg">
-        ${coverBackground}
-      </div>
-      <h1>${escapeHtml(title)}</h1>
-      ${subtitle}
-      ${infoTable}
+        ${logo}
+        <div class="coverTitleContainer">
+            <h1>${escapeHtml(title)}</h1>
+        </div>
+        <div class="coverSubtitleContainer">
+            <h2>${subtitle}</h2>
+        </div>
+        <div class="coverAdditionalContainer">
+            <h3>${additional}</h3>
+        </div>
+        <div class="coverImageContainer">
+            ${infoTable}
+        </div>
     </div>`;
 }
 
 /**
  * Build the legal notice markup, shown once at the end of the document.
  */
-function buildLegal(theme: PdfTheme): string {
-  if (!(theme.showLegal && theme.legalText)) return "";
-  const legalTitle = theme.legalTitle
-    ? `<div class="legal-title">${escapeHtml(theme.legalTitle)}</div>`
-    : "";
-  return `<div class="legal-footer">${legalTitle}${escapeHtml(theme.legalText)}</div>`;
+function buildLegal(theme ,vars) {
+  if (!(theme.showLegal)) return "";
+  
+  const legalTitle = theme.legalTitle ? `<h2>${escapeHtml(theme.legalTitle)}</h2>` : "Impressum";
+  
+  let editorial = "";
+  if (escapeHtml(resolveTextVariables(theme.legalEditorial, vars)) != "") {
+      editorial = `
+        <h5>Redaktion</h5>
+        <p>${escapeHtml(resolveTextVariables(theme.legalEditorial, vars))}</p>
+      `;
+  }
+  let author = "";
+  if (escapeHtml(resolveTextVariables(theme.legalAuthor, vars)) != "") {
+      author = `
+        <h5>Autorinnen und Autoren</h5>
+        <p>${escapeHtml(resolveTextVariables(theme.legalAuthor, vars))}</p>
+      `;
+  }
+  let photoCredit = "";
+  if (escapeHtml(resolveTextVariables(theme.legalPhotoCredit, vars)) != "") {
+      photoCredit = `
+        <h5>Bildnachweis</h5>
+        <p>${escapeHtml(resolveTextVariables(theme.legalPhotoCredit, vars)).replace(", ", "<br/>")}</p>
+      `;
+  }
+  
+  return `
+  ${legalTitle}
+  <div class="legalInformation">
+    <p>${escapeHtml(theme.legalText)}</p>    
+    <h5>Herausgeber</h5>
+    <p>${escapeHtml(resolveTextVariables(theme.legalCompany, vars))}</p>
+    <p class="legalDepartment">${escapeHtml(resolveTextVariables(theme.legalDepartment1, vars))}</p>
+    <p>${escapeHtml(resolveTextVariables(theme.legalDepartment2, vars))}</p>
+    <p>&nbsp;</p>
+    <p>${escapeHtml(resolveTextVariables(theme.legalStreet, vars))}</p>
+    <p>${escapeHtml(resolveTextVariables(theme.legalCity, vars))}</p>
+    <p>&nbsp;</p>
+    <p>${escapeHtml(resolveTextVariables(theme.legalTelephone, vars))}</p>
+    <p>${escapeHtml(resolveTextVariables(theme.legalMail, vars))}</p>
+    <p>&nbsp;</p>
+    <p class="legalLink"><a href="${escapeHtml(resolveTextVariables(theme.legalWebLink, vars))}" class="legalLink">${escapeHtml(theme.legalWebLinkAlt)}</a></p>
+
+    ${editorial}
+    ${author}
+    ${photoCredit}
+    
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&copy; <span id="aktuelles-jahr">2026</span> ${escapeHtml(resolveTextVariables(theme.legalCompany, vars))}</p>
+
+    <script>
+      document.getElementById('aktuelles-jahr').innerText = new Date().getFullYear();
+    </script>
+  </div>
+  `;
 }
 
 /**
@@ -742,16 +965,17 @@ export function buildHtml(
     processedBody = extracted.html;
     toc = buildTocHtml(extracted.headings, theme.tocTitle || "Table of Contents");
   }
+  //processedBody = `<div class="contentContainer">${applyUrlDisplay(processedBody, theme.urlDisplay)}</div>`;
   processedBody = applyUrlDisplay(processedBody, theme.urlDisplay);
 
   const body = [
     buildRunningHeader(theme, vars, logoDataUri),
     buildRunningFooter(theme, vars),
     buildClassification(theme, vars),
-    buildCover(theme, title, logoDataUri, coverBackgroundDataUri, coverImageDataUri, coverInfo),
+    buildCover(theme, title, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars, coverInfo),
+    buildLegal(theme, vars),
     toc,
-    processedBody,
-    buildLegal(theme),
+    processedBody
   ].join("\n  ");
 
   return assembleDocument(css, theme, body);
@@ -763,7 +987,7 @@ export function buildHtml(
 export interface MergedSection {
   title: string;
   bodyHtml: string;
-  pageBreaks?: { h1: boolean; h2: boolean; h3: boolean };
+  pageBreaks?: { h1: boolean; h2: boolean; h3: boolean, h4: boolean, h5: boolean };
 }
 
 /**
@@ -781,6 +1005,8 @@ function buildSectionPageBreakCss(sections: MergedSection[]): string {
     if (s.pageBreaks.h1) rules.push(`${scope} h1 ${decl}`);
     if (s.pageBreaks.h2) rules.push(`${scope} h2:not(.merged-section-title) ${decl}`);
     if (s.pageBreaks.h3) rules.push(`${scope} h3 ${decl}`);
+    if (s.pageBreaks.h4) rules.push(`${scope} h3 ${decl}`);
+    if (s.pageBreaks.h5) rules.push(`${scope} h3 ${decl}`);
   });
   if (rules.length === 0) return "";
   return `\n/* --- Per-note page breaks --- */\n${rules.join("\n")}\n`;
@@ -848,10 +1074,10 @@ export function buildMergedHtml(
     buildRunningHeader(theme, vars, logoDataUri),
     buildRunningFooter(theme, vars),
     buildClassification(theme, vars),
-    buildCover(theme, mergedTitle, logoDataUri, coverBackgroundDataUri, coverImageDataUri),
+    buildCover(theme, mergedTitle, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars),
+    buildLegal(theme, vars),
     toc,
-    sectionsHtml,
-    buildLegal(theme),
+    sectionsHtml
   ].join("\n  ");
 
   return assembleDocument(css, theme, body);
@@ -1024,7 +1250,7 @@ function fmValue(vars: DocVars, key: string): string {
  * Replace placeholders in header/footer/classification text:
  * {title} {filename} {author} {date} {time} and {fm.KEY} for any frontmatter key.
  */
-function resolveTextVariables(text: string, vars: DocVars): string {
+export function resolveTextVariables(text: string, vars: DocVars): string {
   const now = new Date();
   return text
     .replace(/\{title\}/gi, vars.title)

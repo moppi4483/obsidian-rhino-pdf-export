@@ -515,7 +515,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addToggle(c, "Cover page", () => theme.showCover, (v) => { theme.showCover = v; });
     this.addText(c, "Title", () => theme.title, (v) => { theme.title = v; });
     this.addText(c, "Subtitle", () => theme.subtitle, (v) => { theme.subtitle = v; });
-    this.addText(c, "Additional Content", () => theme.additionContent, (v) => { theme.additionContent = v; }, {
+    this.addText(c, "Additional Content", () => theme.additionalContent, (v) => { theme.additionalContent = v; }, {
       desc: "Additional content on the front page",
     });
     
@@ -556,9 +556,13 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
     this.addToggle(c, "Header logo (page 2+)", () => theme.showHeaderLogo, (v) => { theme.showHeaderLogo = v; });
     this.addLength(c, "Header logo height", () => theme.headerLogoHeight, (v) => { theme.headerLogoHeight = v; });
-    this.addText(c, "Header text", () => theme.headerText, (v) => { theme.headerText = v; }, {
+    this.addText(c, "Header text (Line 1 - Bold)", () => theme.headerText, (v) => { theme.headerText = v; }, {
       desc: vars,
       placeholder: "{title}",
+    });
+    this.addText(c, "Header text (Line 2 - Normal)", () => theme.headerText2, (v) => { theme.headerText2 = v; }, {
+      desc: vars,
+      placeholder: "{subtitle}",
     });
     this.addToggle(c, "Pagination", () => theme.showPagination, (v) => { theme.showPagination = v; });
     this.addText(c, "Pagination format", () => theme.paginationFormat, (v) => { theme.paginationFormat = v; }, {
@@ -626,8 +630,9 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addText(c, "Legal Department E-Mail", () => theme.legalMail, (v) => { theme.legalMail = v; });
     this.addText(c, "Legal Department Link", () => theme.legalWebLink, (v) => { theme.legalWebLink = v; });
     this.addText(c, "Legal Department Link (Alt-Text)", () => theme.legalWebLinkAlt, (v) => { theme.legalWebLinkAlt = v; });
-    
-    
+    this.addText(c, "Legal Editorial", () => theme.legalEditorial, (v) => { theme.legalEditorial = v; });
+    this.addText(c, "Legal Author", () => theme.legalAuthor, (v) => { theme.legalAuthor = v; });
+    this.addText(c, "Legal Photo Credit", () => theme.legalPhotoCredit, (v) => { theme.legalPhotoCredit = v; });
   }
 
   private renderMetadataSection(c: HTMLElement, theme: PdfTheme) {

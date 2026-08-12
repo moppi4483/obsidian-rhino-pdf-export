@@ -7,6 +7,7 @@ import {
   makeDocVars,
   makePdfMetadata,
   resolveImagePaths,
+  resolveTextVariables,
   type RenderAssets,
 } from "./render";
 import { isFontFamily, isFontWeight } from "./frontmatter";
@@ -153,11 +154,11 @@ export class AssetCache {
 
   async get(theme: PdfTheme, notify = true): Promise<RenderAssets> {
     // One key for both inputs, with no separator to collide with a path.
-    const key = JSON.stringify([theme.logoPath, theme.customFonts ?? []]);
+    const key = JSON.stringify([theme.logoPath, theme.coverBackgroundPath, theme.coverImagePath, theme.customFonts ?? []]);
     const hit = this.cache.get(key);
     if (hit) return hit;
 
-    const [logoDataUri, coverBackgroundUri, coverImageUri, fonts] = await Promise.all([
+    const [logoDataUri, coverBackgroundDataUri, coverImageDataUri, fonts] = await Promise.all([
       loadLogoDataUri(this.app, theme.logoPath),
       loadCoverBackgroundDataUri(this.app, theme.coverBackgroundPath),
       loadCoverImageDataUri(this.app, theme.coverImagePath),
@@ -169,7 +170,7 @@ export class AssetCache {
       new Notice(`Rhino PDF — font not embedded:\n${fonts.skipped.join("\n")}`, 8000);
     }
 
-    const assets: RenderAssets = { logoDataUri, fontFaceCss: fonts.css };
+    const assets: RenderAssets = { logoDataUri, coverBackgroundDataUri, coverImageDataUri, fontFaceCss: fonts.css };
     this.cache.set(key, assets);
     return assets;
   }
@@ -193,11 +194,16 @@ export async function exportNoteToPdf(req: ExportRequest): Promise<void> {
   const { app, file, theme, coverInfoKeys, outputPath, assets } = req;
 
   const mdContent = await app.vault.cachedRead(file);
-  const title = extractTitle(mdContent, file.basename);
+  let title = extractTitle(mdContent, file.basename);
   const bodyHtml = await renderNoteHtml(app, mdContent, file.path);
 
   const fm = app.metadataCache.getFileCache(file)?.frontmatter ?? {};
   const vars = makeDocVars(title, file.basename, fm);
+ 
+  if (resolveTextVariables(theme.title, vars) != "") {
+      title = resolveTextVariables(theme.title, vars);
+  }
+
   const coverInfo = coverInfoRows(fm, coverInfoKeys);
   const html = buildHtml(bodyHtml, title, theme, assets, vars, coverInfo);
 
