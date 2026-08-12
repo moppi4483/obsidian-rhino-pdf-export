@@ -573,12 +573,25 @@ strong { font-weight: bold; color: #1a1a1a; }
   width: 100%;
   font-weight: bold;
 }
-.toc li.toc-h3 {
+.toc li.toc-h3,
+.toc li.toc-h4 {
   padding-left: 8mm;
   font-size: 10pt;
   color: ${p};
   width: 100%;
   font-weight: normal;
+}
+.tocNumber {
+  display: inline-block;
+}
+.toc-h2 .tocNumber {
+  width: 1rem;
+}
+.toc-h3 .tocNumber {
+  width: 2rem;
+}
+.toc-h4 .tocNumber {
+  width: 3rem;
 }
 .toc li a {
   display: flex;
@@ -1094,7 +1107,7 @@ function extractHeadings(bodyHtml: string, counterStart = 0): {
 } {
   const headings: { level: number; text: string; id: string }[] = [];
   let counter = counterStart;
-  const html = bodyHtml.replace(/<(h[23])([^>]*)>([\s\S]*?)<\/\1>/gi, (_match: string, tag: string, attrs: string, content: string) => {
+  const html = bodyHtml.replace(/<(h[234])([^>]*)>([\s\S]*?)<\/\1>/gi, (_match: string, tag: string, attrs: string, content: string) => {
     const level = parseInt(tag[1]);
     const text = content.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ").trim();
     // Reuse an existing id if the heading already has one (avoids a duplicate id
@@ -1114,8 +1127,23 @@ function extractHeadings(bodyHtml: string, counterStart = 0): {
 function buildTocHtml(headings: { level: number; text: string; id: string }[], tocTitle = "Table of Contents"): string {
   if (headings.length === 0) return "";
   const items = headings.map((h) => {
-    const cls = h.level === 3 ? ' class="toc-h3"' : "";
-    return `<li${cls}><a href="#${h.id}">${escapeHtml(h.text)}</a></li>`;
+    let cls = "";
+    switch (h.level) {
+      case 2:
+        cls = ' class="toc-h2"';
+        break;
+      case 3:
+        cls = ' class="toc-h3"';
+        break;
+      case 4:
+        cls = ' class="toc-h4"';
+        break;
+      default:
+        cls = "";
+    }
+
+    const parts = escapeHtml(h.text).match(/^([\d.]*\d)\s+(.*)$/);
+    return `<li${cls}><a href="#${h.id}"><span class="tocNumber">${parts[1]} </span><span>${parts[2]}</span></a></li>`;
   }).join("\n      ");
   return `
     <div class="toc">
