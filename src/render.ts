@@ -78,7 +78,7 @@ ${fontFaceCss}
 body {
   font-family: ${theme.bodyFont};
   font-size: ${theme.bodyFontSize};
-  line-height: 1.6;
+  line-height: 1.15;
   color: ${p};
   background: #ffffff;
 }
@@ -301,6 +301,17 @@ img {
 }
 
 /* --- Headings --- */
+.h2-content {
+    border: ${a} solid 1px;
+    margin-bottom: 15px;
+    padding: 0px 5px;
+}
+.h2-content h2 {
+    background: ${a};
+    margin: 0px -5px;
+    padding: 0px 5px;
+    color: white;
+}
 h2 {
   font-size: 18pt;
   font-weight: bold;
@@ -652,6 +663,56 @@ a {
   color: ${a};
   text-decoration: underline;
 }
+/* --- operon-aufgaben-tabelle -- */
+.operon-aufgaben-tabelle {
+  font-family: ${theme.bodyFont};
+  font-size: ${theme.bodyFontSize};
+  line-height: 1.15;
+  margin: 0 -5px -7px -5px;
+  padding: 0 5px;
+  width: -webkit-fill-available;
+  vertical-align: top;
+  text-align: left !important;
+}
+.operon-aufgaben-tabelle th {
+  background-color: #DADADA;
+  color: ${p};
+  font-family: ${theme.bodyFont};
+  font-size: ${theme.bodyFontSize};
+  line-height: 1.15;
+  font-weight: bold;
+  padding: 5px 10px;
+  vertical-align: top;
+  text-align: left !important;
+}
+.operon-aufgaben-tabelle td {
+  background-color: #FFF;
+  color: ${p};
+  font-family: ${theme.bodyFont};
+  font-size: ${theme.bodyFontSize};
+  line-height: 1.15;
+  font-weight: normal;
+  padding: 5px 10px;
+  vertical-align: top;
+  text-align: left !important;
+}
+.operon-aufgaben-tabelle td * {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  text-align: left !important;
+}
+  .operon-aufgaben-tabelle li {
+  list-style: none;
+  margin: 0 0 0 0;
+  text-align: left !important;
+}
+.operon-aufgaben-tabelle,
+.operon-aufgaben-tabelle th,
+.operon-aufgaben-tabelle td,
+.operon-aufgaben-tabelle td *,
+.operon-aufgaben-tabelle th * {
+    text-align: left !important;
+}
 ${theme.watermarkText ? `
 /* --- Watermark --- */
 .rhino-watermark {
@@ -981,6 +1042,8 @@ export function buildHtml(
   //processedBody = `<div class="contentContainer">${applyUrlDisplay(processedBody, theme.urlDisplay)}</div>`;
   processedBody = applyUrlDisplay(processedBody, theme.urlDisplay);
 
+  processedBody = wrapH2Sections(processedBody);
+
   const body = [
     buildRunningHeader(theme, vars, logoDataUri),
     buildRunningFooter(theme, vars),
@@ -988,10 +1051,18 @@ export function buildHtml(
     buildCover(theme, title, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars, coverInfo),
     buildLegal(theme, vars),
     toc,
-    processedBody
+    processedBody,
+    buildOperonWikiTaskLink2HTMLTable()
   ].join("\n  ");
 
   return assembleDocument(css, theme, body);
+}
+
+function wrapH2Sections(html) {
+    return html.replace(
+        /(<h2\b[^>]*>[\s\S]*?<\/h2>[\s\S]*?)(?=<h2\b[^>]*>|$)/gi,
+        '<div class="h2-content">$1</div>'
+    );
 }
 
 /**
@@ -1090,7 +1161,8 @@ export function buildMergedHtml(
     buildCover(theme, mergedTitle, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars),
     buildLegal(theme, vars),
     toc,
-    sectionsHtml
+    sectionsHtml,
+    buildOperonWikiTaskLink2HTMLTable()
   ].join("\n  ");
 
   return assembleDocument(css, theme, body);
@@ -1343,4 +1415,384 @@ function escapeHtml(str: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function buildOperonWikiTaskLink2HTMLTable(): string {
+  return `
+
+  <script>
+(function () {
+
+    const TABLE_ID = "operon-aufgaben-tabelle";
+    const TASK_SELECTOR = ".operon-task-wikilink-reading";
+
+    let updating = false;
+    let observer = null;
+
+
+    // ============================================================
+    // Aufgaben auslesen und Tabelle erstellen
+    // ============================================================
+
+    function renderAufgabenTabelle() {
+
+        if (updating) {
+            return;
+        }
+
+        updating = true;
+
+        try {
+
+            // ----------------------------------------------------
+            // Alle Operon-Aufgaben suchen
+            // ----------------------------------------------------
+
+            const aufgaben = [
+                ...document.querySelectorAll(TASK_SELECTOR)
+            ];
+
+
+            // ----------------------------------------------------
+            // Bereits vorhandene Tabelle entfernen
+            // ----------------------------------------------------
+
+            const alteTabelle =
+                document.getElementById(TABLE_ID);
+
+            if (alteTabelle) {
+                alteTabelle.remove();
+            }
+
+
+            // ----------------------------------------------------
+            // KEINE Aufgaben vorhanden
+            // ----------------------------------------------------
+
+            if (aufgaben.length === 0) {
+                return;
+            }
+
+
+            // ----------------------------------------------------
+            // Position der ersten Aufgabe merken
+            // ----------------------------------------------------
+
+            const ersteAufgabe = aufgaben[0];
+            const parent = ersteAufgabe.parentNode;
+
+            if (!parent) {
+                return;
+            }
+
+
+            // ====================================================
+            // Tabelle erstellen
+            // ====================================================
+
+            const table = document.createElement("table");
+
+            table.id = TABLE_ID;
+            table.className = "operon-aufgaben-tabelle";
+
+
+            // ----------------------------------------------------
+            // Kopfzeile
+            // ----------------------------------------------------
+
+            const thead = document.createElement("thead");
+
+            thead.innerHTML = \`
+                <tr>
+                    <th>Aufgabe</th>
+                    <th style="width: 25%;">Verantwortlich</th>
+                    <th style="width: 15%;">Termin</th>
+                </tr>
+            \`;
+
+            table.appendChild(thead);
+
+
+            // ----------------------------------------------------
+            // Tabellenkörper
+            // ----------------------------------------------------
+
+            const tbody = document.createElement("tbody");
+
+
+            // ====================================================
+            // JEDE Aufgabe verarbeiten
+            // ====================================================
+
+            aufgaben.forEach(aufgabe => {
+
+                const row = document.createElement("tr");
+
+
+                // ------------------------------------------------
+                // Aufgabe
+                // ------------------------------------------------
+
+                const aufgabenCell =
+                    document.createElement("td");
+                const ulAufgabe = document.createElement("ul");
+                const liAufgabe = document.createElement("li");
+
+
+                const aufgabenElement =
+                    aufgabe.querySelector(
+                        ".operon-task-wikilink-label"
+                    );
+
+                aufgabenCell.textContent =
+                    aufgabenElement
+                        ?.textContent
+                        ?.trim() || "";
+
+                ulAufgabe.appendChild(liAufgabe);
+
+                //aufgabenCell.appendChild(ulAufgabe);
+
+                // ------------------------------------------------
+                // Verantwortliche
+                // ------------------------------------------------
+
+                const verantwortliche = [];
+
+
+                aufgabe
+                    .querySelectorAll(".lucide-users")
+                    .forEach(icon => {
+
+                        const chip =
+                            icon.closest(".operon-chip");
+
+                        const name =
+                            chip
+                                ?.querySelector(
+                                    ".operon-inline-compact-chip-label"
+                                )
+                                ?.textContent
+                                ?.trim();
+
+                        if (
+                            name &&
+                            !verantwortliche.includes(name)
+                        ) {
+                            verantwortliche.push(name);
+                        }
+
+                    });
+
+
+                const verantwortlicheCell =
+                    document.createElement("td");
+
+
+                // Keine Person
+                if (verantwortliche.length === 0) {
+
+                    verantwortlicheCell.textContent = "";
+
+                }
+
+                // Eine Person
+                else if (verantwortliche.length === 1) {
+
+                    verantwortlicheCell.textContent =
+                        verantwortliche[0];
+
+                }
+
+                // Mehrere Personen
+                else {
+
+                    const ul =
+                        document.createElement("ul");
+
+                    verantwortliche.forEach(name => {
+
+                        const li =
+                            document.createElement("li");
+
+                        li.textContent = name;
+
+                        ul.appendChild(li);
+
+                    });
+
+ /*                   const p1 =
+                        document.createElement("p");
+
+                    verantwortliche.forEach(name => {
+
+                        const p2 =
+                            document.createElement("P");
+
+                        p2.textContent = name;
+
+                        p1.appendChild(p2);
+
+                    });*/
+                    verantwortlicheCell.appendChild(ul);
+                }
+
+
+                // ------------------------------------------------
+                // Termin
+                // ------------------------------------------------
+
+                const terminCell =
+                    document.createElement("td");
+
+
+                const kalenderIcon =
+                    aufgabe.querySelector(
+                        ".lucide-calendar-clock"
+                    );
+
+
+                const terminChip =
+                    kalenderIcon?.closest(
+                        ".operon-chip"
+                    );
+
+
+                const termin =
+                    terminChip
+                        ?.querySelector(
+                            ".operon-inline-compact-chip-label"
+                        )
+                        ?.textContent
+                        ?.trim() || "";
+
+
+                // YYYY-MM-DD -> DD.MM.YYYY
+
+                if (
+                    /^\\d{4}-\\d{2}-\\d{2}$/
+                        .test(termin)
+                ) {
+
+                    const [jahr, monat, tag] =
+                        termin.split("-");
+
+                    terminCell.textContent =
+                        \`\${tag}.\${monat}.\${jahr}\`;
+
+                } else {
+
+                    terminCell.textContent =
+                        termin;
+                }
+
+
+                // ------------------------------------------------
+                // Zeile zusammensetzen
+                // ------------------------------------------------
+
+                row.appendChild(aufgabenCell);
+                row.appendChild(verantwortlicheCell);
+                row.appendChild(terminCell);
+
+                tbody.appendChild(row);
+
+            });
+
+
+            table.appendChild(tbody);
+
+
+            // ====================================================
+            // Operon-Elemente ausblenden
+            // ====================================================
+
+            aufgaben.forEach(aufgabe => {
+
+                aufgabe.style.display = "none";
+
+            });
+
+
+            // ====================================================
+            // Tabelle an Position der ersten Aufgabe einsetzen
+            // ====================================================
+
+            parent.insertBefore(
+                table,
+                ersteAufgabe
+            );
+
+        }
+
+        finally {
+
+            updating = false;
+
+        }
+
+    }
+
+
+    // ============================================================
+    // MutationObserver
+    // ============================================================
+
+    observer = new MutationObserver(() => {
+
+        if (updating) {
+            return;
+        }
+
+        // Operon erst fertig rendern lassen
+        clearTimeout(window.operonTableTimer);
+
+        window.operonTableTimer =
+            setTimeout(() => {
+
+                renderAufgabenTabelle();
+
+            }, 100);
+
+    });
+
+
+    observer.observe(document.body, {
+
+        childList: true,
+        subtree: true
+
+    });
+
+
+    // ============================================================
+    // Initialisierung
+    // ============================================================
+
+    function init() {
+
+        renderAufgabenTabelle();
+
+    }
+
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            init,
+            { once: true }
+        );
+
+    } else {
+
+        init();
+
+    }
+
+})();
+</script>
+  `;
 }
