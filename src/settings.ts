@@ -285,6 +285,10 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       desc: "Relative path in vault (e.g. assets/logo.png)",
       placeholder: "assets/logo.png",
     });
+    this.addText(containerEl, "Background", () => theme.backgroundPath, (v) => { theme.backgroundPath = v.trim(); }, {
+      desc: "Relative path in vault (e.g. assets/background.png)\nuse pictures in with the same form-factor of the document-format.\nThis Setting overwrites Logos!!!",
+      placeholder: "assets/background.png",
+    });
 
     this.renderPageSection(containerEl, theme);
     this.renderTypographySection(containerEl, theme);
@@ -514,11 +518,31 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
     this.addToggle(c, "Cover page", () => theme.showCover, (v) => { theme.showCover = v; });
     this.addText(c, "Title", () => theme.title, (v) => { theme.title = v; });
+    //this.addElementStylingRow(c, theme, "Title Font-Size", "titleFontSize", "Title Font-Color", "titleFontColor", "Title Font-Style", "titleFontStyle", "Title Font-Weight", "titleFontWeight");
+    this.addText(c, "Title Font-Size", () => theme.titleFontSize, (v) => { theme.titleFontSize = v; });
+    this.addColor(c, "Title Font-Color", () => theme.titleFontColor, (v) => { theme.titleFontColor = v; });
+    this.addDropdown(
+      c,
+      "Title Font-Style",
+      [["normal", "Normal"], ["oblique", "Oblique"], ["italic", "Italic"]],
+      () => theme.titleFontStyle || "normal",
+      (v) => { theme.titleFontStyle = v as PdfTheme["titleFontStyle"]; }
+    );
+    this.addDropdown(
+      c,
+      "Title Font-Weight",
+      [["normal", "Normal"], ["bold", "Bold"], ["bolder", "Bolder"], ["lighter", "Lighter"]],
+      () => theme.titleFontWeight || "normal",
+      (v) => { theme.titleFontWeight = v as PdfTheme["titleFontWeight"]; }
+    );
     this.addText(c, "Subtitle", () => theme.subtitle, (v) => { theme.subtitle = v; });
     this.addText(c, "Additional Content", () => theme.additionalContent, (v) => { theme.additionalContent = v; }, {
       desc: "Additional content on the front page",
     });
-    
+    this.addToggle(c, "Dedicated cover Page", () => theme.dedicatedCover, (v) => { theme.dedicatedCover = v; }, {
+      desc: "inserts a page-break after the cover, independent from other settings",
+    });
+
     this.addText(c, "Cover Background", () => theme.coverBackgroundPath, (v) => { theme.coverBackgroundPath = v.trim(); }, {
       desc: "Relative path in vault (e.g. assets/background.png)\nuse pictures in with the same form-factor of the document-format",
       placeholder: "assets/background.png",
@@ -527,7 +551,6 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       desc: "Relative path in vault (e.g. assets/coverImage.png)",
       placeholder: "assets/coverImage.png",
     });
-    this.addText(c, "Width of the cover-image", () => theme.coverImageWidth, (v) => { theme.coverImageWidth = v; });
     this.addText(
       c,
       "Cover info block",
@@ -550,23 +573,117 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
 
     this.addToggle(c, "Protocol-like cover & document-style", () => theme.protocolLike, (v) => { theme.protocolLike = v; });
+    this.addText(c, "Protocol title", () => theme.protocolTitle, (v) => { theme.protocolTitle = v.trim(); }, {
+      desc: "Title auf the protocol",
+      placeholder: "{fm.title}",
+    });
+    this.addText(c, "Protocol Creator Text", () => theme.protocolCreatorText, (v) => { theme.protocolCreatorText = v.trim(); }, {
+      desc: "Value of the text-label of the creator.",
+      placeholder: "created by",
+    });
+    this.addText(c, "Protocol Creator Value", () => theme.protocolCreatorValue, (v) => { theme.protocolCreatorValue = v.trim(); }, {
+      desc: "creator of the protocol",
+      placeholder: "{fm.protocolCreator}",
+    });
+    this.addText(c, "Protocol Client Text", () => theme.protocolClientText, (v) => { theme.protocolClientText = v.trim(); }, {
+      desc: "Value of the text-label of the client.",
+      placeholder: "Client",
+    });
+    this.addText(c, "Protocol Client Value", () => theme.protocolClientValue, (v) => { theme.protocolClientValue = v.trim(); }, {
+      desc: "client of the meeting",
+      placeholder: "{fm.protocolClient}",
+    });
+    this.addText(c, "Protocol Client-Participants Text", () => theme.protocolClientParticipantText, (v) => { theme.protocolClientParticipantText = v.trim(); }, {
+      desc: "Value of the text-label of the client-Participants.",
+      placeholder: "Client-Participants",
+    });
+    this.addText(c, "Protocol Client-Participants Value", () => theme.protocolClientParticipantValue, (v) => { theme.protocolClientParticipantValue = v.trim(); }, {
+      desc: "client-Participants of the meeting",
+      placeholder: "{fm.protocolClientParticipant}",
+    });
+    this.addText(c, "Protocol Contractor Text", () => theme.protocolContractorText, (v) => { theme.protocolContractorText = v.trim(); }, {
+      desc: "Value of the text-label of the Contractor.",
+      placeholder: "Contractor",
+    });
+    this.addText(c, "Protocol Contractor Value", () => theme.protocolContractorValue, (v) => { theme.protocolContractorValue = v.trim(); }, {
+      desc: "Contractor of the meeting",
+      placeholder: "{fm.protocolContractor}",
+    });
+    this.addText(c, "Protocol Contractor-Participants Text", () => theme.protocolContractorParticipantText, (v) => { theme.protocolContractorParticipantText = v.trim(); }, {
+      desc: "Value of the text-label of the Contractor-Participants.",
+      placeholder: "Contractor",
+    });
+    this.addText(c, "Protocol Contractor-Participants Value", () => theme.protocolContractorParticipantValue, (v) => { theme.protocolContractorParticipantValue = v.trim(); }, {
+      desc: "Contractor-Participants of the meeting",
+      placeholder: "{fm.protocolContractorParticipant}",
+    });
+    this.addText(c, "Protocol Date Text", () => theme.protocolDateText, (v) => { theme.protocolDateText = v.trim(); }, {
+      desc: "Value of the text-label of the Date.",
+      placeholder: "Date",
+    });
+    this.addText(c, "Protocol Date Value", () => theme.protocolDateValue, (v) => { theme.protocolDateValue = v.trim(); }, {
+      desc: "Date of the meeting",
+      placeholder: "{fm.protocolDate}",
+    });
+    this.addText(c, "Protocol Location Text", () => theme.protocolLocationText, (v) => { theme.protocolLocationText = v.trim(); }, {
+      desc: "Value of the text-label of the Location.",
+      placeholder: "Location",
+    });
+    this.addText(c, "Protocol Date Value", () => theme.protocolLocationValue, (v) => { theme.protocolLocationValue = v.trim(); }, {
+      desc: "Location of the meeting",
+      placeholder: "{fm.protocolLocation}",
+    });
   }
 
   private renderHeaderFooterSection(c: HTMLElement, theme: PdfTheme) {
     new Setting(c).setName("Header and footer").setHeading();
 
     const vars = "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}";
+    this.addToggle(c, "Header on first page", () => theme.showHeaderOn1stPage, (v) => { theme.showHeaderOn1stPage = v; });
+    this.addToggle(c, "Footer on first page", () => theme.showFooterOn1stPage, (v) => { theme.showFooterOn1stPage = v; });
 
     this.addToggle(c, "Header logo (page 2+)", () => theme.showHeaderLogo, (v) => { theme.showHeaderLogo = v; });
     this.addLength(c, "Header logo height", () => theme.headerLogoHeight, (v) => { theme.headerLogoHeight = v; });
-    this.addText(c, "Header text (Line 1 - Bold)", () => theme.headerText, (v) => { theme.headerText = v; }, {
+    this.addText(c, "Header text (Line 1)", () => theme.headerText, (v) => { theme.headerText = v; }, {
       desc: vars,
       placeholder: "{title}",
     });
-    this.addText(c, "Header text (Line 2 - Normal)", () => theme.headerText2, (v) => { theme.headerText2 = v; }, {
+    this.addText(c, "Header (Line 1) Font-Size", () => theme.header1FontSize, (v) => { theme.header1FontSize = v; });
+    this.addColor(c, "Header (Line 1) Font-Color", () => theme.header1FontColor, (v) => { theme.header1FontColor = v; });
+    this.addDropdown(
+      c,
+      "Header (Line 1) Font-Style",
+      [["normal", "Normal"], ["oblique", "Oblique"], ["italic", "Italic"]],
+      () => theme.header1FontStyle || "normal",
+      (v) => { theme.header1FontStyle = v as PdfTheme["header1FontStyle"]; }
+    );
+    this.addDropdown(
+      c,
+      "Header (Line 1) Font-Weight",
+      [["normal", "Normal"], ["bold", "Bold"], ["bolder", "Bolder"], ["lighter", "Lighter"]],
+      () => theme.header1FontWeight || "normal",
+      (v) => { theme.header1FontWeight = v as PdfTheme["header1FontWeight"]; }
+    );
+    this.addText(c, "Header text (Line 2)", () => theme.headerText2, (v) => { theme.headerText2 = v; }, {
       desc: vars,
       placeholder: "{subtitle}",
     });
+    this.addText(c, "Header (Line 2) Font-Size", () => theme.header2FontSize, (v) => { theme.header2FontSize = v; });
+    this.addColor(c, "Header (Line 2) Font-Color", () => theme.header2FontColor, (v) => { theme.header2FontColor = v; });
+    this.addDropdown(
+      c,
+      "Header (Line 2) Font-Style",
+      [["normal", "Normal"], ["oblique", "Oblique"], ["italic", "Italic"]],
+      () => theme.header2FontStyle || "normal",
+      (v) => { theme.header2FontStyle = v as PdfTheme["header2FontStyle"]; }
+    );
+    this.addDropdown(
+      c,
+      "Header (Line 1) Font-Weight",
+      [["normal", "Normal"], ["bold", "Bold"], ["bolder", "Bolder"], ["lighter", "Lighter"]],
+      () => theme.header2FontWeight || "normal",
+      (v) => { theme.header2FontWeight = v as PdfTheme["header2FontWeight"]; }
+    );
     this.addToggle(c, "Pagination", () => theme.showPagination, (v) => { theme.showPagination = v; });
     this.addText(c, "Pagination format", () => theme.paginationFormat, (v) => { theme.paginationFormat = v; }, {
       desc: 'Use {page} and {pages}, e.g. "{page} / {pages}" or "Page {page} of {pages}"',
@@ -707,4 +824,30 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     });
     input.click();
   }
+
+/*
+  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSize: string, fontSize: string, captionFontColor: string, fontColor: string, captionFontStyle: string, fontStyle: string, captionFontWeight: string, fontWeight: string) {
+   const row = new Setting(c).setClass("rhino-elementStyling-row");
+
+    console.log(fontSize);
+
+    row.addText(c, captionFontSize, () => theme[fontSize], (v) => { theme[fontSize] = v; });
+    row.addColor(c, captionFontColor, () => theme[fontColor], (v) => { theme[fontColor] = v; });
+    row.addDropdown(
+      c,
+      captionFontStyle,
+      [["normal", "Normal"], ["oblique", "Oblique"], ["italic", "Italic"]],
+      () => theme[fontStyle] || "normal",
+      (v) => { theme[fontStyle] = v as PdfTheme["titleFontStyle"]; }
+    );
+
+    row.addDropdown(
+      c,
+      captionFontWeight,
+      [["normal", "Normal"], ["bold", "Bold"], ["bolder", "Bolder"], ["lighter", "Lighter"]],
+      () => theme[fontWeight] || "normal",
+      (v) => { theme[fontWeight] = v as PdfTheme["titleFontWeight"]; }
+    );
+
+  }*/
 }

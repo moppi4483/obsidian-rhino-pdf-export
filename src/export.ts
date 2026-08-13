@@ -129,6 +129,17 @@ export async function loadCoverBackgroundDataUri(app: App, logoPath: string): Pr
   return `data:${MIME_BY_EXT[ext] || "image/png"};base64,${b64}`;
 }
 
+export async function loadBackgroundDataUri(app: App, logoPath: string): Promise<string> {
+  if (!logoPath) return "";
+  const file = app.vault.getAbstractFileByPath(logoPath);
+  if (!file || !(file instanceof TFile)) return "";
+
+  const data = await app.vault.readBinary(file);
+  const ext = logoPath.split(".").pop()?.toLowerCase() || "png";
+  const b64 = Buffer.from(data).toString("base64");
+  return `data:${MIME_BY_EXT[ext] || "image/png"};base64,${b64}`;
+}
+
 export async function loadCoverImageDataUri(app: App, logoPath: string): Promise<string> {
   if (!logoPath) return "";
   const file = app.vault.getAbstractFileByPath(logoPath);
@@ -158,10 +169,11 @@ export class AssetCache {
     const hit = this.cache.get(key);
     if (hit) return hit;
 
-    const [logoDataUri, coverBackgroundDataUri, coverImageDataUri, fonts] = await Promise.all([
+    const [logoDataUri, coverBackgroundDataUri, coverImageDataUri, backgroundDataUri, fonts] = await Promise.all([
       loadLogoDataUri(this.app, theme.logoPath),
       loadCoverBackgroundDataUri(this.app, theme.coverBackgroundPath),
       loadCoverImageDataUri(this.app, theme.coverImagePath),
+      loadBackgroundDataUri(this.app, theme.backgroundPath),
       buildCustomFontCss(this.app, theme),
     ]);
     // Only on a cache miss: a silently missing font falls back to a system one,
@@ -170,7 +182,7 @@ export class AssetCache {
       new Notice(`Rhino PDF — font not embedded:\n${fonts.skipped.join("\n")}`, 8000);
     }
 
-    const assets: RenderAssets = { logoDataUri, coverBackgroundDataUri, coverImageDataUri, fontFaceCss: fonts.css };
+    const assets: RenderAssets = { logoDataUri, coverBackgroundDataUri, coverImageDataUri, backgroundDataUri, fontFaceCss: fonts.css };
     this.cache.set(key, assets);
     return assets;
   }

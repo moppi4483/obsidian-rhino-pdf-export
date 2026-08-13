@@ -156,6 +156,30 @@
   width: 72px;
 }
 
+/* Settings: row for styling different Elements */
+.rhino-elementStyling-row .setting-item-control {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.rhino-elementStyling-row input.rhino-elementStyling-size {
+  width: 100px;
+}
+
+.rhino-elementStyling-row input.rhino-elementStyling-color {
+  width: 100px;
+}
+
+.rhino-elementStyling-row input.rhino-elementStyling-style {
+  width: 100px;
+}
+
+.rhino-elementStyling-row input.rhino-elementStyling-weight {
+  width: 100px;
+}
+
+
+
 /* Settings: font file suggester */
 .rhino-suggest-path {
   font-size: 12px;

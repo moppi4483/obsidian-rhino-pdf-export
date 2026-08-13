@@ -25,25 +25,57 @@ export interface PdfTheme {
 
   // Logo (relative path in vault, or empty)
   logoPath: string;
+  backgroundPath: string;
 
   // Cover page
   showCover: boolean;
   showToc: boolean;
   tocTitle: string;
+  title: string;
+  titleFontSize: string,
+  titleFontColor: string,
+  titleFontStyle: "normal" | "oblique" | "italic";
+  titleFontWeight: "normal" | "bold" | "bolder" | "lighter";
   subtitle: string;
   additionalContent: string;
   // Frontmatter keys listed by default in the cover info block
+  dedicatedCover: boolean;
   coverBackgroundPath: string,
   coverImagePath: string,
   coverInfoFields: string[];
   protocolLike: boolean;
-  
+  protocolTitle: string,
+  protocolCreatorText: string,
+  protocolCreatorValue: string,
+  protocolClientText: string,
+  protocolClientValue: string,
+  protocolClientParticipantText: string,
+  protocolClientParticipantValue: string,
+  protocolContractorText: string,
+  protocolContractorValue: string,
+  protocolContractorParticipantText: string,
+  protocolContractorParticipantValue: string,
+  protocolDateText: string,
+  protocolDateValue: string,
+  protocolLocationText: string,
+  protocolLocationValue: string,
+
 
   // Header (page 2+)
   showHeaderLogo: boolean;
+  showHeaderOn1stPage: boolean;
+  showFooterOn1stPage: boolean;
   headerLogoHeight: string; // CSS value, e.g. "12mm"
   headerText: string; // supports {title}, {date}
+  header1FontSize: string,
+  header1FontColor: string,
+  header1FontStyle: "normal" | "oblique" | "italic";
+  header1FontWeight: "normal" | "bold" | "bolder" | "lighter";
   headerText2: string;
+  header2FontSize: string,
+  header2FontColor: string,
+  header2FontStyle: "normal" | "oblique" | "italic";
+  header2FontWeight: "normal" | "bold" | "bolder" | "lighter";
 
   // Footer
   showPagination: boolean;
