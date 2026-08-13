@@ -36,6 +36,8 @@ export interface PdfTheme {
   coverBackgroundPath: string,
   coverImagePath: string,
   coverInfoFields: string[];
+  protocolLike: boolean;
+  
 
   // Header (page 2+)
   showHeaderLogo: boolean;

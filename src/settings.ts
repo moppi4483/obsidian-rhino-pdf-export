@@ -547,6 +547,9 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addToggle(c, "Number headings", () => theme.numberHeadings, (v) => { theme.numberHeadings = v; }, {
       desc: "Automatically number H2/H3 headings (1, 1.1, …), synced with the table of contents",
     });
+
+
+    this.addToggle(c, "Protocol-like cover & document-style", () => theme.protocolLike, (v) => { theme.protocolLike = v; });
   }
 
   private renderHeaderFooterSection(c: HTMLElement, theme: PdfTheme) {

@@ -18,6 +18,8 @@ export const BUILTIN_THEMES: PdfTheme[] = [
     coverImagePath: "",
     coverImageWidth: "",
     coverInfoFields: [],
+    protocolLike: false,
+
     showHeaderLogo: false,
     headerLogoHeight: "10mm",
     headerText: "",
@@ -93,6 +95,8 @@ export function createBlankTheme(): PdfTheme {
     coverImagePath: "",
     coverImageWidth: "",
     coverInfoFields: [],
+    protocolLike: false,
+
     showHeaderLogo: false,
     headerLogoHeight: "12mm",
     headerText: "",
