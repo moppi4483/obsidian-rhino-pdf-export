@@ -298,10 +298,11 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
 
 .coverSubtitleContainer h2 {
   text-align: left;
-  font-size: 21pt;
+  font-size: ${theme.subtitleFontSize};
   line-height: 1.05;
-  font-weight: normal;
-  color: ${p};
+  font-style: ${theme.subtitleFontStyle};
+  font-weight: ${theme.subtitleFontWeight};
+  color: ${theme.subtitleFontColor};
   margin: 0;
   padding: 0;
 }
@@ -316,10 +317,11 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
 }
 .coverAdditionalContainer h3 {
   text-align: left;
-  font-size: 11pt;
+  font-size: ${theme.additionalContentFontSize};
   line-height: 1.05;
-  font-weight: normal;
-  color: ${p};
+  font-style: ${theme.additionalContentFontStyle};
+  font-weight: ${theme.additionalContentFontWeight};
+  color: ${theme.additionalContentFontColor};
   margin: 0;
   padding: 0;
 }
@@ -743,8 +745,8 @@ a {
   color: ${a};
   text-decoration: underline;
 }
-/* --- operon-aufgaben-tabelle -- */
-.operon-aufgaben-tabelle {
+/* --- task-table -- */
+.task-table {
   font-family: ${theme.bodyFont};
   font-size: ${theme.bodyFontSize};
   line-height: 1.15;
@@ -754,7 +756,7 @@ a {
   vertical-align: top;
   text-align: left !important;
 }
-.operon-aufgaben-tabelle th {
+.task-table th {
   background-color: #DADADA;
   color: ${p};
   font-family: ${theme.bodyFont};
@@ -765,7 +767,7 @@ a {
   vertical-align: top;
   text-align: left !important;
 }
-.operon-aufgaben-tabelle td {
+.task-table td {
   color: ${p};
   font-family: ${theme.bodyFont};
   font-size: ${theme.bodyFontSize};
@@ -775,21 +777,21 @@ a {
   vertical-align: top;
   text-align: left !important;
 }
-.operon-aufgaben-tabelle td * {
+.task-table td * {
   margin: 0 0 0 0;
   padding: 0 0 0 0;
   text-align: left !important;
 }
-  .operon-aufgaben-tabelle li {
+.task-table li {
   list-style: none;
   margin: 0 0 0 0;
   text-align: left !important;
 }
-.operon-aufgaben-tabelle,
-.operon-aufgaben-tabelle th,
-.operon-aufgaben-tabelle td,
-.operon-aufgaben-tabelle td *,
-.operon-aufgaben-tabelle th * {
+.task-table,
+.task-table th,
+.task-table td,
+.task-table td *,
+.task-table th * {
     text-align: left !important;
 }
 ${theme.watermarkText ? `
@@ -1039,7 +1041,7 @@ function buildCover(
 /**
  * Build the legal notice markup, shown once at the end of the document.
  */
-function buildLegal(theme ,vars) {
+function buildLegal(theme: PdfTheme ,vars: DocVars) {
   if (!(theme.showLegal)) return "";
   
   const legalTitle = theme.legalTitle ? `<h2>${escapeHtml(theme.legalTitle)}</h2>` : "Impressum";
@@ -1233,8 +1235,7 @@ export function buildHtml(
     buildCover(theme, title, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars, coverInfo),
     buildLegal(theme, vars),
     toc,
-    convertOperonTasksToTables(processedBody)
-    /*convertOperonWikiTaskLink2HTMLTable(processedBody)*/
+    convertOperonTasksToHTMLTable(processedBody)
   ].join("\n  ");
 
   return assembleDocument(css, theme, body, assets);
@@ -1343,8 +1344,7 @@ export function buildMergedHtml(
     buildCover(theme, mergedTitle, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars),
     buildLegal(theme, vars),
     toc,
-    convertOperonTasksToTables(sectionsHtml)
-    /*convertOperonWikiTaskLink2HTMLTable(sectionsHtml)*/
+    convertOperonTasksToHTMLTable(sectionsHtml)
   ].join("\n  ");
 
   return assembleDocument(css, theme, body, assets);
@@ -1604,625 +1604,664 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function convertOperonWikiTaskLink2HTMLTable(html): string {
-  const TABLE_ID = "operon-aufgaben-tabelle";
-  const SECTION_SELECTOR = ".h2-content";
-  const TASK_SELECTOR = ".operon-task-wikilink-reading";
 
-
-  // ============================================================
-  // HTML-Quelltext in DOM umwandeln
-  // ============================================================
-  const parser = new DOMParser();
-  const doc =
-      parser.parseFromString(html, "text/html");
-
-
-  // ============================================================
-  // Alle Abschnitte einzeln verarbeiten
-  // ============================================================
-  const sections =
-      doc.querySelectorAll(SECTION_SELECTOR);
-
-  sections.forEach(section => {
-
-      // --------------------------------------------------------
-      // Aufgaben NUR innerhalb dieses Abschnitts suchen
-      // --------------------------------------------------------
-      const aufgaben = [
-          ...section.querySelectorAll(TASK_SELECTOR)
-      ];
-
-      // --------------------------------------------------------
-      // Bereits vorhandene Tabelle in diesem Abschnitt entfernen
-      // --------------------------------------------------------
-      const alteTabelle =
-          section.querySelector(
-              `#${TABLE_ID}`
-          );
-
-      if (alteTabelle) {
-          alteTabelle.remove();
-      }
-
-      // --------------------------------------------------------
-      // Keine Aufgaben in diesem Abschnitt
-      // --------------------------------------------------------
-      if (aufgaben.length === 0) {
-          return;
-      }
-
-      // ========================================================
-      // BR-Tags zwischen den Aufgaben entfernen
-      // ========================================================
-      aufgaben.forEach((aufgabe, index) => {
-          // Die letzte Aufgabe benötigt keine Suche nach
-          // folgenden BR-Tags.
-          if (index === aufgaben.length - 1) {
-              return;
-          }
-
-          let node =
-              aufgabe.nextSibling;
-
-          // Alle Whitespace-Textknoten und BR-Tags
-          // zwischen dieser und der nächsten Aufgabe entfernen.
-          while (
-              node &&
-              node !== aufgaben[index + 1]
-          ) {
-              const nextNode =
-                  node.nextSibling;
-
-              // BR entfernen
-              if (
-                  node.nodeType ===
-                      Node.ELEMENT_NODE &&
-                  node.tagName === "BR"
-              ) {
-                  node.remove();
-              }
-
-              // Reine Whitespace-Textknoten entfernen
-              else if (
-                  node.nodeType ===
-                      Node.TEXT_NODE &&
-                  node.textContent.trim() === ""
-              ) {
-                  node.remove();
-              }
-
-              node = nextNode;
-          }
-      });
-
-      // ========================================================
-      // Position der ersten Aufgabe merken
-      // ========================================================
-      const ersteAufgabe = aufgaben[0];
-      const parent = ersteAufgabe.parentNode;
-
-      if (!parent) {
-          return;
-      }
-
-      // ========================================================
-      // Tabelle erstellen
-      // ========================================================
-      const table =
-          doc.createElement("table");
-
-      table.id = TABLE_ID;
-      table.className =
-          "operon-aufgaben-tabelle";
-
-      // ========================================================
-      // Kopfzeile
-      // ========================================================
-      const thead =
-          doc.createElement("thead");
-
-      thead.innerHTML = `
-          <tr>
-              <th>Aufgabe</th>
-              <th style="width: 35%;">Verantwortlich</th>
-              <th style="width: 15%;">Termin</th>
-          </tr>
-      `;
-
-      table.appendChild(thead);
-
-      // ========================================================
-      // Tabellenkörper
-      // ========================================================
-      const tbody =
-          doc.createElement("tbody");
-
-      // ========================================================
-      // Aufgaben dieses Abschnitts verarbeiten
-      // ========================================================
-      aufgaben.forEach(aufgabe => {
-          const row =
-              doc.createElement("tr");
-
-          // ----------------------------------------------------
-          // Aufgabe
-          // ----------------------------------------------------
-          const aufgabenCell =
-              doc.createElement("td");
-
-          const aufgabenElement =
-              aufgabe.querySelector(
-                  ".operon-task-wikilink-label"
-              );
-
-          aufgabenCell.textContent =
-              aufgabenElement
-                  ?.textContent
-                  ?.trim() || "";
-
-          // ----------------------------------------------------
-          // Verantwortliche
-          // ----------------------------------------------------
-          const verantwortliche = [];
-
-          aufgabe
-              .querySelectorAll(".lucide-users")
-              .forEach(icon => {
-
-                  const chip =
-                      icon.closest(
-                          ".operon-chip"
-                      );
-
-                  const name =
-                      chip
-                          ?.querySelector(
-                              ".operon-inline-compact-chip-label"
-                          )
-                          ?.textContent
-                          ?.trim();
-
-                  if (
-                      name &&
-                      !verantwortliche.includes(name)
-                  ) {
-                      verantwortliche.push(name);
-                  }
-              });
-
-          const verantwortlicheCell =
-              doc.createElement("td");
-
-          if (
-              verantwortliche.length === 0
-          ) {
-              verantwortlicheCell.textContent =
-                  "";
-          }
-          else if (
-              verantwortliche.length === 1
-          ) {
-              verantwortlicheCell.textContent =
-                  verantwortliche[0];
-          }
-          else {
-              const ul =
-                  doc.createElement("ul");
-
-              verantwortliche.forEach(name => {
-
-                  const li =
-                      doc.createElement("li");
-
-                  li.textContent =
-                      name;
-
-                  ul.appendChild(li);
-              });
-
-              verantwortlicheCell.appendChild(
-                  ul
-              );
-          }
-
-          // ----------------------------------------------------
-          // Termin
-          // ----------------------------------------------------
-          const terminCell =
-              doc.createElement("td");
-
-          const kalenderIcon =
-              aufgabe.querySelector(
-                  ".lucide-calendar-clock"
-              );
-
-          const terminChip =
-              kalenderIcon?.closest(
-                  ".operon-chip"
-              );
-
-          const termin =
-              terminChip
-                  ?.querySelector(
-                      ".operon-inline-compact-chip-label"
-                  )
-                  ?.textContent
-                  ?.trim() || "";
-
-          // YYYY-MM-DD → DD.MM.YYYY
-          terminCell.textContent = formatDateToGerman(termin);
-
-          // ----------------------------------------------------
-          // Zeile zusammensetzen
-          // ----------------------------------------------------
-          row.appendChild(
-              aufgabenCell
-          );
-          row.appendChild(
-              verantwortlicheCell
-          );
-          row.appendChild(
-              terminCell
-          );
-
-          tbody.appendChild(row);
-      });
-
-      table.appendChild(tbody);
-
-      // ========================================================
-      // Operon-Elemente dieses Abschnitts ausblenden
-      // ========================================================
-      aufgaben.forEach(aufgabe => {
-          aufgabe.style.display =
-              "none";
-      });
-
-      // ========================================================
-      // Tabelle innerhalb dieses Abschnitts einsetzen
-      // ========================================================
-      parent.insertBefore(
-          table,
-          ersteAufgabe
-      );
-  });
-
-
-  // ============================================================
-  // Angepassten HTML-Quelltext zurückgeben
-  // ============================================================
-  return (
-      "<!DOCTYPE html>\n" +
-      doc.documentElement.outerHTML
-  );
-}
-
-
-
-function convertOperonTasksToTables(html) {
+function convertOperonTasksToHTMLTable(html) {
     const TASK_SELECTOR = ".operon-task-wikilink-reading";
-    const RESPONSIBLE_NAME = "Thomas Quander";
+    const TASK_LABEL_SELECTOR = ".operon-task-wikilink-label";
+
+    const USERS_ICON_SELECTOR =
+        ".lucide-users";
+
+    const DATE_ICON_SELECTOR =
+        ".lucide-calendar-clock, .lucide-calendar-days";
+
+    const CHIP_SELECTOR =
+        ".operon-chip";
+
+    const CHIP_LABEL_SELECTOR =
+        ".operon-inline-compact-chip-label";
+
 
     // ============================================================
     // HTML in DOM umwandeln
     // ============================================================
     const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+
+    const doc =
+        parser.parseFromString(
+            html,
+            "text/html"
+        );
+
 
     // ============================================================
-    // Alle Aufgaben finden
+    // Hilfsfunktion:
+    // Prüfen, ob ein Element eine Operon-Klasse besitzt
+    // ============================================================
+    function hasOperonClass(element) {
+
+        if (
+            !element ||
+            element.nodeType !== Node.ELEMENT_NODE
+        ) {
+            return false;
+        }
+
+        return [...element.classList].some(
+            className =>
+                className
+                    .toLowerCase()
+                    .includes("operon")
+        );
+    }
+
+
+    // ============================================================
+    // Hilfsfunktion:
+    // Äußerstes Operon-Element einer Aufgabe bestimmen
+    //
+    // Die Tabelle darf später NICHT innerhalb eines Operon-
+    // Elements liegen, weil diese Elemente am Ende gelöscht
+    // werden.
+    // ============================================================
+    function getTaskRoot(task) {
+
+        let root = task;
+
+        while (
+            root.parentElement &&
+            hasOperonClass(root.parentElement)
+        ) {
+            root = root.parentElement;
+        }
+
+        return root;
+    }
+
+
+    // ============================================================
+    // Aufgaben finden
     // ============================================================
     const tasks = [
         ...doc.querySelectorAll(TASK_SELECTOR)
     ];
 
+
     if (tasks.length === 0) {
-        return doc.documentElement.outerHTML;
+        return html;
     }
+
+
+    // ============================================================
+    // Aufgaben mit ihrem tatsächlichen äußeren Operon-Element
+    // verknüpfen
+    // ============================================================
+    const taskEntries =
+        tasks.map(task => ({
+            task,
+            root: getTaskRoot(task)
+        }));
+
 
     // ============================================================
     // Prüfen, ob zwei Aufgaben direkt aufeinander folgen
     //
-    // Zwischen zwei Aufgaben dürfen nur
-    // - <br>
-    // - Whitespace-Textknoten
-    // stehen.
+    // Erlaubt sind ausschließlich:
+    //   - <br>
+    //   - Whitespace-Textknoten
+    //
+    // Alles andere trennt zwei Aufgaben voneinander.
     // ============================================================
-    function areDirectlyFollowing(taskA, taskB) {
-        let node = taskA.nextSibling;
+    function areDirectlyFollowing(
+        firstRoot,
+        secondRoot
+    ) {
 
-        while (node && node !== taskB) {
-
-            // <br> ist erlaubt
-            if (
-                node.nodeType === Node.ELEMENT_NODE &&
-                node.tagName.toLowerCase() === "br"
-            ) {
-                node = node.nextSibling;
-                continue;
-            }
-
-            // Leerzeichen / Zeilenumbrüche sind erlaubt
-            if (
-                node.nodeType === Node.TEXT_NODE &&
-                node.textContent.trim() === ""
-            ) {
-                node = node.nextSibling;
-                continue;
-            }
-
-            // Alles andere bedeutet:
-            // Die nächste Aufgabe ist NICHT direkt anschließend.
+        // Unterschiedliche Eltern können niemals
+        // direkt aufeinander folgen.
+        if (
+            firstRoot.parentNode !==
+            secondRoot.parentNode
+        ) {
             return false;
         }
 
-        return node === taskB;
+
+        let node =
+            firstRoot.nextSibling;
+
+
+        while (
+            node &&
+            node !== secondRoot
+        ) {
+
+            // ----------------------------------------------------
+            // <br> zwischen zwei Aufgaben ist erlaubt
+            // ----------------------------------------------------
+            if (
+                node.nodeType ===
+                    Node.ELEMENT_NODE &&
+                node.tagName.toLowerCase() ===
+                    "br"
+            ) {
+                node =
+                    node.nextSibling;
+
+                continue;
+            }
+
+
+            // ----------------------------------------------------
+            // Whitespace zwischen zwei Aufgaben ist erlaubt
+            // ----------------------------------------------------
+            if (
+                node.nodeType ===
+                    Node.TEXT_NODE &&
+                node.textContent.trim() === ""
+            ) {
+                node =
+                    node.nextSibling;
+
+                continue;
+            }
+
+
+            // ----------------------------------------------------
+            // Jedes andere Element / jeder andere Text
+            // unterbricht die Aufgabenfolge.
+            // ----------------------------------------------------
+            return false;
+        }
+
+
+        return node === secondRoot;
     }
 
+
     // ============================================================
-    // Aufgaben in zusammenhängende Gruppen aufteilen
+    // Aufgaben in Gruppen aufteilen
     // ============================================================
-    const taskGroups = [];
+    const groups = [];
 
-    let currentGroup = [tasks[0]];
+    let currentGroup = [
+        taskEntries[0]
+    ];
 
-    for (let i = 1; i < tasks.length; i++) {
 
-        const previousTask = tasks[i - 1];
-        const currentTask = tasks[i];
+    for (
+        let i = 1;
+        i < taskEntries.length;
+        i++
+    ) {
+
+        const previous =
+            taskEntries[i - 1];
+
+        const current =
+            taskEntries[i];
+
 
         if (
             areDirectlyFollowing(
-                previousTask,
-                currentTask
+                previous.root,
+                current.root
             )
         ) {
-            currentGroup.push(currentTask);
+
+            currentGroup.push(
+                current
+            );
+
         }
         else {
-            taskGroups.push(currentGroup);
-            currentGroup = [currentTask];
+
+            groups.push(
+                currentGroup
+            );
+
+            currentGroup = [
+                current
+            ];
         }
     }
 
+
     // Letzte Gruppe hinzufügen
-    taskGroups.push(currentGroup);
+    groups.push(
+        currentGroup
+    );
+
 
     // ============================================================
-    // Daten aus einer Aufgabe auslesen
+    // Daten einer einzelnen Aufgabe auslesen
     // ============================================================
     function extractTaskData(task) {
 
-        // --------------------------------------------------------
+        // ========================================================
         // Aufgabe
-        // --------------------------------------------------------
-        const labelElement =
+        // ========================================================
+        const label =
             task.querySelector(
-                ".operon-task-wikilink-label"
+                TASK_LABEL_SELECTOR
             );
 
+
         const aufgabe =
-            labelElement?.textContent?.trim() || "";
+            label
+                ?.textContent
+                ?.trim() || "";
 
 
-        // --------------------------------------------------------
+        // ========================================================
         // Verantwortlich
         //
-        // Gesucht wird gezielt nach einem Element,
-        // dessen Text "Thomas Quander" enthält.
+        // .lucide-users
+        //       ↓
+        // nächster .operon-chip
+        //       ↓
+        // .operon-inline-compact-chip-label
         //
-        // Es können mehrere solche Elemente vorhanden sein.
-        // Der Name wird aber nur einmal übernommen.
-        // --------------------------------------------------------
-        let verantwortlich = "";
+        // Dadurch funktioniert es unabhängig davon, welche
+        // Person tatsächlich im Chip steht.
+        // ========================================================
+        const verantwortliche = [];
 
-        const allElements = [
-            ...task.querySelectorAll("*")
-        ];
 
-        for (const element of allElements) {
+        task
+            .querySelectorAll(
+                USERS_ICON_SELECTOR
+            )
+            .forEach(usersIcon => {
 
-            const text =
-                element.textContent?.trim() || "";
+                const chip =
+                    usersIcon.closest(
+                        CHIP_SELECTOR
+                    );
 
-            if (
-                text.includes(RESPONSIBLE_NAME)
-            ) {
-                verantwortlich =
-                    RESPONSIBLE_NAME;
+
+                if (!chip) {
+                    return;
+                }
+
+
+                const label =
+                    chip.querySelector(
+                        CHIP_LABEL_SELECTOR
+                    );
+
+
+                const name =
+                    label
+                        ?.textContent
+                        ?.trim() || "";
+
+
+                if (
+                    name &&
+                    !verantwortliche.includes(name)
+                ) {
+
+                    verantwortliche.push(
+                        name
+                    );
+                }
+            });
+
+
+        // ========================================================
+        // Termin
+        //
+        // Auch hier erfolgt die Erkennung strukturell:
+        //
+        // .lucide-calendar-clock
+        //       ↓
+        // .operon-chip
+        //       ↓
+        // .operon-inline-compact-chip-label
+        //
+        // Falls kein Kalender-Element existiert:
+        // leere Zeichenkette.
+        // ========================================================
+        let termin = "";
+
+
+        const dateIcons =
+            task.querySelectorAll(
+                DATE_ICON_SELECTOR
+            );
+
+
+        for (const dateIcon of dateIcons) {
+
+            const chip =
+                dateIcon.closest(
+                    CHIP_SELECTOR
+                );
+
+
+            if (!chip) {
+                continue;
+            }
+
+
+            const label =
+                chip.querySelector(
+                    CHIP_LABEL_SELECTOR
+                );
+
+
+            const value =
+                label
+                    ?.textContent
+                    ?.trim() || "";
+
+
+            if (value) {
+
+                termin = value;
 
                 break;
             }
         }
 
 
-        // --------------------------------------------------------
-        // Termin
-        //
-        // Sucht innerhalb der Aufgabe nach einem Datum
-        // im Format YYYY-MM-DD.
-        //
-        // Kein Datum => leere Spalte.
-        // --------------------------------------------------------
-        const taskText =
-            task.textContent || "";
-
-        const dateMatch =
-            taskText.match(
-                /\b\d{4}-\d{2}-\d{2}\b/
-            );
-
-        const termin =
-            dateMatch
-                ? dateMatch[0]
-                : "";
-
-
         return {
             aufgabe,
-            verantwortlich,
+            verantwortliche,
             termin
         };
     }
 
-    // ============================================================
-    // Tabellen erzeugen
-    //
-    // WICHTIG:
-    // Die Tabelle wird VOR der ersten Aufgabe der jeweiligen
-    // Gruppe eingesetzt.
-    // ============================================================
-    taskGroups.forEach(group => {
 
-        const firstTask = group[0];
-        const parent = firstTask.parentNode;
+    // ============================================================
+    // Für jede Gruppe eine eigene Tabelle erstellen
+    // ============================================================
+    groups.forEach(group => {
+
+        const firstEntry =
+            group[0];
+
+        const firstRoot =
+            firstEntry.root;
+
+
+        const parent =
+            firstRoot.parentNode;
+
 
         if (!parent) {
             return;
         }
 
-        // --------------------------------------------------------
+
+        // ========================================================
         // Tabelle erstellen
-        // --------------------------------------------------------
+        // ========================================================
         const table =
-            doc.createElement("table");
+            doc.createElement(
+                "table"
+            );
 
-        // KEINE "operon"-Klasse verwenden,
-        // da diese später entfernt werden.
+
+        // Absichtlich KEIN "operon" im Klassennamen!
         table.className =
-            "aufgaben-tabelle";
+            "task-table";
 
 
-        // --------------------------------------------------------
+        // ========================================================
         // Tabellenkopf
-        // --------------------------------------------------------
+        // ========================================================
         const thead =
-            doc.createElement("thead");
+            doc.createElement(
+                "thead"
+            );
+
 
         const headerRow =
-            doc.createElement("tr");
-
-        [
-            "Aufgabe",
-            "Verantwortlich",
-            "Termin"
-        ].forEach(headerText => {
-
-            const th =
-                doc.createElement("th");
-
-            th.textContent =
-                headerText;
-
-            headerRow.appendChild(th);
-        });
-
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
+            doc.createElement(
+                "tr"
+            );
 
 
-        // --------------------------------------------------------
+        const aufgabeHeader =
+            doc.createElement(
+                "th"
+            );
+
+        aufgabeHeader.textContent =
+            "Aufgabe";
+
+
+        const verantwortlichHeader =
+            doc.createElement(
+                "th"
+            );
+
+        verantwortlichHeader.textContent =
+            "Verantwortlich";
+
+        verantwortlichHeader.style.width =
+            "35%";
+
+
+        const terminHeader =
+            doc.createElement(
+                "th"
+            );
+
+        terminHeader.textContent =
+            "Termin";
+
+        terminHeader.style.width =
+            "15%";
+
+
+        headerRow.appendChild(
+            aufgabeHeader
+        );
+
+        headerRow.appendChild(
+            verantwortlichHeader
+        );
+
+        headerRow.appendChild(
+            terminHeader
+        );
+
+
+        thead.appendChild(
+            headerRow
+        );
+
+        table.appendChild(
+            thead
+        );
+
+
+        // ========================================================
         // Tabellenkörper
-        // --------------------------------------------------------
+        // ========================================================
         const tbody =
-            doc.createElement("tbody");
+            doc.createElement(
+                "tbody"
+            );
 
 
-        // --------------------------------------------------------
-        // Aufgaben der Gruppe
-        // --------------------------------------------------------
-        group.forEach(task => {
+        // ========================================================
+        // Aufgaben der Gruppe verarbeiten
+        // ========================================================
+        group.forEach(entry => {
 
             const data =
-                extractTaskData(task);
+                extractTaskData(
+                    entry.task
+                );
+
 
             const row =
-                doc.createElement("tr");
+                doc.createElement(
+                    "tr"
+                );
 
 
+            // ----------------------------------------------------
             // Aufgabe
-            const taskCell =
-                doc.createElement("td");
+            // ----------------------------------------------------
+            const aufgabeCell =
+                doc.createElement(
+                    "td"
+                );
 
-            taskCell.textContent =
+            aufgabeCell.textContent =
                 data.aufgabe;
 
 
+            // ----------------------------------------------------
             // Verantwortlich
-            const responsibleCell =
-                doc.createElement("td");
+            // ----------------------------------------------------
+            const verantwortlichCell =
+                doc.createElement(
+                    "td"
+                );
 
-            responsibleCell.textContent =
-                data.verantwortlich;
+
+            if (
+                data.verantwortliche.length === 0
+            ) {
+
+                verantwortlichCell.textContent =
+                    "";
+
+            }
+            else if (
+                data.verantwortliche.length === 1
+            ) {
+
+                verantwortlichCell.textContent =
+                    data.verantwortliche[0];
+
+            }
+            else {
+
+                const ul =
+                    doc.createElement(
+                        "ul"
+                    );
 
 
+                data.verantwortliche.forEach(
+                    name => {
+
+                        const li =
+                            doc.createElement(
+                                "li"
+                            );
+
+                        li.textContent =
+                            name;
+
+                        ul.appendChild(
+                            li
+                        );
+                    }
+                );
+
+
+                verantwortlichCell.appendChild(
+                    ul
+                );
+            }
+
+
+            // ----------------------------------------------------
             // Termin
-            const dateCell =
-                doc.createElement("td");
+            // ----------------------------------------------------
+            const terminCell =
+                doc.createElement(
+                    "td"
+                );
 
-            dateCell.textContent =
-                data.termin;
+            terminCell.textContent =
+                formatDateToGerman(data.termin);
 
 
-            row.appendChild(taskCell);
-            row.appendChild(responsibleCell);
-            row.appendChild(dateCell);
+            // ----------------------------------------------------
+            // Zeile zusammensetzen
+            // ----------------------------------------------------
+            row.appendChild(
+                aufgabeCell
+            );
 
-            tbody.appendChild(row);
+            row.appendChild(
+                verantwortlichCell
+            );
+
+            row.appendChild(
+                terminCell
+            );
+
+
+            tbody.appendChild(
+                row
+            );
         });
 
 
-        table.appendChild(tbody);
+        table.appendChild(
+            tbody
+        );
 
 
-        // --------------------------------------------------------
-        // Tabelle exakt an der Fundstelle einsetzen
-        // --------------------------------------------------------
+        // ========================================================
+        // Tabelle exakt an der Fundstelle der ersten Aufgabe
+        // einsetzen.
+        //
+        // Wichtig:
+        // Wir setzen sie VOR das äußerste Operon-Element.
+        // Dadurch wird sie später beim Löschen der Operon-
+        // Elemente nicht mit entfernt.
+        // ========================================================
         parent.insertBefore(
             table,
-            firstTask
+            firstRoot
         );
     });
 
 
     // ============================================================
-    // ALLE Operon-Elemente entfernen
-    //
-    // Es wird nach jedem Klassennamen gesucht, der "operon"
-    // enthält, unabhängig von Groß-/Kleinschreibung.
+    // ALLE Elemente entfernen, bei denen irgendein Klassenname
+    // "operon" enthält.
     //
     // Beispiel:
-    // operon-task-...
-    // operon-chip
-    // my-operon-element
-    // ============================================================
-    const operonElements = [
-        ...doc.querySelectorAll("*")
-    ].filter(element => {
-
-        const classNames =
-            [...element.classList];
-
-        return classNames.some(className =>
-            className
-                .toLowerCase()
-                .includes("operon")
-        );
-    });
-
-
-    // Von außen nach innen entfernen.
+    //   operon-task-wikilink-reading
+    //   operon-chip
+    //   operon-inline-compact-chip-label
+    //   my-operon-element
     //
-    // Falls ein Operon-Element bereits innerhalb eines anderen
-    // Operon-Elements liegt, wird es durch das Entfernen des
-    // äußeren Elements automatisch mit entfernt.
-    operonElements.forEach(element => {
+    // Die neu erzeugten Tabellen bleiben erhalten, da ihre
+    // Klassen keinen Bestandteil "operon" enthalten.
+    // ============================================================
+    const elementsToRemove = [
+        ...doc.querySelectorAll("*")
+    ].filter(element =>
+        [...element.classList].some(
+            className =>
+                className
+                    .toLowerCase()
+                    .includes("operon")
+        )
+    );
 
-        if (element.parentNode) {
-            element.remove();
+
+    elementsToRemove.forEach(
+        element => {
+
+            if (element.parentNode) {
+                element.remove();
+            }
         }
-    });
+    );
 
 
     // ============================================================

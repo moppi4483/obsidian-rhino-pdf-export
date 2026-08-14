@@ -1,4 +1,4 @@
-import { App, DropdownComponent, Notice, PluginSettingTab, Setting, TextComponent, TFile, TFolder } from "obsidian";
+import { App, ColorComponent, DropdownComponent, Notice, PluginSettingTab, Setting, TextComponent, TFile, TFolder } from "obsidian";
 import type RhinoPdfExport from "./main";
 import type { CustomFont, PdfTheme } from "./types";
 import { BUILTIN_THEMES, createBlankTheme, duplicateTheme } from "./themes";
@@ -8,6 +8,7 @@ import { FontFileSuggest, FontFolderModal, fontFilesIn, readFontFiles } from "./
 
 const PAGE_SIZES = ["A3", "A4", "A5", "Letter", "Legal", "Tabloid"];
 const MARGIN_SIDES = ["top", "right", "bottom", "left"] as const;
+const FONT_SETTINGS = ["size", "color", "style", "weight"];
 
 type Getter<T> = () => T;
 type Setter<T> = (value: T) => void;
@@ -518,27 +519,16 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
     this.addToggle(c, "Cover page", () => theme.showCover, (v) => { theme.showCover = v; });
     this.addText(c, "Title", () => theme.title, (v) => { theme.title = v; });
-    //this.addElementStylingRow(c, theme, "Title Font-Size", "titleFontSize", "Title Font-Color", "titleFontColor", "Title Font-Style", "titleFontStyle", "Title Font-Weight", "titleFontWeight");
-    this.addText(c, "Title Font-Size", () => theme.titleFontSize, (v) => { theme.titleFontSize = v; });
-    this.addColor(c, "Title Font-Color", () => theme.titleFontColor, (v) => { theme.titleFontColor = v; });
-    this.addDropdown(
-      c,
-      "Title Font-Style",
-      [["normal", "Normal"], ["oblique", "Oblique"], ["italic", "Italic"]],
-      () => theme.titleFontStyle || "normal",
-      (v) => { theme.titleFontStyle = v as PdfTheme["titleFontStyle"]; }
-    );
-    this.addDropdown(
-      c,
-      "Title Font-Weight",
-      [["normal", "Normal"], ["bold", "Bold"], ["bolder", "Bolder"], ["lighter", "Lighter"]],
-      () => theme.titleFontWeight || "normal",
-      (v) => { theme.titleFontWeight = v as PdfTheme["titleFontWeight"]; }
-    );
+    this.addElementStylingRow(c, theme, "Font-format for title-text", "titleFontSize", "titleFontColor", "titleFontStyle", "titleFontWeight");
+
     this.addText(c, "Subtitle", () => theme.subtitle, (v) => { theme.subtitle = v; });
+    this.addElementStylingRow(c, theme, "Font-format for subtitle-text", "subtitleFontSize", "subtitleFontColor", "subtitleFontStyle", "subtitleFontWeight");
+
     this.addText(c, "Additional Content", () => theme.additionalContent, (v) => { theme.additionalContent = v; }, {
       desc: "Additional content on the front page",
     });
+    this.addElementStylingRow(c, theme, "Font-format for additional-content-text", "additionalContentFontSize", "additionalContentFontColor", "additionalContentFontStyle", "additionalContentFontWeight");
+
     this.addToggle(c, "Dedicated cover Page", () => theme.dedicatedCover, (v) => { theme.dedicatedCover = v; }, {
       desc: "inserts a page-break after the cover, independent from other settings",
     });
@@ -644,46 +634,19 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
     this.addToggle(c, "Header logo (page 2+)", () => theme.showHeaderLogo, (v) => { theme.showHeaderLogo = v; });
     this.addLength(c, "Header logo height", () => theme.headerLogoHeight, (v) => { theme.headerLogoHeight = v; });
-    this.addText(c, "Header text (Line 1)", () => theme.headerText, (v) => { theme.headerText = v; }, {
+
+    this.addText(c, "Header-text (line 1)", () => theme.headerText, (v) => { theme.headerText = v; }, {
       desc: vars,
       placeholder: "{title}",
     });
-    this.addText(c, "Header (Line 1) Font-Size", () => theme.header1FontSize, (v) => { theme.header1FontSize = v; });
-    this.addColor(c, "Header (Line 1) Font-Color", () => theme.header1FontColor, (v) => { theme.header1FontColor = v; });
-    this.addDropdown(
-      c,
-      "Header (Line 1) Font-Style",
-      [["normal", "Normal"], ["oblique", "Oblique"], ["italic", "Italic"]],
-      () => theme.header1FontStyle || "normal",
-      (v) => { theme.header1FontStyle = v as PdfTheme["header1FontStyle"]; }
-    );
-    this.addDropdown(
-      c,
-      "Header (Line 1) Font-Weight",
-      [["normal", "Normal"], ["bold", "Bold"], ["bolder", "Bolder"], ["lighter", "Lighter"]],
-      () => theme.header1FontWeight || "normal",
-      (v) => { theme.header1FontWeight = v as PdfTheme["header1FontWeight"]; }
-    );
-    this.addText(c, "Header text (Line 2)", () => theme.headerText2, (v) => { theme.headerText2 = v; }, {
+    this.addElementStylingRow(c, theme, "Font-format for header-text (line 1)", "header1FontSize", "header1FontColor", "header1FontStyle", "header1FontWeight");
+    
+    this.addText(c, "Header-text (line 2)", () => theme.headerText2, (v) => { theme.headerText2 = v; }, {
       desc: vars,
       placeholder: "{subtitle}",
     });
-    this.addText(c, "Header (Line 2) Font-Size", () => theme.header2FontSize, (v) => { theme.header2FontSize = v; });
-    this.addColor(c, "Header (Line 2) Font-Color", () => theme.header2FontColor, (v) => { theme.header2FontColor = v; });
-    this.addDropdown(
-      c,
-      "Header (Line 2) Font-Style",
-      [["normal", "Normal"], ["oblique", "Oblique"], ["italic", "Italic"]],
-      () => theme.header2FontStyle || "normal",
-      (v) => { theme.header2FontStyle = v as PdfTheme["header2FontStyle"]; }
-    );
-    this.addDropdown(
-      c,
-      "Header (Line 1) Font-Weight",
-      [["normal", "Normal"], ["bold", "Bold"], ["bolder", "Bolder"], ["lighter", "Lighter"]],
-      () => theme.header2FontWeight || "normal",
-      (v) => { theme.header2FontWeight = v as PdfTheme["header2FontWeight"]; }
-    );
+    this.addElementStylingRow(c, theme, "Font-format for header-text (line 2)", "header2FontSize", "header2FontColor", "header2FontStyle", "header2FontWeight");
+
     this.addToggle(c, "Pagination", () => theme.showPagination, (v) => { theme.showPagination = v; });
     this.addText(c, "Pagination format", () => theme.paginationFormat, (v) => { theme.paginationFormat = v; }, {
       desc: 'Use {page} and {pages}, e.g. "{page} / {pages}" or "Page {page} of {pages}"',
@@ -825,29 +788,66 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     input.click();
   }
 
-/*
-  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSize: string, fontSize: string, captionFontColor: string, fontColor: string, captionFontStyle: string, fontStyle: string, captionFontWeight: string, fontWeight: string) {
-   const row = new Setting(c).setClass("rhino-elementStyling-row");
 
-    console.log(fontSize);
+  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSetting: string, fontSize: string, fontColor: string, fontStyle: string, fontWeight: string) {
+    const fontSetting = new Setting(c)
+      .setName(captionFontSetting)
+      .setDesc("size, color, style & weight")
+      .setClass("rhino-margins-row");
 
-    row.addText(c, captionFontSize, () => theme[fontSize], (v) => { theme[fontSize] = v; });
-    row.addColor(c, captionFontColor, () => theme[fontColor], (v) => { theme[fontColor] = v; });
-    row.addDropdown(
-      c,
-      captionFontStyle,
-      [["normal", "Normal"], ["oblique", "Oblique"], ["italic", "Italic"]],
-      () => theme[fontStyle] || "normal",
-      (v) => { theme[fontStyle] = v as PdfTheme["titleFontStyle"]; }
-    );
+    for (const side of FONT_SETTINGS) {
+      switch(side) {
+        case "size":
+          fontSetting.addText((t) => {
+            t.setPlaceholder("11pt")
+            t.setValue(theme[fontSize])
+            t.onChange(async (v) => {
+              theme[fontSize] = v.trim();
+              this.save();
+            });
+          });
+          break;
 
-    row.addDropdown(
-      c,
-      captionFontWeight,
-      [["normal", "Normal"], ["bold", "Bold"], ["bolder", "Bolder"], ["lighter", "Lighter"]],
-      () => theme[fontWeight] || "normal",
-      (v) => { theme[fontWeight] = v as PdfTheme["titleFontWeight"]; }
-    );
-
-  }*/
+        case 'color':
+          fontSetting.addColorPicker((t) => {
+            t.setValue("#000")
+            t.setValue(theme[fontColor])
+            t.onChange(async (v) => {
+              theme[fontColor] = v.trim();
+              this.save();
+            });
+          });
+          break;
+        
+        case 'style':
+          fontSetting.addDropdown((t) => {
+            t.addOption("normal", "Normal")
+            t.addOption("oblique", "Oblique")
+            t.addOption("italic", "Italic")
+            t.setValue("normal")
+            t.setValue(theme[fontStyle])
+            t.onChange(async (v) => {
+              theme[fontStyle] = v;
+              this.save();
+            });
+          });
+          break;
+        
+        case 'weight':
+          fontSetting.addDropdown((t) => {
+            t.addOption("normal", "Normal")
+            t.addOption("bold", "Bold")
+            t.addOption("bolder", "Bolder")
+            t.addOption("lighter", "Lighter")
+            t.setValue("normal")
+            t.setValue(theme[fontWeight])
+            t.onChange(async (v) => {
+              theme[fontWeight] = v;
+              this.save();
+            });
+          });
+          break;
+      }
+    }
+  }
 }

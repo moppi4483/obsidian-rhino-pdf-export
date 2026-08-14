@@ -37,7 +37,15 @@ export interface PdfTheme {
   titleFontStyle: "normal" | "oblique" | "italic";
   titleFontWeight: "normal" | "bold" | "bolder" | "lighter";
   subtitle: string;
+  subtitleFontSize: string,
+  subtitleFontColor: string,
+  subtitleFontStyle: "normal" | "oblique" | "italic";
+  subtitleFontWeight: "normal" | "bold" | "bolder" | "lighter";
   additionalContent: string;
+  additionalContentFontSize: string,
+  additionalContentFontColor: string,
+  additionalContentFontStyle: "normal" | "oblique" | "italic";
+  additionalContentFontWeight: "normal" | "bold" | "bolder" | "lighter";
   // Frontmatter keys listed by default in the cover info block
   dedicatedCover: boolean;
   coverBackgroundPath: string,
