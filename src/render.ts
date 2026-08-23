@@ -107,6 +107,8 @@ ${fontFaceCss}
 body {
   font-family: ${theme.bodyFont};
   font-size: ${theme.bodyFontSize};
+  font-weight: ${theme.bodyFontWeight};
+  font-style: ${theme.bodyFontStyle};
   line-height: 1.15;
   color: ${p};
   background: #ffffff;
@@ -156,8 +158,10 @@ body {
 .running-footer-pagination {
   position: running(footerpagination);
   font-family: ${theme.bodyFont};
-  font-size: 7pt;
-  color: ${p};
+  font-size: ${theme.paginationFontSize};
+  color: ${theme.paginationFontColor};
+  font-weight: ${theme.paginationFontWeight};
+  font-style: ${theme.paginationFontStyle};
   margin: 0 0 0 -60px;
   padding: 20px 0 0 0;
   width: 80px;
@@ -173,9 +177,11 @@ body {
 .running-footer-text {
   position: running(footertext);
   font-family: ${theme.bodyFont};
-  font-size: 11pt;
+  font-size: ${theme.footerFontSize};
   line-height: 1;
-  color: ${p};
+  font-weight: ${theme.footerFontWeight};
+  font-style: ${theme.footerFontStyle};
+  color: ${theme.footerFontColor};
   margin: 0 0 0 -18;
   padding: 20px 0 0 0;
   display: flex;
@@ -395,9 +401,10 @@ img {
     color: white;
 }
 h2 {
-  font-size: 18pt;
-  font-weight: bold;
-  color: ${p};
+  font-size: ${theme.h2FontSize};
+  font-weight: ${theme.h2FontWeight};
+  color: ${theme.h2FontColor};
+  font-style: ${theme.h2FontStyle};
   /* border-bottom: 2px solid ${a}; */
   /*padding-bottom: 3mm;*/
   margin-top: 0mm;
@@ -405,25 +412,28 @@ h2 {
   page-break-after: avoid;
 }
 h3 {
-  font-size: 14pt;
-  font-weight: bold;
-  color: ${p};
+  font-size: ${theme.h3FontSize};
+  font-weight: ${theme.h3FontWeight};
+  color: ${theme.h3FontColor};
+  font-style: ${theme.h3FontStyle};
   margin-top: 7mm;
   margin-bottom: 3mm;
   page-break-after: avoid;
 }
 h4 {
-  font-size: 11pt;
-  font-weight: bold;
-  color: ${p};
+  font-size: ${theme.h4FontSize};
+  font-weight: ${theme.h4FontWeight};
+  color: ${theme.h4FontColor};
+  font-style: ${theme.h4FontStyle};
   margin-top: 7mm;
   margin-bottom: 3mm;
   page-break-after: avoid;
 }
 h5 {
-  font-size: 11pt;
-  font-weight: bold;
-  color: #B5D3EB;
+  font-size: ${theme.h5FontSize};
+  font-weight: ${theme.h5FontWeight};
+  color: ${theme.h5FontColor};
+  font-style: ${theme.h5FontStyle};
   margin-top: 7mm;
   margin-bottom: 3mm;
   page-break-after: avoid;
@@ -807,7 +817,8 @@ ${theme.watermarkText ? `
   pointer-events: none;
   z-index: 1000;
   white-space: nowrap;
-  font-weight: bold;
+  font-weight: ${theme.watermarkFontWeight};
+  font-sytle: ${theme.watermarkFontStyle};
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -1049,21 +1060,21 @@ function buildLegal(theme: PdfTheme ,vars: DocVars) {
   let editorial = "";
   if (escapeHtml(resolveTextVariables(theme.legalEditorial, vars)) != "") {
       editorial = `
-        <h5>Redaktion</h5>
+        <h5>${escapeHtml(resolveTextVariables(theme.legalEditorial, vars))}</h5>
         <p>${escapeHtml(resolveTextVariables(theme.legalEditorial, vars))}</p>
       `;
   }
   let author = "";
   if (escapeHtml(resolveTextVariables(theme.legalAuthor, vars)) != "") {
       author = `
-        <h5>Autorinnen und Autoren</h5>
+        <h5>${escapeHtml(resolveTextVariables(theme.legalAuthorText, vars))}</h5>
         <p>${escapeHtml(resolveTextVariables(theme.legalAuthor, vars))}</p>
       `;
   }
   let photoCredit = "";
   if (escapeHtml(resolveTextVariables(theme.legalPhotoCredit, vars)) != "") {
       photoCredit = `
-        <h5>Bildnachweis</h5>
+        <h5>${escapeHtml(resolveTextVariables(theme.legalPhotoCreditText, vars))}</h5>
         <p>${escapeHtml(resolveTextVariables(theme.legalPhotoCredit, vars)).replaceAll(", ", "<br/>")}</p>
       `;
   }
@@ -1072,7 +1083,7 @@ function buildLegal(theme: PdfTheme ,vars: DocVars) {
   ${legalTitle}
   <div class="legalInformation">
     <p>${escapeHtml(theme.legalText)}</p>    
-    <h5>Herausgeber</h5>
+    <h5>${escapeHtml(resolveTextVariables(theme.legalEditor, vars))}</h5>
     <p>${escapeHtml(resolveTextVariables(theme.legalCompany, vars))}</p>
     <p class="legalDepartment">${escapeHtml(resolveTextVariables(theme.legalDepartment1, vars))}</p>
     <p>${escapeHtml(resolveTextVariables(theme.legalDepartment2, vars))}</p>

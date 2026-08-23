@@ -282,17 +282,21 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addText(containerEl, "Theme name", () => theme.name, (v) => { theme.name = v; });
     this.addColor(containerEl, "Primary color", () => theme.primaryColor, (v) => { theme.primaryColor = v; });
     this.addColor(containerEl, "Accent color", () => theme.accentColor, (v) => { theme.accentColor = v; });
-    this.addText(containerEl, "Logo", () => theme.logoPath, (v) => { theme.logoPath = v.trim(); }, {
+    
+    
+    
+    /* this.addText(containerEl, "Logo", () => theme.logoPath, (v) => { theme.logoPath = v.trim(); }, {
       desc: "Relative path in vault (e.g. assets/logo.png)",
       placeholder: "assets/logo.png",
-    });
+    });*/
     this.addText(containerEl, "Background", () => theme.backgroundPath, (v) => { theme.backgroundPath = v.trim(); }, {
       desc: "Relative path in vault (e.g. assets/background.png)\nuse pictures in with the same form-factor of the document-format.\nThis Setting overwrites Logos!!!",
       placeholder: "assets/background.png",
     });
 
     this.renderPageSection(containerEl, theme);
-    this.renderTypographySection(containerEl, theme);
+    this.renderCustomFonts(containerEl, theme);
+    this.renderMainTypographySection(contanerEl, theme);
     this.renderCoverSection(containerEl, theme);
     this.renderHeaderFooterSection(containerEl, theme);
     this.renderWatermarkSection(containerEl, theme);
@@ -300,7 +304,8 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.renderLegalSection(containerEl, theme);
     this.renderMetadataSection(containerEl, theme);
   }
-
+  
+  
   private renderPageSection(c: HTMLElement, theme: PdfTheme) {
     new Setting(c).setName("Page layout").setHeading();
 
@@ -331,27 +336,51 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
         });
       });
     }
-
-    new Setting(c).setName("Page breaks").setHeading();
+  }
+  
+  
+  private renderMainTypographySection(c: HTMLElement, theme: PDFTheme) {
+    new Setting(c).setName("Main Typography").setHeading();
     c.createEl("p", {
-      text: "Start a new page before each heading of the selected level(s). The cover and table of contents are never affected.",
+      text:
+        "This section allows you to configure settings for the basic typographic elements." +
+        "This includes the default font, font size, and other attributes. " +
+        "It also provides options for customizing the appearance of links and headings.",
+      cls: "setting-item-description",
+    });
+    
+    this.addText(c, "Document font family", () => theme.bodyFont, (v) => { theme.bodyFont = v; }, {
+      desc: "CSS font stack, e.g. 'Inter', sans-serif. Inter and JetBrains Mono are bundled.",
+    }); 
+    this.addElementStylingRow(c, theme, "Font-format for plain-text in the whole document", "bodyFontSize", "", "bodyFontStyle", "bodyFontWeight");
+    this.addText(c, "Code font", () => theme.codeFont, (v) => { theme.codeFont = v; });
+    
+    
+    /**
+     *
+     * Setting for Header 
+     *
+     **/
+     new Setting(c).setName("Headings & page breaks").setHeading();
+    c.createEl("p", {
+      text: "Start a new page before each heading of the selected level(s). " + 
+          "The cover and table of contents are never affected." + 
+          "The setting for h1 is generally only needed when several documents are " + 
+          "to be combined into one document. " + 
+          "Individual documents are structured using the headings h2-h5.,
       cls: "setting-item-description",
     });
     this.addToggle(c, "Before heading 1", () => theme.pageBreakBeforeH1, (v) => { theme.pageBreakBeforeH1 = v; });
+    this.addElementStylingRow(c, theme, "Font-format for 1st-level-headers (used in case of ", "h1FontSize", "h1FontColor", "h1FontStyle", "h1FontWeight");  
     this.addToggle(c, "Before heading 2", () => theme.pageBreakBeforeH2, (v) => { theme.pageBreakBeforeH2 = v; });
+    this.addElementStylingRow(c, theme, "Font-format for 2nd-level-headers", "h2FontSize", "h2FontColor", "h2FontStyle", "h2FontWeight");
     this.addToggle(c, "Before heading 3", () => theme.pageBreakBeforeH3, (v) => { theme.pageBreakBeforeH3 = v; });
+    this.addElementStylingRow(c, theme, "Font-format for 3rd-level-headers", "h3FontSize", "h3FontColor", "h3FontStyle", "h3FontWeight");
+    this.addElementStylingRow(c, theme, "Font-format for 4th-level-headers", "h4FontSize", "h4FontColor", "h4FontStyle", "h4FontWeight");
+    this.addElementStylingRow(c, theme, "Font-format for 5th-level-headers", "h5FontSize", "h5FontColor", "h5FontStyle", "h5FontWeight"); 
   }
 
-  private renderTypographySection(c: HTMLElement, theme: PdfTheme) {
-    new Setting(c).setName("Typography").setHeading();
-    this.addText(c, "Body font", () => theme.bodyFont, (v) => { theme.bodyFont = v; }, {
-      desc: "CSS font stack, e.g. 'Inter', sans-serif. Inter and JetBrains Mono are bundled.",
-    });
-    this.addText(c, "Code font", () => theme.codeFont, (v) => { theme.codeFont = v; });
-    this.addLength(c, "Font size", () => theme.bodyFontSize, (v) => { theme.bodyFontSize = v; });
 
-    this.renderCustomFonts(c, theme);
-  }
 
   /**
    * Font files embedded from the vault. Without them a font must be installed on
@@ -516,31 +545,43 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
   private renderCoverSection(c: HTMLElement, theme: PdfTheme) {
     new Setting(c).setName("Cover and contents").setHeading();
+    c.createEl("p", {
+      text:
+        "This section allows you to configure the cover design. " + 
+        "Once the cover page is activated, the settings for the background image, " + 
+        "header, and footer will only take effect from the second page onward. " + 
+        "The header and footer are not displayed on the cover page. " + 
+        "If you want a background image on the cover page, you must explicitly " + 
+        "specify this in this section.",
+      cls: "setting-item-description",
+    });
 
-    this.addToggle(c, "Cover page", () => theme.showCover, (v) => { theme.showCover = v; });
+    this.addToggle(c, "Show cover page", () => theme.showCover, (v) => { theme.showCover = v; });
+    this.addToggle(c, "Dedicated cover Page", () => theme.dedicatedCover, (v) => { theme.dedicatedCover = v; }, {
+      desc: "inserts a page-break after the cover page. If this setting is not set, the content of the document will be inserted directly after the configured content of the cover page.",
+    });
+
     this.addText(c, "Title", () => theme.title, (v) => { theme.title = v; });
     this.addElementStylingRow(c, theme, "Font-format for title-text", "titleFontSize", "titleFontColor", "titleFontStyle", "titleFontWeight");
 
     this.addText(c, "Subtitle", () => theme.subtitle, (v) => { theme.subtitle = v; });
     this.addElementStylingRow(c, theme, "Font-format for subtitle-text", "subtitleFontSize", "subtitleFontColor", "subtitleFontStyle", "subtitleFontWeight");
 
-    this.addText(c, "Additional Content", () => theme.additionalContent, (v) => { theme.additionalContent = v; }, {
+    this.addText(c, "Additional Content (sub-subtitle)", () => theme.additionalContent, (v) => { theme.additionalContent = v; }, {
       desc: "Additional content on the front page",
     });
     this.addElementStylingRow(c, theme, "Font-format for additional-content-text", "additionalContentFontSize", "additionalContentFontColor", "additionalContentFontStyle", "additionalContentFontWeight");
 
-    this.addToggle(c, "Dedicated cover Page", () => theme.dedicatedCover, (v) => { theme.dedicatedCover = v; }, {
-      desc: "inserts a page-break after the cover, independent from other settings",
-    });
-
+    
     this.addText(c, "Cover Background", () => theme.coverBackgroundPath, (v) => { theme.coverBackgroundPath = v.trim(); }, {
       desc: "Relative path in vault (e.g. assets/background.png)\nuse pictures in with the same form-factor of the document-format",
       placeholder: "assets/background.png",
     });
     this.addText(c, "Cover Image", () => theme.coverImagePath, (v) => { theme.coverImagePath = v.trim(); }, {
-      desc: "Relative path in vault (e.g. assets/coverImage.png)",
+      desc: "An image, wich wwill be shown on the cover page after title, subtitle an additional content. If a cover info block hab been configured, this setting will override the cover info block. Relative path in vault (e.g. assets/coverImage.png)",
       placeholder: "assets/coverImage.png",
     });
+    
     this.addText(
       c,
       "Cover info block",
@@ -553,76 +594,54 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
         placeholder: "author, date",
       }
     );
+  }
+    
+  
+  private renderTocSection(c: HTMLElement, theme: PdfTheme) {
+    new Setting(c).setName("Table of contents").setHeading();
+    c.createEl("p", {
+      text:
+        "This section allows you to configure the table of content.",
+      cls: "setting-item-description",
+    });  
     this.addToggle(c, "Table of contents", () => theme.showToc, (v) => { theme.showToc = v; }, {
-      desc: "Auto-generated from h2/h3 headings, after the cover page",
+      desc: "Auto-generated from H2/H3/H4 headings, after the cover page",
     });
     this.addText(c, "Table of contents title", () => theme.tocTitle, (v) => { theme.tocTitle = v; });
     this.addToggle(c, "Number headings", () => theme.numberHeadings, (v) => { theme.numberHeadings = v; }, {
-      desc: "Automatically number H2/H3 headings (1, 1.1, …), synced with the table of contents",
+      desc: "Automatically number H2/H3/H4 headings (1, 1.1, …), synced with the table of contents",
     });
-
-
+    this.addElementStylingRow(c, theme, "Font-format for the 1st-level toc-entry (H2)", "tocH2FontSize", "tocH2FontColor", "tocH2FontStyle", "tocH2FontWeight");
+    this.addElementStylingRow(c, theme, "Font-format for the 2nd-level toc-entry (H3)", "tocH3FontSize", "tocH3FontColor", "tocH3FontStyle", "tocH3FontWeight");
+    this.addElementStylingRow(c, theme, "Font-format for the 3rd-level toc-entry (H4)", "tocH4FontSize", "tocH4FontColor", "tocH4FontStyle", "tocH4FontWeight");
+  }
+  
+  
+  private renderProtocolLookAndFeel Section(c: HTMLElement, theme: PdfTheme) {
+    new Setting(c).setName("Protocoll-like look & feel").setHeading();
+    c.createEl("p", {
+      text:
+        "This section allows you to configure the design of the exported document like " +
+        "a protocoll (meeting-note). " + 
+        "This settings overwrites the cover, toc, an legal informations settings." + 
+        "Only the background image setting from the cover-section will be taken." + 
+        "On the first page there will be shon the configured Informations in a table. " +
+        "Every H2-heading and the folling content will be put in a bordered section (table-like).",
+      cls: "setting-item-description",
+    });
     this.addToggle(c, "Protocol-like cover & document-style", () => theme.protocolLike, (v) => { theme.protocolLike = v; });
     this.addText(c, "Protocol title", () => theme.protocolTitle, (v) => { theme.protocolTitle = v.trim(); }, {
       desc: "Title auf the protocol",
       placeholder: "{fm.title}",
     });
-    this.addText(c, "Protocol Creator Text", () => theme.protocolCreatorText, (v) => { theme.protocolCreatorText = v.trim(); }, {
-      desc: "Value of the text-label of the creator.",
-      placeholder: "created by",
-    });
-    this.addText(c, "Protocol Creator Value", () => theme.protocolCreatorValue, (v) => { theme.protocolCreatorValue = v.trim(); }, {
-      desc: "creator of the protocol",
-      placeholder: "{fm.protocolCreator}",
-    });
-    this.addText(c, "Protocol Client Text", () => theme.protocolClientText, (v) => { theme.protocolClientText = v.trim(); }, {
-      desc: "Value of the text-label of the client.",
-      placeholder: "Client",
-    });
-    this.addText(c, "Protocol Client Value", () => theme.protocolClientValue, (v) => { theme.protocolClientValue = v.trim(); }, {
-      desc: "client of the meeting",
-      placeholder: "{fm.protocolClient}",
-    });
-    this.addText(c, "Protocol Client-Participants Text", () => theme.protocolClientParticipantText, (v) => { theme.protocolClientParticipantText = v.trim(); }, {
-      desc: "Value of the text-label of the client-Participants.",
-      placeholder: "Client-Participants",
-    });
-    this.addText(c, "Protocol Client-Participants Value", () => theme.protocolClientParticipantValue, (v) => { theme.protocolClientParticipantValue = v.trim(); }, {
-      desc: "client-Participants of the meeting",
-      placeholder: "{fm.protocolClientParticipant}",
-    });
-    this.addText(c, "Protocol Contractor Text", () => theme.protocolContractorText, (v) => { theme.protocolContractorText = v.trim(); }, {
-      desc: "Value of the text-label of the Contractor.",
-      placeholder: "Contractor",
-    });
-    this.addText(c, "Protocol Contractor Value", () => theme.protocolContractorValue, (v) => { theme.protocolContractorValue = v.trim(); }, {
-      desc: "Contractor of the meeting",
-      placeholder: "{fm.protocolContractor}",
-    });
-    this.addText(c, "Protocol Contractor-Participants Text", () => theme.protocolContractorParticipantText, (v) => { theme.protocolContractorParticipantText = v.trim(); }, {
-      desc: "Value of the text-label of the Contractor-Participants.",
-      placeholder: "Contractor",
-    });
-    this.addText(c, "Protocol Contractor-Participants Value", () => theme.protocolContractorParticipantValue, (v) => { theme.protocolContractorParticipantValue = v.trim(); }, {
-      desc: "Contractor-Participants of the meeting",
-      placeholder: "{fm.protocolContractorParticipant}",
-    });
-    this.addText(c, "Protocol Date Text", () => theme.protocolDateText, (v) => { theme.protocolDateText = v.trim(); }, {
-      desc: "Value of the text-label of the Date.",
-      placeholder: "Date",
-    });
-    this.addText(c, "Protocol Date Value", () => theme.protocolDateValue, (v) => { theme.protocolDateValue = v.trim(); }, {
-      desc: "Date of the meeting",
-      placeholder: "{fm.protocolDate}",
-    });
-    this.addText(c, "Protocol Location Text", () => theme.protocolLocationText, (v) => { theme.protocolLocationText = v.trim(); }, {
-      desc: "Value of the text-label of the Location.",
-      placeholder: "Location",
-    });
-    this.addText(c, "Protocol Date Value", () => theme.protocolLocationValue, (v) => { theme.protocolLocationValue = v.trim(); }, {
-      desc: "Location of the meeting",
-      placeholder: "{fm.protocolLocation}",
-    });
+    
+    this.addLabelOutputRow(c, theme, "Creator of the protocol", "protocolCreatorText", "protocolCreatorValue");
+    this.addLabelOutputRow(c, theme, "Client of the meeting", "protocolClientText", "protocolClientValue");
+    this.addLabelOutputRow(c, theme, "Client-participants of the meeting", "protocolClientParticipantText", "protocolClientParticipantValue");
+    this.addLabelOutputRow(c, theme, "Contractor of the meeting", "protocolContractorText", "protocolContractorValue");
+    this.addLabelOutputRow(c, theme, "Contractor-participants of the meeting", "protocolContractorParticipantText", "protocolContractorParticipantValue");
+    this.addLabelOutputRow(c, theme, "Date of the meeting", "protocolDateText", "protocolDateValue");
+    this.addLabelOutputRow(c, theme, "Location of the meeting", "protocolLocationText", "protocolLocationValue");
   }
 
   private renderHeaderFooterSection(c: HTMLElement, theme: PdfTheme) {
@@ -651,7 +670,11 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addText(c, "Pagination format", () => theme.paginationFormat, (v) => { theme.paginationFormat = v; }, {
       desc: 'Use {page} and {pages}, e.g. "{page} / {pages}" or "Page {page} of {pages}"',
     });
+    this.addElementStylingRow(c, theme, "Font-format for pagination", "paginationFontSize", "paginationFontColor", "paginationFontStyle", "paginationFontWeight");
+    
     this.addText(c, "Footer text", () => theme.footerText, (v) => { theme.footerText = v; }, { desc: vars });
+    this.addElementStylingRow(c, theme, "Font-format for footer-text", "footerFontSize", "footerFontColor", "footerFontStyle", "footerFontWeight");
+    
     this.addDropdown(
       c,
       "External links",
@@ -669,7 +692,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       desc: "Leave empty to disable",
       placeholder: "DRAFT",
     });
-    this.addColor(c, "Watermark color", () => theme.watermarkColor, (v) => { theme.watermarkColor = v; });
+    this.addElementStylingRow(c, theme, "Font-format for the Watermark", "watermarkFontSize", "watermarkColor", "watermarkFontStyle", "watermarkFontWeight");
     this.addSlider(
       c,
       "Watermark opacity",
@@ -677,7 +700,6 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       (v) => { theme.watermarkOpacity = v; },
       { min: 0, max: 1, step: 0.01 }
     );
-    this.addLength(c, "Watermark font size", () => theme.watermarkFontSize, (v) => { theme.watermarkFontSize = v; });
     this.addSlider(
       c,
       "Watermark rotation",
@@ -704,6 +726,11 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addToggle(c, "Legal notice", () => theme.showLegal, (v) => { theme.showLegal = v; });
     this.addText(c, "Legal notice title", () => theme.legalTitle, (v) => { theme.legalTitle = v; });
     this.addTextArea(c, "Legal notice text", () => theme.legalText, (v) => { theme.legalText = v; });
+    
+    
+    this.addText(c, "Legal editor ", () => theme.legalTitle, (v) => { theme.legalTitle = v; }, {
+      desc: "Header of the legal editor section.",
+    });
     this.addText(c, "Legal Company", () => theme.legalCompany, (v) => { theme.legalCompany = v; });
     this.addText(c, "Legal Department (Main)", () => theme.legalDepartment1, (v) => { theme.legalDepartment1 = v; });
     this.addText(c, "Legal Department (Sub)", () => theme.legalDepartment2, (v) => { theme.legalDepartment2 = v; });
@@ -713,9 +740,10 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addText(c, "Legal Department E-Mail", () => theme.legalMail, (v) => { theme.legalMail = v; });
     this.addText(c, "Legal Department Link", () => theme.legalWebLink, (v) => { theme.legalWebLink = v; });
     this.addText(c, "Legal Department Link (Alt-Text)", () => theme.legalWebLinkAlt, (v) => { theme.legalWebLinkAlt = v; });
-    this.addText(c, "Legal Editorial", () => theme.legalEditorial, (v) => { theme.legalEditorial = v; });
-    this.addText(c, "Legal Author", () => theme.legalAuthor, (v) => { theme.legalAuthor = v; });
-    this.addText(c, "Legal Photo Credit", () => theme.legalPhotoCredit, (v) => { theme.legalPhotoCredit = v; });
+    
+    this.addLabelOutputRow(c, theme, "Legal editorial", "legalEditorialText", "legalEditorial");
+    this.addLabelOutputRow(c, theme, "Legal author", "legalAuthorText", "legalAuthor");
+    this.addLabelOutputRow(c, theme, "Legal photo credit", "legalPhotoCreditText", "legalPhotoCredit");
   }
 
   private renderMetadataSection(c: HTMLElement, theme: PdfTheme) {
@@ -788,64 +816,103 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     input.click();
   }
 
+  private addLabelOutputRow(c: HTMLElement, theme: PdfTheme, caption: string, label: string, output: string) {
+    const row = new Setting(c)
+      .setName(caption) 
+      .setDesc("text of the label & output behind the label")
+      .setClass("rhino-margins-row");
+    
+    
+    row.addText((t) => {
+      t.setPlaceholder("text of the label")
+      t.setValue(theme[label])
+      t.onChange(async (v) => {
+        theme[label] = v.trim();
+        this.save();
+      });
+    });
+    
+    row.addText((t) => {
+      t.setPlaceholder("output behind the label")
+      t.setValue(theme[output])
+      t.onChange(async (v) => {
+        theme[output] = v.trim();
+        this.save();
+      });
+    });
+  }
 
   private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSetting: string, fontSize: string, fontColor: string, fontStyle: string, fontWeight: string) {
+    let description = "";
+    
+    description = fontSize != "" ? "size" : "";
+    description = fontColor != "" ? (description != "" ? description + ", color" : "color") : description + "";
+    description = fontStyle != "" ? (description != "" ? description + ", style" : "style") : description + "";
+    description = fontWeight != "" ? (description != "" ? description + ", weight" : "weight") : description + ""; 
     const fontSetting = new Setting(c)
-      .setName(captionFontSetting)
-      .setDesc("size, color, style & weight")
+      .setName(captionFontSetting) 
+      .setDesc(description)
       .setClass("rhino-margins-row");
 
     for (const side of FONT_SETTINGS) {
       switch(side) {
         case "size":
-          fontSetting.addText((t) => {
-            t.setPlaceholder("11pt")
-            t.setValue(theme[fontSize])
-            t.onChange(async (v) => {
-              theme[fontSize] = v.trim();
-              this.save();
+          if (fontSize != "") {
+            fontSetting.addText((t) => {
+              t.setPlaceholder("11pt")
+              t.setValue(theme[fontSize])
+              t.onChange(async (v) => {
+                theme[fontSize] = v.trim();
+                this.save();
+              });
             });
-          });
+          } 
           break;
 
         case 'color':
-          fontSetting.addColorPicker((t) => {
-            t.setValue("#000")
-            t.setValue(theme[fontColor])
-            t.onChange(async (v) => {
-              theme[fontColor] = v.trim();
-              this.save();
+          if (fontColor != "" {
+           fontSetting.addColorPicker((t) => {
+              t.setValue("#000")
+              t.setValue(theme[fontColor])
+              t.onChange(async (v) => {
+                theme[fontColor] = v.trim();
+                this.save();
+              });
             });
-          });
+          }
           break;
         
         case 'style':
-          fontSetting.addDropdown((t) => {
-            t.addOption("normal", "Normal")
-            t.addOption("oblique", "Oblique")
-            t.addOption("italic", "Italic")
-            t.setValue("normal")
-            t.setValue(theme[fontStyle])
-            t.onChange(async (v) => {
-              theme[fontStyle] = v;
-              this.save();
+          if (fontStyle != "" ) {
+            fontSetting.addDropdown((t) => {
+              t.addOption("normal", "Normal")
+              t.addOption("oblique", "Oblique")
+              t.addOption("italic", "Italic")
+              t.setValue("normal")
+              t.setValue(theme[fontStyle])
+              t.onChange(async (v) => {
+                theme[fontStyle] = v;
+                this.save();
+              });
             });
-          });
+          } 
           break;
         
         case 'weight':
-          fontSetting.addDropdown((t) => {
-            t.addOption("normal", "Normal")
-            t.addOption("bold", "Bold")
-            t.addOption("bolder", "Bolder")
-            t.addOption("lighter", "Lighter")
-            t.setValue("normal")
-            t.setValue(theme[fontWeight])
-            t.onChange(async (v) => {
-              theme[fontWeight] = v;
-              this.save();
+          if (fontWeight != "") {
+            fontSetting.addDropdown((t) => {
+              t.addOption("normal", "Normal")
+              t.addOption("bold", "Bold")
+              t.addOption("bolder", "Bolder")
+              t.addOption("lighter", "Lighter")
+              t.setValue("normal")
+              t.setValue(theme[fontWeight])
+              t.onChange(async (v) => {
+                theme[fontWeight] = v;
+                this.save();
+              });
             });
-          });
+          } 
           break;
       }
     }
