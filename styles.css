@@ -91,6 +91,11 @@
   margin-left: 4px;
 }
 
+.rhino-margins-row-double input[type="text"] {
+  width: 144px;
+  margin-left: 4px;
+}
+
 /* A value the generated stylesheet could not use. Scoped tightly enough to win
    over the default input border without !important. */
 .rhino-pdf-export-modal input.rhino-invalid,
