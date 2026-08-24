@@ -341,7 +341,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
   }
   
   
-  private renderMainTypographySection(c: HTMLElement, theme: PDFTheme) {
+  private renderMainTypographySection(c: HTMLElement, theme: PdfTheme) {
     new Setting(c).setName("Main Typography").setHeading();
     c.createEl("p", {
       text:
