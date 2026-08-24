@@ -752,8 +752,10 @@ strong { font-weight: bold; color: #1a1a1a; }
   margin-bottom: 2mm;
 }
 a {
-  color: ${a};
-  text-decoration: underline;
+  color: ${theme.linkFontColor};
+  font-style: ${theme.linkFontStyle};
+  font-weight: ${theme.linkFontWeight};
+  text-decoration: ${theme.linkFontUnderline};
 }
 /* --- task-table -- */
 .task-table {
@@ -1239,6 +1241,9 @@ export function buildHtml(
     processedBody = wrapH2Sections(processedBody);
   }
 
+  processedBody = convertOperonTasksToHTMLTable(processedBody);
+  processedBody = fixInternalHeadingLinks(processedBody);
+
   const body = [
     buildRunningHeader(theme, vars, logoDataUri),
     buildRunningFooter(theme, vars),
@@ -1246,7 +1251,7 @@ export function buildHtml(
     buildCover(theme, title, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars, coverInfo),
     buildLegal(theme, vars),
     toc,
-    convertOperonTasksToHTMLTable(processedBody)
+    processedBody
   ].join("\n  ");
 
   return assembleDocument(css, theme, body, assets);
@@ -1340,13 +1345,16 @@ export function buildMergedHtml(
       ${sectionBody}
     </div>`;
   }).join("\n");
-  const sectionsHtml = applyUrlDisplay(processedSections, theme.urlDisplay);
+  let sectionsHtml = applyUrlDisplay(processedSections, theme.urlDisplay);
 
   // Table of contents for merged document
   let toc = "";
   if (theme.showToc) {
     toc = buildTocHtml(allHeadings, theme.tocTitle || "Table of Contents");
   }
+
+  sectionsHtml = convertOperonTasksToHTMLTable(sectionsHtml);
+  sectionsHtml = fixInternalHeadingLinks(sectionsHtml);
 
   const body = [
     buildRunningHeader(theme, vars, logoDataUri),
@@ -1355,7 +1363,7 @@ export function buildMergedHtml(
     buildCover(theme, mergedTitle, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars),
     buildLegal(theme, vars),
     toc,
-    convertOperonTasksToHTMLTable(sectionsHtml)
+    sectionsHtml
   ].join("\n  ");
 
   return assembleDocument(css, theme, body, assets);
@@ -2280,3 +2288,57 @@ function convertOperonTasksToHTMLTable(html) {
     // ============================================================
     return doc.documentElement.outerHTML;
 }
+
+function fixInternalHeadingLinks(htmlString) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+
+    const links = doc.querySelectorAll('a.internal-link[href^="#"]');
+
+    const headings = [
+        ...doc.querySelectorAll(
+            'h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'
+        )
+    ];
+
+    for (const link of links) {
+        const linkText = link.textContent.trim();
+
+        if (!linkText) {
+            continue;
+        }
+
+        const heading = headings.find(heading => {
+            const headingText = (
+                heading.dataset.heading ||
+                heading.textContent
+            ).trim();
+
+            return (
+                headingText === linkText ||
+                headingText.startsWith(linkText + ' ')
+            );
+        });
+
+        if (!heading) {
+            console.warn(
+                `Keine Überschrift für internen Link gefunden: "${linkText}"`
+            );
+            continue;
+        }
+
+        const target = `#${heading.id}`;
+
+        link.setAttribute('href', target);
+
+        if (link.hasAttribute('data-href')) {
+            link.setAttribute('data-href', target);
+        }
+
+        if (link.hasAttribute('aria-label')) {
+            link.setAttribute('aria-label', heading.id);
+        }
+    }
+
+    return doc.documentElement.outerHTML;
+  }

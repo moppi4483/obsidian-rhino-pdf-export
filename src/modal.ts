@@ -30,13 +30,27 @@ import electron from "electron";
 
 /** Overrides worth changing right before a single-note export. */
 const MODAL_FIELDS: DocField[] = [
+  "title",
   "subtitle",
+  "additionalContent",
   "showCover",
   "coverImagePath",
-  "showToc",
-  "watermarkText",
   "legalText",
-  "classificationText",
+  "legalCompany",
+  "legalDepartment1",
+  "legalDepartment2",
+  "legalStreet",
+  "legalCity",
+  "legalTelephone",
+  "legalMail",
+  "legalWebLink",
+  "legalWebLinkAlt",
+  "showToc",
+  "headerText",
+  "headerText2",
+  "footerText",
+  "watermarkText",
+  "classificationText"
 ];
 
 const PREVIEW_DEBOUNCE_MS = 250;

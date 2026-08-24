@@ -5,14 +5,26 @@ import { frontmatterToString } from "./render";
 
 /** Theme fields the export modals let you override for a single document. */
 export type DocField =
+    "title"
   | "subtitle"
+  | "additionalContent"
   | "showCover"
   | "coverImagePath"
+  | "legalText"
+  | "legalCompany"
+  | "legalDepartment1"
+  | "legalDepartment2"
+  | "legalStreet"
+  | "legalCity"
+  | "legalTelephone"
+  | "legalMail"
+  | "legalWebLink"
+  | "legalWebLinkAlt"
   | "showToc"
   | "headerText"
+  | "headerText2"
   | "footerText"
   | "watermarkText"
-  | "legalText"
   | "classificationText";
 
 interface FieldUI {
@@ -22,14 +34,26 @@ interface FieldUI {
 }
 
 const FIELD_UI: Record<DocField, FieldUI> = {
+  title: { name: "Title", type: "text", desc: "Title of the document, shown on the cover." },
   subtitle: { name: "Subtitle", type: "text", desc: "Shown under the title on the cover" },
+  additionalContent: { name: "Additional content (sub-subtitle)", type: "text", desc: "Shown under the subtitle on the cover" },
   showCover: { name: "Cover page", type: "toggle" },
   coverImagePath: { name: "Cover Image", type: "text" },
+  legalText: { name: "Legal notice text", type: "text" },
+  legalCompany: { name: "Legal Company", type: "text" },
+  legalDepartment1: { name: "Legal Department (Main)", type: "text" },
+  legalDepartment2: { name: "Legal Department (Sub)", type: "text" },
+  legalStreet: { name: "Legal Department Street", type: "text" },
+  legalCity: { name: "Legal Department City", type: "text" },
+  legalTelephone: { name: "Legal Department Telephone", type: "text" },
+  legalMail: { name: "Legal Department E-Mail", type: "text" },
+  legalWebLink: { name: "Legal Department Link", type: "text" },
+  legalWebLinkAlt: { name: "Legal Department Link (Alt-Text)", type: "text" },
   showToc: { name: "Table of contents", type: "toggle" },
-  headerText: { name: "Header text", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
+  headerText: { name: "Header text (line 1)", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
+  headerText2: { name: "Header text (line 2)", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
   footerText: { name: "Footer text", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
   watermarkText: { name: "Watermark", type: "text", desc: "Leave empty to disable" },
-  legalText: { name: "Legal notice text", type: "text" },
   classificationText: { name: "Classification banner", type: "text", desc: "Centered on every page. Leave empty to disable." },
 };
 

@@ -160,6 +160,10 @@ export interface PdfTheme {
   bodyFontSize: string; // e.g. "10pt"
   bodyFontStyle: "normal" | "oblique" | "italic";
   bodyFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  linkFontColor: string;
+  linkFontStyle: "normal" | "oblique" | "italic";
+  linkFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  linkFontUnderline: "none" | "underline";
   /** Font files embedded from the vault, so exports don't depend on the machine. */
   customFonts: CustomFont[];
 

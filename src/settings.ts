@@ -8,7 +8,7 @@ import { FontFileSuggest, FontFolderModal, fontFilesIn, readFontFiles } from "./
 
 const PAGE_SIZES = ["A3", "A4", "A5", "Letter", "Legal", "Tabloid"];
 const MARGIN_SIDES = ["top", "right", "bottom", "left"] as const;
-const FONT_SETTINGS = ["size", "color", "style", "weight"];
+const FONT_SETTINGS = ["size", "color", "style", "weight", "underline"];
 
 type Getter<T> = () => T;
 type Setter<T> = (value: T) => void;
@@ -355,6 +355,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       desc: "CSS font stack, e.g. 'Inter', sans-serif. Inter and JetBrains Mono are bundled.",
     }); 
     this.addElementStylingRow(c, theme, "Font-format for plain-text in the whole document", "bodyFontSize", "", "bodyFontStyle", "bodyFontWeight");
+    this.addElementStylingRow(c, theme, "Font-format for links in plain-text", "", "linkFontColor", "linkFontStyle", "linkFontWeight", "linkFontUnderline");
     this.addText(c, "Code font", () => theme.codeFont, (v) => { theme.codeFont = v; });
     
     
@@ -822,7 +823,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     const row = new Setting(c)
       .setName(caption) 
       .setDesc("text of the label & output behind the label")
-      .setClass("rhino-margins-row");
+      .setClass("rhino-margins-row-double");
     
     
     row.addText((t) => {
@@ -844,13 +845,21 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     });
   }
 
-  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSetting: string, fontSize: string, fontColor: string, fontStyle: string, fontWeight: string) {
+  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSetting: string, fontSize: string, fontColor: string, fontStyle: string, fontWeight: string, fontUnderline: string) {
     let description = "";
     
+    fontSize = typeof fontSize !== "undefined" ? fontSize : "";
+    fontColor = typeof fontColor !== "undefined" ? fontColor : "";
+    fontStyle = typeof fontStyle !== "undefined" ? fontStyle : "";
+    fontWeight = typeof fontWeight !== "undefined" ? fontWeight : "";
+    fontUnderline = typeof fontUnderline !== "undefined" ? fontUnderline : "";
+
     description = fontSize != "" ? "size" : "";
     description = fontColor != "" ? (description != "" ? description + ", color" : "color") : description + "";
     description = fontStyle != "" ? (description != "" ? description + ", style" : "style") : description + "";
     description = fontWeight != "" ? (description != "" ? description + ", weight" : "weight") : description + ""; 
+    description = fontUnderline != "" ? (description != "" ? description + ", underline" : "underline") : description + ""; 
+
     const fontSetting = new Setting(c)
       .setName(captionFontSetting) 
       .setDesc(description)
@@ -911,6 +920,21 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
               t.setValue(theme[fontWeight])
               t.onChange(async (v) => {
                 theme[fontWeight] = v;
+                this.save();
+              });
+            });
+          } 
+          break;
+        
+        case 'underline':
+          if (fontUnderline != "") {
+            fontSetting.addDropdown((t) => {
+              t.addOption("none", "No")
+              t.addOption("underline", "Yes")
+              t.setValue("none")
+              t.setValue(theme[fontUnderline])
+              t.onChange(async (v) => {
+                theme[fontUnderline] = v;
                 this.save();
               });
             });
