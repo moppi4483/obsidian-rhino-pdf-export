@@ -255,14 +255,16 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
 .cover {
   text-align: center;
   /*padding: 20mm 0 0mm 0;*/
-  margin: -5mm 0 8mm 0;
+  margin: 0mm 0mm 8mm 0mm;
   padding: 0;
 }
 .coverPB {
   text-align: center;
-  padding: 20mm 0 10mm 0;
-  margin-bottom: 8mm;
-  break-after: page;
+
+  padding: 0mm 0mm 0mm 0mm;
+  margin: 0mm 0mm 0mm 0mm;
+  /*padding: 20mm 0 10mm 0;
+  margin-bottom: 8mm;*/
   page-break-after: always;
 }
 
@@ -271,11 +273,11 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
   height: 100%;
 }
 .coverTitleContainer {
-    display: flex;
+  display: flex;
   flex-direction: column;
   justify-content: flex-end; /* Richtet den Inhalt nach unten aus */
   align-items: flex-start; 
-  height: 27mm;
+  height: 22mm;
   padding: 0;
   margin: 0mm;
 }
@@ -293,7 +295,7 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
   padding: 0;
 }
 .coverSubtitleContainer {
-    display: flex;
+  display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start; 
@@ -680,7 +682,8 @@ strong { font-weight: bold; color: #1a1a1a; }
 }
 .toc li.toc-h2 a {
   margin: 0;
-  padding: 1mm 0;
+  padding-top: 2mm;
+  padding-left: ${theme.tocH2Indent};
   font-size: ${theme.tocH2FontSize};
   color: ${theme.tocH2FontColor};
   width: 100%;
@@ -688,7 +691,7 @@ strong { font-weight: bold; color: #1a1a1a; }
   font-style: ${theme.tocH2FontStyle};
 }
 .toc li.toc-h3 a {
-  padding-left: 8mm;
+  padding-left: ${theme.tocH3Indent};
   font-size: ${theme.tocH3FontSize};
   color: ${theme.tocH3FontColor};
   width: 100%;
@@ -696,7 +699,7 @@ strong { font-weight: bold; color: #1a1a1a; }
   font-style: ${theme.tocH3FontStyle};
 }
 .toc li.toc-h4 a {
-  padding-left: 8mm;
+  padding-left: ${theme.tocH4Indent};
   font-size: ${theme.tocH4FontSize};
   color: ${theme.tocH4FontColor};
   width: 100%;
@@ -707,26 +710,36 @@ strong { font-weight: bold; color: #1a1a1a; }
   display: inline-block;
 }
 .toc-h2 .tocNumber {
-  width: 1rem;
+  min-width: ${theme.tocH2ListIndexWidth};
 }
 .toc-h3 .tocNumber {
-  width: 2rem;
+  min-width: ${theme.tocH3ListIndexWidth};
 }
 .toc-h4 .tocNumber {
-  width: 3rem;
+  min-width: ${theme.tocH4ListIndexWidth};
 }
-.toc li.lof-style {
+
+h2.addIndex:nth-child(n+2) {
+  padding-top: 50px;
+}
+.lof-style .tocNumber {
+  min-width: ${theme.lofListIndexWidth};
+}
+.lot-style .tocNumber {
+  min-width: ${theme.lotListIndexWidth};
+}
+.toc li.lof-style a {
   margin: 0;
-  padding: 1mm 0;
+  padding-left: ${theme.lofIndent};
   font-size: ${theme.lofFontSize};
   color: ${theme.lofFontColor};
   width: 100%;
   font-weight: ${theme.lofFontWeight};
   font-weight: ${theme.lofFontStyle};
 }
-.toc li.lot-style {
+.toc li.lot-style a {
   margin: 0;
-  padding: 1mm 0;
+  padding-left: ${theme.lotIndent};
   font-size: ${theme.lotFontSize};
   color: ${theme.lotFontColor};
   width: 100%;
@@ -756,15 +769,69 @@ strong { font-weight: bold; color: #1a1a1a; }
 
 
 /* --- Legal notice --- */
-.legalDepartment {
-    text-transform: uppercase;
-    font-weight: bold;
-    color: ${a};
+.legalCompany {
+    font-size: ${theme.legalCompanyFontSize};
+    color: ${theme.legalCompanyFontColor};
+    font-weight: ${theme.legalCompanyFontWeight};
+    font-style: ${theme.legalCompanyFontStyle};
+    text-decoration: ${theme.legalCompanyUnderline};
+    text-transform: ${theme.legalCompanyTransform};
 }
-.legalLink {
-    font-weight: bold;
-    color: #4E95B9;
-    text-decoration: none;
+.legalDepartment1 {
+    font-size: ${theme.legalDepartment1FontSize};
+    color: ${theme.legalDepartment1FontColor};
+    font-weight: ${theme.legalDepartment1FontWeight};
+    font-style: ${theme.legalDepartment1FontStyle};
+    text-decoration: ${theme.legalDepartment1Underline};
+    text-transform: ${theme.legalDepartment1Transform};
+}
+.legalDepartment2 {
+    font-size: ${theme.legalDepartment2FontSize};
+    color: ${theme.legalDepartment2FontColor};
+    font-weight: ${theme.legalDepartment2FontWeight};
+    font-style: ${theme.legalDepartment2FontStyle};
+    text-decoration: ${theme.legalDepartment2Underline};
+    text-transform: ${theme.legalDepartment2Transform};
+}
+.legalStreet {
+    font-size: ${theme.legalStreetFontSize};
+    color: ${theme.legalStreetFontColor};
+    font-weight: ${theme.legalStreetFontWeight};
+    font-style: ${theme.legalStreetFontStyle};
+    text-decoration: ${theme.legalStreetUnderline};
+    text-transform: ${theme.legalStreetTransform};
+}
+.legalCity {
+    font-size: ${theme.legalCityFontSize};
+    color: ${theme.legalCityFontColor};
+    font-weight: ${theme.legalCityFontWeight};
+    font-style: ${theme.legalCityFontStyle};
+    text-decoration: ${theme.legalCityUnderline};
+    text-transform: ${theme.legalCityTransform};
+}
+.legalTelephone {
+    font-size: ${theme.legalTelephoneFontSize};
+    color: ${theme.legalTelephoneFontColor};
+    font-weight: ${theme.legalTelephoneFontWeight};
+    font-style: ${theme.legalTelephoneFontStyle};
+    text-decoration: ${theme.legalTelephoneUnderline};
+    text-transform: ${theme.legalTelephoneTransform};
+}
+.legalMail {
+    font-size: ${theme.legalMailFontSize};
+    color: ${theme.legalMailFontColor};
+    font-weight: ${theme.legalMailFontWeight};
+    font-style: ${theme.legalMailFontStyle};
+    text-decoration: ${theme.legalMailUnderline};
+    text-transform: ${theme.legalMailTransform};
+}
+.legalWebLink {
+    font-size: ${theme.legalWebLinkFontSize};
+    color: ${theme.legalWebLinkFontColor};
+    font-weight: ${theme.legalWebLinkFontWeight};
+    font-style: ${theme.legalWebLinkFontStyle};
+    text-decoration: ${theme.legalWebLinkUnderline};
+    text-transform: ${theme.legalWebLinkTransform};
 }
 .legalInformation p {
     padding: 0;
@@ -960,16 +1027,16 @@ function buildCover(
         ${rows}
       </table>`;
   }
-  
-  
-  if(coverImage != "") {
-      infoTable = coverImage;
+
+
+  if (coverImage != "") {
+    infoTable = coverImage;
   }
-  
+
   let background = "";
   let logo = "";
   if (coverBackground != "") {
-      background = `
+    background = `
     <style>  
       .pagedjs_page:first-child {
           position: relative;
@@ -989,20 +1056,20 @@ function buildCover(
     </style>
       `;
   } else {
-      logo = coverLogo;
+    logo = coverLogo;
   }
 
 
 
   const coverClass = theme.dedicatedCover ? "coverPB" : "cover";
-  
+
   const creator = `
     <tr><td>${escapeHtml(theme.protocolCreatorText)}</td><td colspan="3">${escapeHtml(resolveTextVariables(theme.protocolCreatorValue, vars))}</td></tr>
     <tr><td colspan="4">&nbsp;</td></tr>
   `;
-  const client = 
-    (resolveTextVariables(theme.protocolClientValue, vars) && resolveTextVariables(theme.protocolClientParticipantValue, vars)) 
-    ? `
+  const client =
+    (resolveTextVariables(theme.protocolClientValue, vars) && resolveTextVariables(theme.protocolClientParticipantValue, vars))
+      ? `
       <tr>
         <td>${escapeHtml(theme.protocolClientText)}</td>
         <td colspan="3">${escapeHtml(resolveTextVariables(theme.protocolClientValue, vars))}</td>
@@ -1011,11 +1078,11 @@ function buildCover(
         <td>${escapeHtml(theme.protocolClientParticipantText)}</td>
         <td colspan="3">${escapeHtml(resolveTextVariables(theme.protocolClientParticipantValue, vars)).replaceAll(", ", "<br/>")}</td>
       </tr>
-      <tr><td colspan="4">&nbsp;</td></tr>` 
-    : "";
-  const contractor = 
-    (resolveTextVariables(theme.protocolContractorValue, vars) && resolveTextVariables(theme.protocolContractorParticipantValue, vars)) 
-    ? `
+      <tr><td colspan="4">&nbsp;</td></tr>`
+      : "";
+  const contractor =
+    (resolveTextVariables(theme.protocolContractorValue, vars) && resolveTextVariables(theme.protocolContractorParticipantValue, vars))
+      ? `
       <tr>
         <td>${escapeHtml(theme.protocolContractorText)}</td>
         <td colspan="3">${escapeHtml(resolveTextVariables(theme.protocolContractorValue, vars)).replaceAll(", ", "<br/>")}</td>
@@ -1034,7 +1101,7 @@ function buildCover(
       <td>${escapeHtml(resolveTextVariables(theme.protocolLocationValue, vars))}</td>
     </tr>
   `;
-  
+
 
 
 
@@ -1089,49 +1156,49 @@ function buildCover(
 /**
  * Build the legal notice markup, shown once at the end of the document.
  */
-function buildLegal(theme: PdfTheme ,vars: DocVars) {
+function buildLegal(theme: PdfTheme, vars: DocVars) {
   if (!(theme.showLegal)) return "";
-  
+
   const legalTitle = theme.legalTitle ? `<h2>${escapeHtml(theme.legalTitle)}</h2>` : "Impressum";
-  
+
   let editorial = "";
   if (escapeHtml(resolveTextVariables(theme.legalEditorial, vars)) != "") {
-      editorial = `
-        <h5>${escapeHtml(resolveTextVariables(theme.legalEditorial, vars))}</h5>
+    editorial = `
+        <h5>${escapeHtml(resolveTextVariables(theme.legalEditorialText, vars))}</h5>
         <p>${escapeHtml(resolveTextVariables(theme.legalEditorial, vars))}</p>
       `;
   }
   let author = "";
   if (escapeHtml(resolveTextVariables(theme.legalAuthor, vars)) != "") {
-      author = `
+    author = `
         <h5>${escapeHtml(resolveTextVariables(theme.legalAuthorText, vars))}</h5>
         <p>${escapeHtml(resolveTextVariables(theme.legalAuthor, vars))}</p>
       `;
   }
   let photoCredit = "";
   if (escapeHtml(resolveTextVariables(theme.legalPhotoCredit, vars)) != "") {
-      photoCredit = `
+    photoCredit = `
         <h5>${escapeHtml(resolveTextVariables(theme.legalPhotoCreditText, vars))}</h5>
         <p>${escapeHtml(resolveTextVariables(theme.legalPhotoCredit, vars)).replaceAll(", ", "<br/>")}</p>
       `;
   }
-  
+
   return `
   ${legalTitle}
   <div class="legalInformation">
     <p>${escapeHtml(theme.legalText)}</p>    
     <h5>${escapeHtml(resolveTextVariables(theme.legalEditor, vars))}</h5>
-    <p>${escapeHtml(resolveTextVariables(theme.legalCompany, vars))}</p>
-    <p class="legalDepartment">${escapeHtml(resolveTextVariables(theme.legalDepartment1, vars))}</p>
-    <p>${escapeHtml(resolveTextVariables(theme.legalDepartment2, vars))}</p>
+    <p class="legalCompany">${escapeHtml(resolveTextVariables(theme.legalCompany, vars))}</p>
+    <p class="legalDepartment1">${escapeHtml(resolveTextVariables(theme.legalDepartment1, vars))}</p>
+    <p class="legalDepartment2">${escapeHtml(resolveTextVariables(theme.legalDepartment2, vars))}</p>
     <p>&nbsp;</p>
-    <p>${escapeHtml(resolveTextVariables(theme.legalStreet, vars))}</p>
-    <p>${escapeHtml(resolveTextVariables(theme.legalCity, vars))}</p>
+    <p class="legalStreet">${escapeHtml(resolveTextVariables(theme.legalStreet, vars))}</p>
+    <p class="legalCity">${escapeHtml(resolveTextVariables(theme.legalCity, vars))}</p>
     <p>&nbsp;</p>
-    <p>${escapeHtml(resolveTextVariables(theme.legalTelephone, vars))}</p>
-    <p>${escapeHtml(resolveTextVariables(theme.legalMail, vars))}</p>
+    <p class="legalTelephone">${escapeHtml(resolveTextVariables(theme.legalTelephone, vars))}</p>
+    <p class="legalMail">${escapeHtml(resolveTextVariables(theme.legalMail, vars))}</p>
     <p>&nbsp;</p>
-    <p class="legalLink"><a href="${escapeHtml(resolveTextVariables(theme.legalWebLink, vars))}" class="legalLink">${escapeHtml(theme.legalWebLinkAlt)}</a></p>
+    <p class="legalWebLink"><a href="${escapeHtml(resolveTextVariables(theme.legalWebLink, vars))}" class="legalWebLink">${escapeHtml(theme.legalWebLinkAlt)}</a></p>
 
     ${editorial}
     ${author}
@@ -1207,9 +1274,9 @@ function buildHeadScripts(theme: PdfTheme): string {
  */
 function assembleDocument(css: string, theme: PdfTheme, body: string, assets: RenderAssets): string {
   const { backgroundDataUri } = assets;
-  const background = 
+  const background =
     backgroundDataUri
-    ? `
+      ? `
       <style>  
         .pagedjs_page:nth-child(n+2) {
             position: relative;
@@ -1228,7 +1295,7 @@ function assembleDocument(css: string, theme: PdfTheme, body: string, assets: Re
         }
       </style>
     `
-    : "";
+      : "";
 
 
   return `<!DOCTYPE html>
@@ -1295,7 +1362,7 @@ export function buildHtml(
   //processedBody = `<div class="contentContainer">${applyUrlDisplay(processedBody, theme.urlDisplay)}</div>`;
   processedBody = applyUrlDisplay(processedBody, theme.urlDisplay);
 
-  if(theme.protocolLike) {
+  if (theme.protocolLike) {
     processedBody = wrapH2Sections(processedBody);
   }
 
@@ -1317,10 +1384,10 @@ export function buildHtml(
 }
 
 function wrapH2Sections(html: string) {
-    return html.replace(
-        /(<h2\b[^>]*>[\s\S]*?<\/h2>[\s\S]*?)(?=<h2\b[^>]*>|$)/gi,
-        '<div class="h2-content">$1</div>'
-    );
+  return html.replace(
+    /(<h2\b[^>]*>[\s\S]*?<\/h2>[\s\S]*?)(?=<h2\b[^>]*>|$)/gi,
+    '<div class="h2-content">$1</div>'
+  );
 }
 
 /**
@@ -1399,7 +1466,7 @@ export function buildMergedHtml(
       }
 
 
-      
+
       const lofHeadings: { level: number; text: string; id: string }[] = [];
       const lotHeadings: { level: number; text: string; id: string }[] = [];
 
@@ -1506,7 +1573,7 @@ function buildTocHtml(headings: { level: number; text: string; id: string }[], t
     } catch (error) {
       return `<li${cls}><a href="#${h.id}"><span class="tocNumber">&nbsp;</span><span>${escapeHtml(h.text)}</span></a></li>`;
     }
-    
+
   }).join("\n      ");
   return `
     <div class="toc">
@@ -1559,7 +1626,7 @@ function buildAdditionalIndex(lof: { level: number; text: string; id: string }[]
       const cls = ' class="lof-style"';
 
       const regex = new RegExp(
-          `(${theme.lofKeyword}\\s+\\d+)(?:\\s+-\\s+|\\s*:\\s*|\\s+)(.+)`
+        `(${theme.lofKeyword}\\s+\\d+)(?:\\s+-\\s+|\\s*:\\s*|\\s+)(.+)`
       );
 
       try {
@@ -1571,13 +1638,13 @@ function buildAdditionalIndex(lof: { level: number; text: string; id: string }[]
     }).join("\n      ");
 
   }
-  
+
   if (lot.length > 0) {
     lotItems = lot.map((h) => {
       const cls = ' class="lot-style"';
 
       const regex = new RegExp(
-          `(${theme.lotKeyword}\\s+\\d+)(?:\\s+-\\s+|\\s*:\\s*|\\s+)(.+)`
+        `(${theme.lotKeyword}\\s+\\d+)(?:\\s+-\\s+|\\s*:\\s*|\\s+)(.+)`
       );
 
       try {
@@ -1602,7 +1669,7 @@ function buildAdditionalIndex(lof: { level: number; text: string; id: string }[]
         ${lotItems}
       </ul>
     ` : "";
-  
+
   return (lotIndex != "" || lofIndex != "") ? `
     <div class="toc">
       ${lofIndex}
@@ -1804,720 +1871,720 @@ function escapeHtml(str: string): string {
 
 
 function convertOperonTasksToHTMLTable(html) {
-    const TASK_SELECTOR = ".operon-task-wikilink-reading";
-    const TASK_LABEL_SELECTOR = ".operon-task-wikilink-label";
+  const TASK_SELECTOR = ".operon-task-wikilink-reading";
+  const TASK_LABEL_SELECTOR = ".operon-task-wikilink-label";
 
-    const USERS_ICON_SELECTOR =
-        ".lucide-users";
+  const USERS_ICON_SELECTOR =
+    ".lucide-users";
 
-    const DATE_ICON_SELECTOR =
-        ".lucide-calendar-clock, .lucide-calendar-days";
+  const DATE_ICON_SELECTOR =
+    ".lucide-calendar-clock, .lucide-calendar-days";
 
-    const CHIP_SELECTOR =
-        ".operon-chip";
+  const CHIP_SELECTOR =
+    ".operon-chip";
 
-    const CHIP_LABEL_SELECTOR =
-        ".operon-inline-compact-chip-label";
-
-
-    // ============================================================
-    // HTML in DOM umwandeln
-    // ============================================================
-    const parser = new DOMParser();
-
-    const doc =
-        parser.parseFromString(
-            html,
-            "text/html"
-        );
+  const CHIP_LABEL_SELECTOR =
+    ".operon-inline-compact-chip-label";
 
 
-    // ============================================================
-    // Hilfsfunktion:
-    // Prüfen, ob ein Element eine Operon-Klasse besitzt
-    // ============================================================
-    function hasOperonClass(element) {
+  // ============================================================
+  // HTML in DOM umwandeln
+  // ============================================================
+  const parser = new DOMParser();
 
-        if (
-            !element ||
-            element.nodeType !== Node.ELEMENT_NODE
-        ) {
-            return false;
-        }
-
-        return [...element.classList].some(
-            className =>
-                className
-                    .toLowerCase()
-                    .includes("operon")
-        );
-    }
-
-
-    // ============================================================
-    // Hilfsfunktion:
-    // Äußerstes Operon-Element einer Aufgabe bestimmen
-    //
-    // Die Tabelle darf später NICHT innerhalb eines Operon-
-    // Elements liegen, weil diese Elemente am Ende gelöscht
-    // werden.
-    // ============================================================
-    function getTaskRoot(task) {
-
-        let root = task;
-
-        while (
-            root.parentElement &&
-            hasOperonClass(root.parentElement)
-        ) {
-            root = root.parentElement;
-        }
-
-        return root;
-    }
-
-
-    // ============================================================
-    // Aufgaben finden
-    // ============================================================
-    const tasks = [
-        ...doc.querySelectorAll(TASK_SELECTOR)
-    ];
-
-
-    if (tasks.length === 0) {
-        return html;
-    }
-
-
-    // ============================================================
-    // Aufgaben mit ihrem tatsächlichen äußeren Operon-Element
-    // verknüpfen
-    // ============================================================
-    const taskEntries =
-        tasks.map(task => ({
-            task,
-            root: getTaskRoot(task)
-        }));
-
-
-    // ============================================================
-    // Prüfen, ob zwei Aufgaben direkt aufeinander folgen
-    //
-    // Erlaubt sind ausschließlich:
-    //   - <br>
-    //   - Whitespace-Textknoten
-    //
-    // Alles andere trennt zwei Aufgaben voneinander.
-    // ============================================================
-    function areDirectlyFollowing(
-        firstRoot,
-        secondRoot
-    ) {
-
-        // Unterschiedliche Eltern können niemals
-        // direkt aufeinander folgen.
-        if (
-            firstRoot.parentNode !==
-            secondRoot.parentNode
-        ) {
-            return false;
-        }
-
-
-        let node =
-            firstRoot.nextSibling;
-
-
-        while (
-            node &&
-            node !== secondRoot
-        ) {
-
-            // ----------------------------------------------------
-            // <br> zwischen zwei Aufgaben ist erlaubt
-            // ----------------------------------------------------
-            if (
-                node.nodeType ===
-                    Node.ELEMENT_NODE &&
-                node.tagName.toLowerCase() ===
-                    "br"
-            ) {
-                node =
-                    node.nextSibling;
-
-                continue;
-            }
-
-
-            // ----------------------------------------------------
-            // Whitespace zwischen zwei Aufgaben ist erlaubt
-            // ----------------------------------------------------
-            if (
-                node.nodeType ===
-                    Node.TEXT_NODE &&
-                node.textContent.trim() === ""
-            ) {
-                node =
-                    node.nextSibling;
-
-                continue;
-            }
-
-
-            // ----------------------------------------------------
-            // Jedes andere Element / jeder andere Text
-            // unterbricht die Aufgabenfolge.
-            // ----------------------------------------------------
-            return false;
-        }
-
-
-        return node === secondRoot;
-    }
-
-
-    // ============================================================
-    // Aufgaben in Gruppen aufteilen
-    // ============================================================
-    const groups = [];
-
-    let currentGroup = [
-        taskEntries[0]
-    ];
-
-
-    for (
-        let i = 1;
-        i < taskEntries.length;
-        i++
-    ) {
-
-        const previous =
-            taskEntries[i - 1];
-
-        const current =
-            taskEntries[i];
-
-
-        if (
-            areDirectlyFollowing(
-                previous.root,
-                current.root
-            )
-        ) {
-
-            currentGroup.push(
-                current
-            );
-
-        }
-        else {
-
-            groups.push(
-                currentGroup
-            );
-
-            currentGroup = [
-                current
-            ];
-        }
-    }
-
-
-    // Letzte Gruppe hinzufügen
-    groups.push(
-        currentGroup
+  const doc =
+    parser.parseFromString(
+      html,
+      "text/html"
     );
 
 
-    // ============================================================
-    // Daten einer einzelnen Aufgabe auslesen
-    // ============================================================
-    function extractTaskData(task) {
+  // ============================================================
+  // Hilfsfunktion:
+  // Prüfen, ob ein Element eine Operon-Klasse besitzt
+  // ============================================================
+  function hasOperonClass(element) {
 
-        // ========================================================
-        // Aufgabe
-        // ========================================================
-        const label =
-            task.querySelector(
-                TASK_LABEL_SELECTOR
-            );
+    if (
+      !element ||
+      element.nodeType !== Node.ELEMENT_NODE
+    ) {
+      return false;
+    }
 
-
-        const aufgabe =
-            label
-                ?.textContent
-                ?.trim() || "";
-
-
-        // ========================================================
-        // Verantwortlich
-        //
-        // .lucide-users
-        //       ↓
-        // nächster .operon-chip
-        //       ↓
-        // .operon-inline-compact-chip-label
-        //
-        // Dadurch funktioniert es unabhängig davon, welche
-        // Person tatsächlich im Chip steht.
-        // ========================================================
-        const verantwortliche = [];
+    return [...element.classList].some(
+      className =>
+        className
+          .toLowerCase()
+          .includes("operon")
+    );
+  }
 
 
-        task
-            .querySelectorAll(
-                USERS_ICON_SELECTOR
-            )
-            .forEach(usersIcon => {
+  // ============================================================
+  // Hilfsfunktion:
+  // Äußerstes Operon-Element einer Aufgabe bestimmen
+  //
+  // Die Tabelle darf später NICHT innerhalb eines Operon-
+  // Elements liegen, weil diese Elemente am Ende gelöscht
+  // werden.
+  // ============================================================
+  function getTaskRoot(task) {
 
-                const chip =
-                    usersIcon.closest(
-                        CHIP_SELECTOR
-                    );
+    let root = task;
 
+    while (
+      root.parentElement &&
+      hasOperonClass(root.parentElement)
+    ) {
+      root = root.parentElement;
+    }
 
-                if (!chip) {
-                    return;
-                }
-
-
-                const label =
-                    chip.querySelector(
-                        CHIP_LABEL_SELECTOR
-                    );
-
-
-                const name =
-                    label
-                        ?.textContent
-                        ?.trim() || "";
+    return root;
+  }
 
 
-                if (
-                    name &&
-                    !verantwortliche.includes(name)
-                ) {
-
-                    verantwortliche.push(
-                        name
-                    );
-                }
-            });
+  // ============================================================
+  // Aufgaben finden
+  // ============================================================
+  const tasks = [
+    ...doc.querySelectorAll(TASK_SELECTOR)
+  ];
 
 
-        // ========================================================
-        // Termin
-        //
-        // Auch hier erfolgt die Erkennung strukturell:
-        //
-        // .lucide-calendar-clock
-        //       ↓
-        // .operon-chip
-        //       ↓
-        // .operon-inline-compact-chip-label
-        //
-        // Falls kein Kalender-Element existiert:
-        // leere Zeichenkette.
-        // ========================================================
-        let termin = "";
+  if (tasks.length === 0) {
+    return html;
+  }
 
 
-        const dateIcons =
-            task.querySelectorAll(
-                DATE_ICON_SELECTOR
-            );
+  // ============================================================
+  // Aufgaben mit ihrem tatsächlichen äußeren Operon-Element
+  // verknüpfen
+  // ============================================================
+  const taskEntries =
+    tasks.map(task => ({
+      task,
+      root: getTaskRoot(task)
+    }));
 
 
-        for (const dateIcon of dateIcons) {
+  // ============================================================
+  // Prüfen, ob zwei Aufgaben direkt aufeinander folgen
+  //
+  // Erlaubt sind ausschließlich:
+  //   - <br>
+  //   - Whitespace-Textknoten
+  //
+  // Alles andere trennt zwei Aufgaben voneinander.
+  // ============================================================
+  function areDirectlyFollowing(
+    firstRoot,
+    secondRoot
+  ) {
 
-            const chip =
-                dateIcon.closest(
-                    CHIP_SELECTOR
-                );
-
-
-            if (!chip) {
-                continue;
-            }
-
-
-            const label =
-                chip.querySelector(
-                    CHIP_LABEL_SELECTOR
-                );
-
-
-            const value =
-                label
-                    ?.textContent
-                    ?.trim() || "";
-
-
-            if (value) {
-
-                termin = value;
-
-                break;
-            }
-        }
-
-
-        return {
-            aufgabe,
-            verantwortliche,
-            termin
-        };
+    // Unterschiedliche Eltern können niemals
+    // direkt aufeinander folgen.
+    if (
+      firstRoot.parentNode !==
+      secondRoot.parentNode
+    ) {
+      return false;
     }
 
 
-    // ============================================================
-    // Für jede Gruppe eine eigene Tabelle erstellen
-    // ============================================================
-    groups.forEach(group => {
-
-        const firstEntry =
-            group[0];
-
-        const firstRoot =
-            firstEntry.root;
+    let node =
+      firstRoot.nextSibling;
 
 
-        const parent =
-            firstRoot.parentNode;
+    while (
+      node &&
+      node !== secondRoot
+    ) {
+
+      // ----------------------------------------------------
+      // <br> zwischen zwei Aufgaben ist erlaubt
+      // ----------------------------------------------------
+      if (
+        node.nodeType ===
+        Node.ELEMENT_NODE &&
+        node.tagName.toLowerCase() ===
+        "br"
+      ) {
+        node =
+          node.nextSibling;
+
+        continue;
+      }
 
 
-        if (!parent) {
-            return;
+      // ----------------------------------------------------
+      // Whitespace zwischen zwei Aufgaben ist erlaubt
+      // ----------------------------------------------------
+      if (
+        node.nodeType ===
+        Node.TEXT_NODE &&
+        node.textContent.trim() === ""
+      ) {
+        node =
+          node.nextSibling;
+
+        continue;
+      }
+
+
+      // ----------------------------------------------------
+      // Jedes andere Element / jeder andere Text
+      // unterbricht die Aufgabenfolge.
+      // ----------------------------------------------------
+      return false;
+    }
+
+
+    return node === secondRoot;
+  }
+
+
+  // ============================================================
+  // Aufgaben in Gruppen aufteilen
+  // ============================================================
+  const groups = [];
+
+  let currentGroup = [
+    taskEntries[0]
+  ];
+
+
+  for (
+    let i = 1;
+    i < taskEntries.length;
+    i++
+  ) {
+
+    const previous =
+      taskEntries[i - 1];
+
+    const current =
+      taskEntries[i];
+
+
+    if (
+      areDirectlyFollowing(
+        previous.root,
+        current.root
+      )
+    ) {
+
+      currentGroup.push(
+        current
+      );
+
+    }
+    else {
+
+      groups.push(
+        currentGroup
+      );
+
+      currentGroup = [
+        current
+      ];
+    }
+  }
+
+
+  // Letzte Gruppe hinzufügen
+  groups.push(
+    currentGroup
+  );
+
+
+  // ============================================================
+  // Daten einer einzelnen Aufgabe auslesen
+  // ============================================================
+  function extractTaskData(task) {
+
+    // ========================================================
+    // Aufgabe
+    // ========================================================
+    const label =
+      task.querySelector(
+        TASK_LABEL_SELECTOR
+      );
+
+
+    const aufgabe =
+      label
+        ?.textContent
+        ?.trim() || "";
+
+
+    // ========================================================
+    // Verantwortlich
+    //
+    // .lucide-users
+    //       ↓
+    // nächster .operon-chip
+    //       ↓
+    // .operon-inline-compact-chip-label
+    //
+    // Dadurch funktioniert es unabhängig davon, welche
+    // Person tatsächlich im Chip steht.
+    // ========================================================
+    const verantwortliche = [];
+
+
+    task
+      .querySelectorAll(
+        USERS_ICON_SELECTOR
+      )
+      .forEach(usersIcon => {
+
+        const chip =
+          usersIcon.closest(
+            CHIP_SELECTOR
+          );
+
+
+        if (!chip) {
+          return;
         }
 
 
-        // ========================================================
-        // Tabelle erstellen
-        // ========================================================
-        const table =
-            doc.createElement(
-                "table"
-            );
+        const label =
+          chip.querySelector(
+            CHIP_LABEL_SELECTOR
+          );
 
 
-        // Absichtlich KEIN "operon" im Klassennamen!
-        table.className =
-            "task-table";
+        const name =
+          label
+            ?.textContent
+            ?.trim() || "";
 
 
-        // ========================================================
-        // Tabellenkopf
-        // ========================================================
-        const thead =
-            doc.createElement(
-                "thead"
-            );
+        if (
+          name &&
+          !verantwortliche.includes(name)
+        ) {
+
+          verantwortliche.push(
+            name
+          );
+        }
+      });
 
 
-        const headerRow =
-            doc.createElement(
-                "tr"
-            );
+    // ========================================================
+    // Termin
+    //
+    // Auch hier erfolgt die Erkennung strukturell:
+    //
+    // .lucide-calendar-clock
+    //       ↓
+    // .operon-chip
+    //       ↓
+    // .operon-inline-compact-chip-label
+    //
+    // Falls kein Kalender-Element existiert:
+    // leere Zeichenkette.
+    // ========================================================
+    let termin = "";
 
 
-        const aufgabeHeader =
-            doc.createElement(
-                "th"
-            );
-
-        aufgabeHeader.textContent =
-            "Aufgabe";
+    const dateIcons =
+      task.querySelectorAll(
+        DATE_ICON_SELECTOR
+      );
 
 
-        const verantwortlichHeader =
-            doc.createElement(
-                "th"
-            );
+    for (const dateIcon of dateIcons) {
 
-        verantwortlichHeader.textContent =
-            "Verantwortlich";
-
-        verantwortlichHeader.style.width =
-            "35%";
-
-
-        const terminHeader =
-            doc.createElement(
-                "th"
-            );
-
-        terminHeader.textContent =
-            "Termin";
-
-        terminHeader.style.width =
-            "15%";
-
-
-        headerRow.appendChild(
-            aufgabeHeader
-        );
-
-        headerRow.appendChild(
-            verantwortlichHeader
-        );
-
-        headerRow.appendChild(
-            terminHeader
+      const chip =
+        dateIcon.closest(
+          CHIP_SELECTOR
         );
 
 
-        thead.appendChild(
-            headerRow
-        );
-
-        table.appendChild(
-            thead
-        );
+      if (!chip) {
+        continue;
+      }
 
 
-        // ========================================================
-        // Tabellenkörper
-        // ========================================================
-        const tbody =
-            doc.createElement(
-                "tbody"
-            );
-
-
-        // ========================================================
-        // Aufgaben der Gruppe verarbeiten
-        // ========================================================
-        group.forEach(entry => {
-
-            const data =
-                extractTaskData(
-                    entry.task
-                );
-
-
-            const row =
-                doc.createElement(
-                    "tr"
-                );
-
-
-            // ----------------------------------------------------
-            // Aufgabe
-            // ----------------------------------------------------
-            const aufgabeCell =
-                doc.createElement(
-                    "td"
-                );
-
-            aufgabeCell.textContent =
-                data.aufgabe;
-
-
-            // ----------------------------------------------------
-            // Verantwortlich
-            // ----------------------------------------------------
-            const verantwortlichCell =
-                doc.createElement(
-                    "td"
-                );
-
-
-            if (
-                data.verantwortliche.length === 0
-            ) {
-
-                verantwortlichCell.textContent =
-                    "";
-
-            }
-            else if (
-                data.verantwortliche.length === 1
-            ) {
-
-                verantwortlichCell.textContent =
-                    data.verantwortliche[0];
-
-            }
-            else {
-
-                const ul =
-                    doc.createElement(
-                        "ul"
-                    );
-
-
-                data.verantwortliche.forEach(
-                    name => {
-
-                        const li =
-                            doc.createElement(
-                                "li"
-                            );
-
-                        li.textContent =
-                            name;
-
-                        ul.appendChild(
-                            li
-                        );
-                    }
-                );
-
-
-                verantwortlichCell.appendChild(
-                    ul
-                );
-            }
-
-
-            // ----------------------------------------------------
-            // Termin
-            // ----------------------------------------------------
-            const terminCell =
-                doc.createElement(
-                    "td"
-                );
-
-            terminCell.textContent =
-                formatDateToGerman(data.termin);
-
-
-            // ----------------------------------------------------
-            // Zeile zusammensetzen
-            // ----------------------------------------------------
-            row.appendChild(
-                aufgabeCell
-            );
-
-            row.appendChild(
-                verantwortlichCell
-            );
-
-            row.appendChild(
-                terminCell
-            );
-
-
-            tbody.appendChild(
-                row
-            );
-        });
-
-
-        table.appendChild(
-            tbody
+      const label =
+        chip.querySelector(
+          CHIP_LABEL_SELECTOR
         );
 
 
-        // ========================================================
-        // Tabelle exakt an der Fundstelle der ersten Aufgabe
-        // einsetzen.
-        //
-        // Wichtig:
-        // Wir setzen sie VOR das äußerste Operon-Element.
-        // Dadurch wird sie später beim Löschen der Operon-
-        // Elemente nicht mit entfernt.
-        // ========================================================
-        parent.insertBefore(
-            table,
-            firstRoot
+      const value =
+        label
+          ?.textContent
+          ?.trim() || "";
+
+
+      if (value) {
+
+        termin = value;
+
+        break;
+      }
+    }
+
+
+    return {
+      aufgabe,
+      verantwortliche,
+      termin
+    };
+  }
+
+
+  // ============================================================
+  // Für jede Gruppe eine eigene Tabelle erstellen
+  // ============================================================
+  groups.forEach(group => {
+
+    const firstEntry =
+      group[0];
+
+    const firstRoot =
+      firstEntry.root;
+
+
+    const parent =
+      firstRoot.parentNode;
+
+
+    if (!parent) {
+      return;
+    }
+
+
+    // ========================================================
+    // Tabelle erstellen
+    // ========================================================
+    const table =
+      doc.createElement(
+        "table"
+      );
+
+
+    // Absichtlich KEIN "operon" im Klassennamen!
+    table.className =
+      "task-table";
+
+
+    // ========================================================
+    // Tabellenkopf
+    // ========================================================
+    const thead =
+      doc.createElement(
+        "thead"
+      );
+
+
+    const headerRow =
+      doc.createElement(
+        "tr"
+      );
+
+
+    const aufgabeHeader =
+      doc.createElement(
+        "th"
+      );
+
+    aufgabeHeader.textContent =
+      "Aufgabe";
+
+
+    const verantwortlichHeader =
+      doc.createElement(
+        "th"
+      );
+
+    verantwortlichHeader.textContent =
+      "Verantwortlich";
+
+    verantwortlichHeader.style.width =
+      "35%";
+
+
+    const terminHeader =
+      doc.createElement(
+        "th"
+      );
+
+    terminHeader.textContent =
+      "Termin";
+
+    terminHeader.style.width =
+      "15%";
+
+
+    headerRow.appendChild(
+      aufgabeHeader
+    );
+
+    headerRow.appendChild(
+      verantwortlichHeader
+    );
+
+    headerRow.appendChild(
+      terminHeader
+    );
+
+
+    thead.appendChild(
+      headerRow
+    );
+
+    table.appendChild(
+      thead
+    );
+
+
+    // ========================================================
+    // Tabellenkörper
+    // ========================================================
+    const tbody =
+      doc.createElement(
+        "tbody"
+      );
+
+
+    // ========================================================
+    // Aufgaben der Gruppe verarbeiten
+    // ========================================================
+    group.forEach(entry => {
+
+      const data =
+        extractTaskData(
+          entry.task
         );
+
+
+      const row =
+        doc.createElement(
+          "tr"
+        );
+
+
+      // ----------------------------------------------------
+      // Aufgabe
+      // ----------------------------------------------------
+      const aufgabeCell =
+        doc.createElement(
+          "td"
+        );
+
+      aufgabeCell.textContent =
+        data.aufgabe;
+
+
+      // ----------------------------------------------------
+      // Verantwortlich
+      // ----------------------------------------------------
+      const verantwortlichCell =
+        doc.createElement(
+          "td"
+        );
+
+
+      if (
+        data.verantwortliche.length === 0
+      ) {
+
+        verantwortlichCell.textContent =
+          "";
+
+      }
+      else if (
+        data.verantwortliche.length === 1
+      ) {
+
+        verantwortlichCell.textContent =
+          data.verantwortliche[0];
+
+      }
+      else {
+
+        const ul =
+          doc.createElement(
+            "ul"
+          );
+
+
+        data.verantwortliche.forEach(
+          name => {
+
+            const li =
+              doc.createElement(
+                "li"
+              );
+
+            li.textContent =
+              name;
+
+            ul.appendChild(
+              li
+            );
+          }
+        );
+
+
+        verantwortlichCell.appendChild(
+          ul
+        );
+      }
+
+
+      // ----------------------------------------------------
+      // Termin
+      // ----------------------------------------------------
+      const terminCell =
+        doc.createElement(
+          "td"
+        );
+
+      terminCell.textContent =
+        formatDateToGerman(data.termin);
+
+
+      // ----------------------------------------------------
+      // Zeile zusammensetzen
+      // ----------------------------------------------------
+      row.appendChild(
+        aufgabeCell
+      );
+
+      row.appendChild(
+        verantwortlichCell
+      );
+
+      row.appendChild(
+        terminCell
+      );
+
+
+      tbody.appendChild(
+        row
+      );
     });
 
 
-    // ============================================================
-    // ALLE Elemente entfernen, bei denen irgendein Klassenname
-    // "operon" enthält.
-    //
-    // Beispiel:
-    //   operon-task-wikilink-reading
-    //   operon-chip
-    //   operon-inline-compact-chip-label
-    //   my-operon-element
-    //
-    // Die neu erzeugten Tabellen bleiben erhalten, da ihre
-    // Klassen keinen Bestandteil "operon" enthalten.
-    // ============================================================
-    const elementsToRemove = [
-        ...doc.querySelectorAll("*")
-    ].filter(element =>
-        [...element.classList].some(
-            className =>
-                className
-                    .toLowerCase()
-                    .includes("operon")
-        )
+    table.appendChild(
+      tbody
     );
 
 
-    elementsToRemove.forEach(
-        element => {
-
-            if (element.parentNode) {
-                element.remove();
-            }
-        }
+    // ========================================================
+    // Tabelle exakt an der Fundstelle der ersten Aufgabe
+    // einsetzen.
+    //
+    // Wichtig:
+    // Wir setzen sie VOR das äußerste Operon-Element.
+    // Dadurch wird sie später beim Löschen der Operon-
+    // Elemente nicht mit entfernt.
+    // ========================================================
+    parent.insertBefore(
+      table,
+      firstRoot
     );
+  });
 
 
-    // ============================================================
-    // Fertiges HTML zurückgeben
-    // ============================================================
-    return doc.documentElement.outerHTML;
+  // ============================================================
+  // ALLE Elemente entfernen, bei denen irgendein Klassenname
+  // "operon" enthält.
+  //
+  // Beispiel:
+  //   operon-task-wikilink-reading
+  //   operon-chip
+  //   operon-inline-compact-chip-label
+  //   my-operon-element
+  //
+  // Die neu erzeugten Tabellen bleiben erhalten, da ihre
+  // Klassen keinen Bestandteil "operon" enthalten.
+  // ============================================================
+  const elementsToRemove = [
+    ...doc.querySelectorAll("*")
+  ].filter(element =>
+    [...element.classList].some(
+      className =>
+        className
+          .toLowerCase()
+          .includes("operon")
+    )
+  );
+
+
+  elementsToRemove.forEach(
+    element => {
+
+      if (element.parentNode) {
+        element.remove();
+      }
+    }
+  );
+
+
+  // ============================================================
+  // Fertiges HTML zurückgeben
+  // ============================================================
+  return doc.documentElement.outerHTML;
 }
 
 function fixInternalHeadingLinks(htmlString) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, 'text/html');
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, 'text/html');
 
-    const links = doc.querySelectorAll('a.internal-link[href^="#"]');
+  const links = doc.querySelectorAll('a.internal-link[href^="#"]');
 
-    const headings = [
-        ...doc.querySelectorAll(
-            'h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'
-        )
-    ];
+  const headings = [
+    ...doc.querySelectorAll(
+      'h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'
+    )
+  ];
 
-    for (const link of links) {
-        const linkText = link.textContent.trim();
+  for (const link of links) {
+    const linkText = link.textContent.trim();
 
-        if (!linkText) {
-            continue;
-        }
-
-        const heading = headings.find(heading => {
-            const headingText = (
-                heading.dataset.heading ||
-                heading.textContent
-            ).trim();
-
-            return (
-                headingText === linkText ||
-                headingText.startsWith(linkText + ' ')
-            );
-        });
-
-        if (!heading) {
-            console.warn(
-                `Keine Überschrift für internen Link gefunden: "${linkText}"`
-            );
-            continue;
-        }
-
-        const target = `#${heading.id}`;
-
-        link.setAttribute('href', target);
-
-        if (link.hasAttribute('data-href')) {
-            link.setAttribute('data-href', target);
-        }
-
-        if (link.hasAttribute('aria-label')) {
-            link.setAttribute('aria-label', heading.id);
-        }
+    if (!linkText) {
+      continue;
     }
 
-    return doc.documentElement.outerHTML;
+    const heading = headings.find(heading => {
+      const headingText = (
+        heading.dataset.heading ||
+        heading.textContent
+      ).trim();
+
+      return (
+        headingText === linkText ||
+        headingText.startsWith(linkText + ' ')
+      );
+    });
+
+    if (!heading) {
+      console.warn(
+        `Keine Überschrift für internen Link gefunden: "${linkText}"`
+      );
+      continue;
+    }
+
+    const target = `#${heading.id}`;
+
+    link.setAttribute('href', target);
+
+    if (link.hasAttribute('data-href')) {
+      link.setAttribute('data-href', target);
+    }
+
+    if (link.hasAttribute('aria-label')) {
+      link.setAttribute('aria-label', heading.id);
+    }
   }
+
+  return doc.documentElement.outerHTML;
+}

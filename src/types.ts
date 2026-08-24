@@ -1,7 +1,7 @@
 /**
  * One font file from the vault, embedded as an @font-face rule.
  *
- * A family needs one entry per weight/style it ships: without a real bold file,
+ * A family needs one entry per weight/style it ships: without a real bold file;
  * the renderer synthesizes one and it shows in print.
  */
 export interface CustomFont {
@@ -23,24 +23,24 @@ export interface PdfTheme {
   primaryColor: string;
   accentColor: string;
   
-  h2FontSize: string,
-  h2FontColor: string,
+  h2FontSize: string;
+  h2FontColor: string;
   h2FontStyle: "normal" | "oblique" | "italic";
   h2FontWeight: "normal" | "bold" | "bolder" | "lighter";
-  h3FontSize: string,
-  h3FontColor: string,
+  h3FontSize: string;
+  h3FontColor: string;
   h3FontStyle: "normal" | "oblique" | "italic";
   h3FontWeight: "normal" | "bold" | "bolder" | "lighter";
-  h4FontSize: string,
-  h4FontColor: string,
+  h4FontSize: string;
+  h4FontColor: string;
   h4FontStyle: "normal" | "oblique" | "italic";
   h4FontWeight: "normal" | "bold" | "bolder" | "lighter";
-  h5FontSize: string,
-  h5FontColor: string,
+  h5FontSize: string;
+  h5FontColor: string;
   h5FontStyle: "normal" | "oblique" | "italic";
   h5FontWeight: "normal" | "bold" | "bolder" | "lighter";
-  h6FontSize: string,
-  h6FontColor: string,
+  h6FontSize: string;
+  h6FontColor: string;
   h6FontStyle: "normal" | "oblique" | "italic";
   h6FontWeight: "normal" | "bold" | "bolder" | "lighter";
 
@@ -52,70 +52,80 @@ export interface PdfTheme {
   showCover: boolean;
   showToc: boolean;
   tocTitle: string; 
-  tocH2FontSize: string,
-  tocH2FontColor: string,
+  tocH2FontSize: string;
+  tocH2FontColor: string;
   tocH2FontStyle: "normal" | "oblique" | "italic";
   tocH2FontWeight: "normal" | "bold" | "bolder" | "lighter";
-  tocH3FontSize: string,
-  tocH3FontColor: string,
+  tocH2Indent: string;
+  tocH2ListIndexWidth: string;
+  tocH3FontSize: string;
+  tocH3FontColor: string;
   tocH3FontStyle: "normal" | "oblique" | "italic";
   tocH3FontWeight: "normal" | "bold" | "bolder" | "lighter";
-  tocH4FontSize: string,
-  tocH4FontColor: string,
+  tocH3Indent: string;
+  tocH3ListIndexWidth: string;
+  tocH4FontSize: string;
+  tocH4FontColor: string;
   tocH4FontStyle: "normal" | "oblique" | "italic";
   tocH4FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  tocH4Indent: string;
+  tocH4ListIndexWidth: string;
 
   showLof: boolean;
   lofTitle: string;
   lofKeyword: string;
-  lofFontSize: string,
-  lofFontColor: string,
+  lofFontSize: string;
+  lofFontColor: string;
   lofFontStyle: "normal" | "oblique" | "italic";
   lofFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  lofIndent: string;
+  lofListIndexWidth: string;
   showLot: boolean;
   lotTitle: string;
   lotKeyword: string;
-  lotFontSize: string,
-  lotFontColor: string,
+  lotFontSize: string;
+  lotFontColor: string;
   lotFontStyle: "normal" | "oblique" | "italic";
   lotFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  lotIndent: string;
+  lotListIndexWidth: string;
 
   title: string;
-  titleFontSize: string,
-  titleFontColor: string,
+  titleFontSize: string;
+  titleFontColor: string;
   titleFontStyle: "normal" | "oblique" | "italic";
   titleFontWeight: "normal" | "bold" | "bolder" | "lighter";
   subtitle: string;
-  subtitleFontSize: string,
-  subtitleFontColor: string,
+  subtitleFontSize: string;
+  subtitleFontColor: string;
   subtitleFontStyle: "normal" | "oblique" | "italic";
   subtitleFontWeight: "normal" | "bold" | "bolder" | "lighter";
   additionalContent: string;
-  additionalContentFontSize: string,
-  additionalContentFontColor: string,
+  additionalContentFontSize: string;
+  additionalContentFontColor: string;
   additionalContentFontStyle: "normal" | "oblique" | "italic";
   additionalContentFontWeight: "normal" | "bold" | "bolder" | "lighter";
   // Frontmatter keys listed by default in the cover info block
   dedicatedCover: boolean;
-  coverBackgroundPath: string,
-  coverImagePath: string,
+  coverBackgroundPath: string;
+  coverImagePath: string;
   coverInfoFields: string[];
   protocolLike: boolean;
-  protocolTitle: string,
-  protocolCreatorText: string,
-  protocolCreatorValue: string,
-  protocolClientText: string,
-  protocolClientValue: string,
-  protocolClientParticipantText: string,
-  protocolClientParticipantValue: string,
-  protocolContractorText: string,
-  protocolContractorValue: string,
-  protocolContractorParticipantText: string,
-  protocolContractorParticipantValue: string,
-  protocolDateText: string,
-  protocolDateValue: string,
-  protocolLocationText: string,
-  protocolLocationValue: string,
+  protocolTitle: string;
+  protocolCreatorText: string;
+  protocolCreatorValue: string;
+  protocolClientText: string;
+  protocolClientValue: string;
+  protocolClientParticipantText: string;
+  protocolClientParticipantValue: string;
+  protocolContractorText: string;
+  protocolContractorValue: string;
+  protocolContractorParticipantText: string;
+  protocolContractorParticipantValue: string;
+  protocolDateText: string;
+  protocolDateValue: string;
+  protocolLocationText: string;
+  protocolLocationValue: string;
 
 
   // Header (page 2+)
@@ -124,26 +134,26 @@ export interface PdfTheme {
   showFooterOn1stPage: boolean;
   headerLogoHeight: string; // CSS value, e.g. "12mm"
   headerText: string; // supports {title}, {date}
-  header1FontSize: string,
-  header1FontColor: string,
+  header1FontSize: string;
+  header1FontColor: string;
   header1FontStyle: "normal" | "oblique" | "italic";
   header1FontWeight: "normal" | "bold" | "bolder" | "lighter";
   headerText2: string;
-  header2FontSize: string,
-  header2FontColor: string,
+  header2FontSize: string;
+  header2FontColor: string;
   header2FontStyle: "normal" | "oblique" | "italic";
   header2FontWeight: "normal" | "bold" | "bolder" | "lighter";
 
   // Footer
   showPagination: boolean;
   paginationFormat: string; // e.g. "{page} / {pages}", "Page {page} of {pages}"
-  paginationFontSize: string,
-  paginationFontColor: string,
+  paginationFontSize: string;
+  paginationFontColor: string;
   paginationFontStyle: "normal" | "oblique" | "italic";
   paginationFontWeight: "normal" | "bold" | "bolder" | "lighter";
   footerText: string; // supports {title}, {date}
-  footerFontSize: string,
-  footerFontColor: string,
+  footerFontSize: string;
+  footerFontColor: string;
   footerFontStyle: "normal" | "oblique" | "italic";
   footerFontWeight: "normal" | "bold" | "bolder" | "lighter";
 
@@ -159,13 +169,61 @@ export interface PdfTheme {
   legalText: string;
   legalEditor: string;
   legalCompany: string;
+  legalCompanyFontSize: string;
+  legalCompanyFontColor: string;
+  legalCompanyFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  legalCompanyFontStyle:"normal" | "oblique" | "italic";
+  legalCompanyUnderline: "none" | "underline";
+  legalCompanyTransform: "none" | "capitalize" | "uppercase" | "lowercase";
   legalDepartment1: string;
+  legalDepartment1FontSize: string;
+  legalDepartment1FontColor: string;
+  legalDepartment1FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  legalDepartment1FontStyle:"normal" | "oblique" | "italic";
+  legalDepartment1Underline: "none" | "underline";
+  legalDepartment1Transform: "none" | "capitalize" | "uppercase" | "lowercase";
   legalDepartment2: string;
+  legalDepartment2FontSize: string;
+  legalDepartment2FontColor: string;
+  legalDepartment2FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  legalDepartment2FontStyle:"normal" | "oblique" | "italic";
+  legalDepartment2Underline: "none" | "underline";
+  legalDepartment2Transform: "none" | "capitalize" | "uppercase" | "lowercase";
   legalStreet: string;
+  legalStreetFontSize: string;
+  legalStreetFontColor: string;
+  legalStreetFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  legalStreetFontStyle:"normal" | "oblique" | "italic";
+  legalStreetUnderline: "none" | "underline";
+  legalStreetTransform: "none" | "capitalize" | "uppercase" | "lowercase";
   legalCity: string;
+  legalCityFontSize: string;
+  legalCityFontColor: string;
+  legalCityFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  legalCityFontStyle:"normal" | "oblique" | "italic";
+  legalCityUnderline: "none" | "underline";
+  legalCityTransform: "none" | "capitalize" | "uppercase" | "lowercase";
   legalTelephone: string;
+  legalTelephoneFontSize: string;
+  legalTelephoneFontColor: string;
+  legalTelephoneFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  legalTelephoneFontStyle:"normal" | "oblique" | "italic";
+  legalTelephoneUnderline: "none" | "underline";
+  legalTelephoneTransform: "none" | "capitalize" | "uppercase" | "lowercase";
   legalMail: string;
+  legalMailFontSize: string;
+  legalMailFontColor: string;
+  legalMailFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  legalMailFontStyle:"normal" | "oblique" | "italic";
+  legalMailUnderline: "none" | "underline";
+  legalMailTransform: "none" | "capitalize" | "uppercase" | "lowercase";
   legalWebLink: string;
+  legalWebLinkFontSize: string;
+  legalWebLinkFontColor: string;
+  legalWebLinkFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  legalWebLinkFontStyle:"normal" | "oblique" | "italic";
+  legalWebLinkUnderline: "none" | "underline";
+  legalWebLinkTransform: "none" | "capitalize" | "uppercase" | "lowercase";
   legalWebLinkAlt: string;
   legalEditorialText: string;
   legalEditorial: string;

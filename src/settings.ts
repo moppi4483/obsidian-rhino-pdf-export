@@ -8,7 +8,7 @@ import { FontFileSuggest, FontFolderModal, fontFilesIn, readFontFiles } from "./
 
 const PAGE_SIZES = ["A3", "A4", "A5", "Letter", "Legal", "Tabloid"];
 const MARGIN_SIDES = ["top", "right", "bottom", "left"] as const;
-const FONT_SETTINGS = ["size", "color", "style", "weight", "underline"];
+const FONT_SETTINGS = ["size", "color", "style", "weight", "underline", "transform"];
 
 type Getter<T> = () => T;
 type Setter<T> = (value: T) => void;
@@ -617,8 +617,11 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       desc: "Automatically number H2/H3/H4 headings (1, 1.1, …), synced with the table of contents",
     });
     this.addElementStylingRow(c, theme, "Font-format for the 1st-level toc-entry (H2)", "tocH2FontSize", "tocH2FontColor", "tocH2FontStyle", "tocH2FontWeight");
+    this.addIndexIndent(c, theme, "Indent of the 1st-level toc-entry", "tocH2Indent", "tocH2ListIndexWidth")
     this.addElementStylingRow(c, theme, "Font-format for the 2nd-level toc-entry (H3)", "tocH3FontSize", "tocH3FontColor", "tocH3FontStyle", "tocH3FontWeight");
+    this.addIndexIndent(c, theme, "Indent of the 2nd-level toc-entry", "tocH3Indent", "tocH3ListIndexWidth")
     this.addElementStylingRow(c, theme, "Font-format for the 3rd-level toc-entry (H4)", "tocH4FontSize", "tocH4FontColor", "tocH4FontStyle", "tocH4FontWeight");
+    this.addIndexIndent(c, theme, "Indent of the 3rd-level toc-entry", "tocH4Indent", "tocH4ListIndexWidth")
   }
   
   private renderAdditionalIndexes(c: HTMLElement, theme: PdfTheme) {
@@ -635,6 +638,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addText(c, "List of figures title", () => theme.lofTitle, (v) => { theme.lofTitle = v; });
     this.addText(c, "List of figures keyword", () => theme.lofKeyword, (v) => { theme.lofKeyword = v; });
     this.addElementStylingRow(c, theme, "Font-format for the List of figures-entry", "lofFontSize", "lofFontColor", "lofFontStyle", "lofFontWeight");
+    this.addIndexIndent(c, theme, "Indent of the \"list of figures\"-entry", "lofIndent", "lofListIndexWidth");
 
 
     this.addToggle(c, "List of tables", () => theme.showLot, (v) => { theme.showLot = v; }, {
@@ -643,6 +647,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addText(c, "List of tables title", () => theme.lotTitle, (v) => { theme.lotTitle = v; });
     this.addText(c, "List of tables keyword", () => theme.lotKeyword, (v) => { theme.lotKeyword = v; });
     this.addElementStylingRow(c, theme, "Font-format for the List of tables-entry", "lotFontSize", "lotFontColor", "lotFontStyle", "lotFontWeight");
+    this.addIndexIndent(c, theme, "Indent of the \"list of tables\"-entry", "lotIndent", "lotListIndexWidth");
   }
   
   private renderProtocolLookAndFeelSection(c: HTMLElement, theme: PdfTheme) {
@@ -756,17 +761,25 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addTextArea(c, "Legal notice text", () => theme.legalText, (v) => { theme.legalText = v; });
     
     
-    this.addText(c, "Legal editor ", () => theme.legalTitle, (v) => { theme.legalTitle = v; }, {
+    this.addText(c, "Legal editor ", () => theme.legalEditor, (v) => { theme.legalEditor = v; }, {
       desc: "Header of the legal editor section.",
     });
     this.addText(c, "Legal Company", () => theme.legalCompany, (v) => { theme.legalCompany = v; });
+    this.addElementStylingRow(c, theme, "Font-format for legal company", "legalCompanyFontSize", "legalCompanyFontColor", "legalCompanyFontStyle", "legalCompanyFontWeight", "legalCompanyUnderline", "legalCompanyTransform");
     this.addText(c, "Legal Department (Main)", () => theme.legalDepartment1, (v) => { theme.legalDepartment1 = v; });
+    this.addElementStylingRow(c, theme, "Font-format for legal department (main)", "legalDepartment1FontSize", "legalDepartment1FontColor", "legalDepartment1FontStyle", "legalDepartment1FontWeight", "legalDepartment1Underline", "legalDepartment1Transform");
     this.addText(c, "Legal Department (Sub)", () => theme.legalDepartment2, (v) => { theme.legalDepartment2 = v; });
+    this.addElementStylingRow(c, theme, "Font-format for legal department (sub)", "legalDepartment2FontSize", "legalDepartment2FontColor", "legalDepartment2FontStyle", "legalDepartment2FontWeight", "legalDepartment2Underline", "legalDepartment2Transform");
     this.addText(c, "Legal Department Street", () => theme.legalStreet, (v) => { theme.legalStreet = v; });
+    this.addElementStylingRow(c, theme, "Font-format for legal department street", "legalStreetFontSize", "legalStreetFontColor", "legalStreetFontStyle", "legalStreetFontWeight", "legalStreetUnderline", "legalStreetTransform");
     this.addText(c, "Legal Department City", () => theme.legalCity, (v) => { theme.legalCity = v; });
+    this.addElementStylingRow(c, theme, "Font-format for legal department city", "legalCityFontSize", "legalCityFontColor", "legalCityFontStyle", "legalCityFontWeight", "legalCityUnderline", "legalCityTransform");
     this.addText(c, "Legal Department Telephone", () => theme.legalTelephone, (v) => { theme.legalTelephone = v; });
+    this.addElementStylingRow(c, theme, "Font-format for legal department telephone", "legalTelephoneFontSize", "legalTelephoneFontColor", "legalTelephoneFontStyle", "legalTelephoneFontWeight", "legalTelephoneUnderline", "legalTelephoneTransform");
     this.addText(c, "Legal Department E-Mail", () => theme.legalMail, (v) => { theme.legalMail = v; });
+    this.addElementStylingRow(c, theme, "Font-format for legal department mail", "legalMailFontSize", "legalMailFontColor", "legalMailFontStyle", "legalMailFontWeight", "legalMailUnderline", "legalMailTransform");
     this.addText(c, "Legal Department Link", () => theme.legalWebLink, (v) => { theme.legalWebLink = v; });
+    this.addElementStylingRow(c, theme, "Font-format for legal department link", "legalWebLinkFontSize", "legalWebLinkFontColor", "legalWebLinkFontStyle", "legalWebLinkFontWeight", "legalWebLinkUnderline", "legalWebLinkTransform");
     this.addText(c, "Legal Department Link (Alt-Text)", () => theme.legalWebLinkAlt, (v) => { theme.legalWebLinkAlt = v; });
     
     this.addLabelOutputRow(c, theme, "Legal editorial", "legalEditorialText", "legalEditorial");
@@ -870,7 +883,33 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     });
   }
 
-  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSetting: string, fontSize: string, fontColor: string, fontStyle: string, fontWeight: string, fontUnderline = "") {
+  private addIndexIndent(c: HTMLElement, theme: PdfTheme, caption: string, indent: string, width: string) {
+    const row = new Setting(c)
+      .setName(caption) 
+      .setDesc("Indent of the entry & width of the index-number")
+      .setClass("rhino-margins-row-double");
+    
+    
+    row.addText((t) => {
+      t.setPlaceholder("0px")
+      t.setValue(theme[indent])
+      t.onChange(async (v) => {
+        theme[indent] = v.trim();
+        this.save();
+      });
+    });
+    
+    row.addText((t) => {
+      t.setPlaceholder("30px")
+      t.setValue(theme[width])
+      t.onChange(async (v) => {
+        theme[width] = v.trim();
+        this.save();
+      });
+    });
+  }
+
+  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSetting: string, fontSize: string, fontColor: string, fontStyle: string, fontWeight: string, fontUnderline = "", fontTransform = "") {
     let description = "";
     
     description = fontSize != "" ? "size" : "";
@@ -878,6 +917,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     description = fontStyle != "" ? (description != "" ? description + ", style" : "style") : description + "";
     description = fontWeight != "" ? (description != "" ? description + ", weight" : "weight") : description + ""; 
     description = fontUnderline != "" ? (description != "" ? description + ", underline" : "underline") : description + ""; 
+    description = fontTransform != "" ? (description != "" ? description + ", text-transform" : "text-transform") : description + ""; 
 
     const fontSetting = new Setting(c)
       .setName(captionFontSetting) 
@@ -954,6 +994,23 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
               t.setValue(theme[fontUnderline])
               t.onChange(async (v) => {
                 theme[fontUnderline] = v;
+                this.save();
+              });
+            });
+          } 
+          break;
+        
+        case 'transform':
+          if (fontTransform != "") {
+            fontSetting.addDropdown((t) => {
+              t.addOption("none", "None")
+              t.addOption("capitalize", "Capitalize")
+              t.addOption("uppercase", "Uppercase")
+              t.addOption("lowercase", "Lowercase")
+              t.setValue("none")
+              t.setValue(theme[fontTransform])
+              t.onChange(async (v) => {
+                theme[fontTransform] = v;
                 this.save();
               });
             });
