@@ -296,12 +296,14 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
     this.renderPageSection(containerEl, theme);
     this.renderCustomFonts(containerEl, theme);
-    this.renderMainTypographySection(contanerEl, theme);
+    this.renderMainTypographySection(containerEl, theme);
     this.renderCoverSection(containerEl, theme);
+    this.renderLegalSection(containerEl, theme);
+    this.renderTocSection(containerEl, theme);
     this.renderHeaderFooterSection(containerEl, theme);
+    this.renderProtocolLookAndFeelSection(containerEl, theme);
     this.renderWatermarkSection(containerEl, theme);
     this.renderClassificationSection(containerEl, theme);
-    this.renderLegalSection(containerEl, theme);
     this.renderMetadataSection(containerEl, theme);
   }
   
@@ -367,7 +369,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
           "The cover and table of contents are never affected." + 
           "The setting for h1 is generally only needed when several documents are " + 
           "to be combined into one document. " + 
-          "Individual documents are structured using the headings h2-h5.,
+          "Individual documents are structured using the headings h2-h5.",
       cls: "setting-item-description",
     });
     this.addToggle(c, "Before heading 1", () => theme.pageBreakBeforeH1, (v) => { theme.pageBreakBeforeH1 = v; });
@@ -617,7 +619,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
   }
   
   
-  private renderProtocolLookAndFeel Section(c: HTMLElement, theme: PdfTheme) {
+  private renderProtocolLookAndFeelSection(c: HTMLElement, theme: PdfTheme) {
     new Setting(c).setName("Protocoll-like look & feel").setHeading();
     c.createEl("p", {
       text:
@@ -870,7 +872,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
           break;
 
         case 'color':
-          if (fontColor != "" {
+          if (fontColor != "") {
            fontSetting.addColorPicker((t) => {
               t.setValue("#000")
               t.setValue(theme[fontColor])
