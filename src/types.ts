@@ -39,6 +39,10 @@ export interface PdfTheme {
   h5FontColor: string,
   h5FontStyle: "normal" | "oblique" | "italic";
   h5FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  h6FontSize: string,
+  h6FontColor: string,
+  h6FontStyle: "normal" | "oblique" | "italic";
+  h6FontWeight: "normal" | "bold" | "bolder" | "lighter";
 
   // Logo (relative path in vault, or empty)
   logoPath: string;
@@ -60,6 +64,22 @@ export interface PdfTheme {
   tocH4FontColor: string,
   tocH4FontStyle: "normal" | "oblique" | "italic";
   tocH4FontWeight: "normal" | "bold" | "bolder" | "lighter";
+
+  showLof: boolean;
+  lofTitle: string;
+  lofKeyword: string;
+  lofFontSize: string,
+  lofFontColor: string,
+  lofFontStyle: "normal" | "oblique" | "italic";
+  lofFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  showLot: boolean;
+  lotTitle: string;
+  lotKeyword: string;
+  lotFontSize: string,
+  lotFontColor: string,
+  lotFontStyle: "normal" | "oblique" | "italic";
+  lotFontWeight: "normal" | "bold" | "bolder" | "lighter";
+
   title: string;
   titleFontSize: string,
   titleFontColor: string,

@@ -300,6 +300,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.renderCoverSection(containerEl, theme);
     this.renderLegalSection(containerEl, theme);
     this.renderTocSection(containerEl, theme);
+    this.renderAdditionalIndexes(containerEl, theme);
     this.renderHeaderFooterSection(containerEl, theme);
     this.renderProtocolLookAndFeelSection(containerEl, theme);
     this.renderWatermarkSection(containerEl, theme);
@@ -381,6 +382,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addElementStylingRow(c, theme, "Font-format for 3rd-level-headers", "h3FontSize", "h3FontColor", "h3FontStyle", "h3FontWeight");
     this.addElementStylingRow(c, theme, "Font-format for 4th-level-headers", "h4FontSize", "h4FontColor", "h4FontStyle", "h4FontWeight");
     this.addElementStylingRow(c, theme, "Font-format for 5th-level-headers", "h5FontSize", "h5FontColor", "h5FontStyle", "h5FontWeight"); 
+    this.addElementStylingRow(c, theme, "Font-format for 6th-level-headers (picture & table caption in combination with \"Caption Numbering\"-plugin)", "h6FontSize", "h6FontColor", "h6FontStyle", "h6FontWeight"); 
   }
 
 
@@ -619,6 +621,29 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addElementStylingRow(c, theme, "Font-format for the 3rd-level toc-entry (H4)", "tocH4FontSize", "tocH4FontColor", "tocH4FontStyle", "tocH4FontWeight");
   }
   
+  private renderAdditionalIndexes(c: HTMLElement, theme: PdfTheme) {
+    new Setting(c).setName("Additional indexes (list of figures / list of tables)").setHeading();
+    c.createEl("p", {
+      text:
+        "This section allows you to configure the list of figures / list of tables.",
+      cls: "setting-item-description",
+    });  
+
+    this.addToggle(c, "List of figures", () => theme.showLof, (v) => { theme.showLof = v; }, {
+      desc: "Auto-generated from H6 headings starting with the configured keyword, after the table of content",
+    });
+    this.addText(c, "List of figures title", () => theme.lofTitle, (v) => { theme.lofTitle = v; });
+    this.addText(c, "List of figures keyword", () => theme.lofKeyword, (v) => { theme.lofKeyword = v; });
+    this.addElementStylingRow(c, theme, "Font-format for the List of figures-entry", "lofFontSize", "lofFontColor", "lofFontStyle", "lofFontWeight");
+
+
+    this.addToggle(c, "List of tables", () => theme.showLot, (v) => { theme.showLot = v; }, {
+      desc: "Auto-generated from H6 headings starting with the configured keyword, after the table of content",
+    });
+    this.addText(c, "List of tables title", () => theme.lotTitle, (v) => { theme.lotTitle = v; });
+    this.addText(c, "List of tables keyword", () => theme.lotKeyword, (v) => { theme.lotKeyword = v; });
+    this.addElementStylingRow(c, theme, "Font-format for the List of tables-entry", "lotFontSize", "lotFontColor", "lotFontStyle", "lotFontWeight");
+  }
   
   private renderProtocolLookAndFeelSection(c: HTMLElement, theme: PdfTheme) {
     new Setting(c).setName("Protocoll-like look & feel").setHeading();
@@ -845,15 +870,9 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     });
   }
 
-  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSetting: string, fontSize: string, fontColor: string, fontStyle: string, fontWeight: string, fontUnderline: string) {
+  private addElementStylingRow(c: HTMLElement, theme: PdfTheme, captionFontSetting: string, fontSize: string, fontColor: string, fontStyle: string, fontWeight: string, fontUnderline = "") {
     let description = "";
     
-    fontSize = typeof fontSize !== "undefined" ? fontSize : "";
-    fontColor = typeof fontColor !== "undefined" ? fontColor : "";
-    fontStyle = typeof fontStyle !== "undefined" ? fontStyle : "";
-    fontWeight = typeof fontWeight !== "undefined" ? fontWeight : "";
-    fontUnderline = typeof fontUnderline !== "undefined" ? fontUnderline : "";
-
     description = fontSize != "" ? "size" : "";
     description = fontColor != "" ? (description != "" ? description + ", color" : "color") : description + "";
     description = fontStyle != "" ? (description != "" ? description + ", style" : "style") : description + "";

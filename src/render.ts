@@ -438,6 +438,16 @@ h5 {
   margin-bottom: 3mm;
   page-break-after: avoid;
 }
+h6 {
+  font-size: ${theme.h6FontSize};
+  font-weight: ${theme.h6FontWeight};
+  color: ${theme.h6FontColor};
+  font-style: ${theme.h6FontStyle};
+  margin-top: 0mm;
+  margin-bottom: 7mm;
+  page-break-before: avoid;
+  text-align:center;
+}
 ${theme.pageBreakBeforeH1 || theme.pageBreakBeforeH2 || theme.pageBreakBeforeH3 ? `
 /* --- Automatic page breaks before headings --- */
 ${theme.pageBreakBeforeH1 ? "h1 { break-before: page; page-break-before: always; }" : ""}
@@ -668,21 +678,30 @@ strong { font-weight: bold; color: #1a1a1a; }
   margin: 0;
   width: 100%;
 }
-.toc li {
+.toc li.toc-h2 a {
   margin: 0;
   padding: 1mm 0;
-  font-size: 10pt;
-  color: #003F57;
+  font-size: ${theme.tocH2FontSize};
+  color: ${theme.tocH2FontColor};
   width: 100%;
-  font-weight: bold;
+  font-weight: ${theme.tocH2FontWeight};
+  font-style: ${theme.tocH2FontStyle};
 }
-.toc li.toc-h3,
-.toc li.toc-h4 {
+.toc li.toc-h3 a {
   padding-left: 8mm;
-  font-size: 10pt;
-  color: ${p};
+  font-size: ${theme.tocH3FontSize};
+  color: ${theme.tocH3FontColor};
   width: 100%;
-  font-weight: normal;
+  font-weight: ${theme.tocH3FontWeight};
+  font-style: ${theme.tocH3FontStyle};
+}
+.toc li.toc-h4 a {
+  padding-left: 8mm;
+  font-size: ${theme.tocH4FontSize};
+  color: ${theme.tocH4FontColor};
+  width: 100%;
+  font-weight: ${theme.tocH4FontWeight};
+  font-style: ${theme.tocH4FontStyle};
 }
 .tocNumber {
   display: inline-block;
@@ -696,6 +715,25 @@ strong { font-weight: bold; color: #1a1a1a; }
 .toc-h4 .tocNumber {
   width: 3rem;
 }
+.toc li.lof-style {
+  margin: 0;
+  padding: 1mm 0;
+  font-size: ${theme.lofFontSize};
+  color: ${theme.lofFontColor};
+  width: 100%;
+  font-weight: ${theme.lofFontWeight};
+  font-weight: ${theme.lofFontStyle};
+}
+.toc li.lot-style {
+  margin: 0;
+  padding: 1mm 0;
+  font-size: ${theme.lotFontSize};
+  color: ${theme.lotFontColor};
+  width: 100%;
+  font-weight: ${theme.lotFontWeight};
+  font-weight: ${theme.lotFontStyle};
+}
+
 .toc li a {
   display: flex;
   align-items: baseline;
@@ -705,9 +743,6 @@ strong { font-weight: bold; color: #1a1a1a; }
 }
 .toc li a::after {
   content: target-counter(attr(href), page);
-  /*float: right;*/
-  /*color: ${p};*/
-  /*font-weight: bold;*/
   order: 3;
   flex: 0 0 auto;
 }
@@ -1234,6 +1269,29 @@ export function buildHtml(
     processedBody = extracted.html;
     toc = buildTocHtml(extracted.headings, theme.tocTitle || "Table of Contents");
   }
+
+  const lofHeadings: { level: number; text: string; id: string }[] = [];
+  const lotHeadings: { level: number; text: string; id: string }[] = [];
+
+  if (theme.showLof) {
+    const extracted = extractCaptions(processedBody, theme.lofKeyword);
+    processedBody = extracted.html;
+    for (const h of extracted.headings) {
+      // Bump everything to H3 since section title is already H2
+      lofHeadings.push({ level: 1, text: h.text, id: h.id });
+    }
+  }
+  if (theme.showLot) {
+    const extracted = extractCaptions(processedBody, theme.lotKeyword);
+    processedBody = extracted.html;
+    for (const h of extracted.headings) {
+      // Bump everything to H3 since section title is already H2
+      lotHeadings.push({ level: 1, text: h.text, id: h.id });
+    }
+  }
+
+  const additionalIndex = buildAdditionalIndex(lofHeadings, lotHeadings, theme);
+
   //processedBody = `<div class="contentContainer">${applyUrlDisplay(processedBody, theme.urlDisplay)}</div>`;
   processedBody = applyUrlDisplay(processedBody, theme.urlDisplay);
 
@@ -1251,6 +1309,7 @@ export function buildHtml(
     buildCover(theme, title, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars, coverInfo),
     buildLegal(theme, vars),
     toc,
+    additionalIndex,
     processedBody
   ].join("\n  ");
 
@@ -1321,6 +1380,7 @@ export function buildMergedHtml(
   // Extract all H2/H3 headings from each section for a full TOC
   let globalCounter = 0;
   let headingCounter = 0;
+  let additionalIndex = "";
   const allHeadings: { level: number; text: string; id: string }[] = [];
   const processedSections = sections.map((s, i) => {
     const sectionId = `merged-${globalCounter++}`;
@@ -1337,6 +1397,30 @@ export function buildMergedHtml(
         // Bump everything to H3 since section title is already H2
         allHeadings.push({ level: 3, text: h.text, id: h.id });
       }
+
+
+      
+      const lofHeadings: { level: number; text: string; id: string }[] = [];
+      const lotHeadings: { level: number; text: string; id: string }[] = [];
+
+      if (theme.showLof) {
+        const extracted = extractCaptions(sectionBody, theme.lofKeyword);
+        sectionBody = extracted.html;
+        for (const h of extracted.headings) {
+          // Bump everything to H3 since section title is already H2
+          lofHeadings.push({ level: 1, text: h.text, id: h.id });
+        }
+      }
+      if (theme.showLot) {
+        const extracted = extractCaptions(sectionBody, theme.lotKeyword);
+        sectionBody = extracted.html;
+        for (const h of extracted.headings) {
+          // Bump everything to H3 since section title is already H2
+          lotHeadings.push({ level: 1, text: h.text, id: h.id });
+        }
+      }
+
+      additionalIndex = buildAdditionalIndex(lofHeadings, lotHeadings, theme);
     }
 
     const pageBreak = i > 0 ? ' style="page-break-before:always;"' : "";
@@ -1363,6 +1447,7 @@ export function buildMergedHtml(
     buildCover(theme, mergedTitle, logoDataUri, coverBackgroundDataUri, coverImageDataUri, vars),
     buildLegal(theme, vars),
     toc,
+    additionalIndex,
     sectionsHtml
   ].join("\n  ");
 
@@ -1431,6 +1516,100 @@ function buildTocHtml(headings: { level: number; text: string; id: string }[], t
       </ul>
     </div>`;
 }
+
+
+/**
+ * Extract H2/H3 headings from body HTML and add IDs for TOC linking.
+ * Returns the modified HTML and the list of headings.
+ */
+function extractCaptions(bodyHtml: string, caption: string, counterStart = 0): {
+  html: string;
+  headings: { level: number; text: string; id: string }[];
+  counterEnd: number;
+} {
+  const headings: { level: number; text: string; id: string }[] = [];
+  let counter = counterStart;
+  const regex = new RegExp(
+    `<(h[6])([^>]*)>\\s*(${caption}[\\s\\S]*?)<\\/\\1>`,
+    "gi"
+  );
+  const html = bodyHtml.replace(regex, (_match: string, tag: string, attrs: string, content: string) => {
+    const level = parseInt(tag[1]);
+    const text = content.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ").trim();
+    // Reuse an existing id if the heading already has one (avoids a duplicate id
+    // attribute, which would break the TOC anchor and target-counter).
+    const existing = attrs.match(/\sid="([^"]+)"/i);
+    const id = existing ? existing[1] : `${caption}-${counter++}`;
+    headings.push({ level, text, id });
+    const newAttrs = existing ? attrs : `${attrs} id="${id}"`;
+    return `<${tag}${newAttrs}>${content}</${tag}>`;
+  });
+  return { html, headings, counterEnd: counter };
+}
+
+/**
+ * Build a table of contents HTML block from headings.
+ */
+function buildAdditionalIndex(lof: { level: number; text: string; id: string }[], lot: { level: number; text: string; id: string }[], theme: PdfTheme): string {
+  let lofItems = "";
+  let lotItems = "";
+
+  if (lof.length > 0) {
+    lofItems = lof.map((h) => {
+      const cls = ' class="lof-style"';
+
+      const regex = new RegExp(
+          `(${theme.lofKeyword}\\s+\\d+)(?:\\s+-\\s+|\\s*:\\s*|\\s+)(.+)`
+      );
+
+      try {
+        const parts = escapeHtml(h.text).match(regex);
+        return `<li${cls}><a href="#${h.id}"><span class="tocNumber">${parts[1]} </span><span>${parts[2]}</span></a></li>`;
+      } catch (error) {
+        return `<li${cls}><a href="#${h.id}"><span class="tocNumber">&nbsp;</span><span>${escapeHtml(h.text)}</span></a></li>`;
+      }
+    }).join("\n      ");
+
+  }
+  
+  if (lot.length > 0) {
+    lotItems = lot.map((h) => {
+      const cls = ' class="lot-style"';
+
+      const regex = new RegExp(
+          `(${theme.lotKeyword}\\s+\\d+)(?:\\s+-\\s+|\\s*:\\s*|\\s+)(.+)`
+      );
+
+      try {
+        const parts = escapeHtml(h.text).match(regex);
+        return `<li${cls}><a href="#${h.id}"><span class="tocNumber">${parts[1]} </span><span>${parts[2]}</span></a></li>`;
+      } catch (error) {
+        return `<li${cls}><a href="#${h.id}"><span class="tocNumber">&nbsp;</span><span>${escapeHtml(h.text)}</span></a></li>`;
+      }
+    }).join("\n      ");
+  }
+
+  const lofIndex = lofItems != "" ? `
+      <h2 class="addIndex">${escapeHtml(theme.lofTitle)}</h2>
+      <ul>
+        ${lofItems}
+      </ul>
+    ` : "";
+
+  const lotIndex = lofItems != "" ? `
+      <h2 class="addIndex">${escapeHtml(theme.lotTitle)}</h2>
+      <ul>
+        ${lotItems}
+      </ul>
+    ` : "";
+  
+  return (lotIndex != "" || lofIndex != "") ? `
+    <div class="toc">
+      ${lofIndex}
+      ${lotIndex}
+    </div>` : "";
+}
+
 
 /**
  * Resolve relative/internal image paths in rendered HTML to absolute file:// URLs.
