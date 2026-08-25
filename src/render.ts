@@ -1804,6 +1804,7 @@ function fmValue(vars: DocVars, key: string): string {
  */
 export function resolveTextVariables(text: string, vars: DocVars): string {
   const now = new Date();
+  text = text.replace(/"/g, '');
   return text
     .replace(/\{title\}/gi, vars.title)
     .replace(/\{filename\}/gi, vars.filename)
@@ -1830,14 +1831,15 @@ export function makeDocVars(
  */
 export function makePdfMetadata(
   title: string,
-  frontmatter: Record<string, unknown> | undefined | null
+  frontmatter: Record<string, unknown> | undefined | null,
+  vars: DocVars
 ): PdfMetadata {
   const fm = frontmatter ?? {};
   const meta: PdfMetadata = { title };
 
-  const author = frontmatterToString(fm.author);
+  const author = resolveTextVariables(String(fm.author), vars);
   if (author) meta.author = author;
-  const subject = frontmatterToString(fm.subject);
+  const subject = resolveTextVariables(String(fm.subject), vars);
   if (subject) meta.subject = subject;
 
   const kw = fm.keywords ?? fm.tags;
@@ -1861,7 +1863,7 @@ export function applyPageBreaks(md: string): string {
   );
 }
 
-function escapeHtml(str: string): string {
+export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")

@@ -1,37 +1,25 @@
-# Rhino PDF Export for Obsidian
+# Configurable PDF Export for Obsidian
+Tis plugin is a fork of the [Rhino PDF Export for Obsidian - Version 1.3.0](https://github.com/degun-osint/obsidian-rhino-pdf-export).
+Export Markdown notes to beautifully styled PDFs with configurable themes: colors, backgrounds, header/footer, watermark, PDF bookmarks, legal notice and many more.
 
-Export Markdown notes to beautifully styled PDFs with configurable themes: colors, logo, header/footer, watermark, PDF bookmarks, legal notice.
-
-## What's new in 1.3.0
-
-Configuration is now layered: **the theme carries the defaults, the note overrides them, the export modal has the last word.**
-
-- **"This document" section** in the export modal: subtitle, cover, table of contents, watermark and classification, changeable right before exporting
-- **"Save to note"**: writes those overrides into the note's frontmatter, so a one-off tweak becomes reproducible
-- **`theme:` frontmatter key**: pin a base theme per note
-- **`order:` frontmatter key**: sort chapters in a merged export, without `01-` filename prefixes
-- **Embedded fonts**: point a theme at font files in your vault and they are inlined into the PDF. Family, weight and style are read from the file itself; "Import from folder" configures a whole family in one click
-- **Fully offline**: fonts are bundled, exporting makes no network request
-- **Quick export command**: no dialog, straight to a PDF next to the note
-- **Duplicate** any theme, built-ins included
-
-⚠️ **Breaking**: `rhino-pdf` frontmatter must now be valid YAML — quote values containing `{`, `:` or `#`. See the [changelog](CHANGELOG.md).
 
 ## Features
-
 - **Built-in themes**: Minimal (clean, serif)
-- **Custom themes**: create and configure your own themes (colors, logo, fonts, margins, legal notice)
+- **Custom themes**: create and configure your own themes (colors, backgrounds, fonts, margins, legal notice, ...)
 - **Theme import/export**: share themes as JSON files
 - **Theme persistence**: custom themes are stored in `.obsidian/rhino-pdf-themes.json`, outside the plugin folder (survives plugin updates)
 - **Live preview**: PDF preview in the export modal before generating
-- **Batch export**: export all notes in a folder with one click (right-click on folder)
-- **Merge mode**: combine all notes in a folder into a single PDF with a full table of contents
-- **Table of contents**: auto-generated from H2/H3 headings, clickable, with page numbers and customizable title
-- **Heading numbering**: optional automatic numbering of H2/H3 (1, 1.1, …), synced with the table of contents
+- **Batch export - not yet testet**: export all notes in a folder with one click (right-click on folder)
+- **Merge mode - not yet testet**: combine all notes in a folder into a single PDF with a full table of contents
+- **Table of contents**: auto-generated from H2/H3/H4 headings, clickable, with page numbers and customizable title
+- **List of figures**: auto generated list of figures (in combination with the ["Caption Numbering"-Plugin](https://github.com/zhangyitong625-zjuchem/Caption-Numbering-Obsidian)), clickable, with page numbers and customizable title
+- **List of tables**: auto generated list of tables (in combination with the ["Caption Numbering"-Plugin](https://github.com/zhangyitong625-zjuchem/Caption-Numbering-Obsidian)), clickable, with page numbers and customizable title
+- **Heading numbering - not yet testet**: optional automatic numbering of H2/H3 (1, 1.1, …), synced with the table of contents
 - **External links**: optionally show link URLs inline or as page footnotes
+- **Internal links**: internal links tho headlines (H2, H3, H4) via Wiki-Links
 - **YAML frontmatter**: override theme settings per note via the `rhino-pdf` key, including which theme to use
-- **Export overrides**: change subtitle, cover, TOC, watermark and classification in the export modal, then save them to the note or to the theme
-- **Obsidian callouts**: full callout rendering with colors and icons (all standard types + [Callout Manager](https://github.com/eth-p/obsidian-callout-manager) compatibility)
+- **Export overrides**: change subtitle, cover, TOC, watermark, classification and more in the export modal, then save them to the note or to the theme
+- **Obsidian callouts - not yet testet**: full callout rendering with colors and icons (all standard types + [Callout Manager](https://github.com/eth-p/obsidian-callout-manager) compatibility)
 - **Watermark**: optional text watermark on every page (configurable text, color, opacity, font size, rotation)
 - **Dynamic headers/footers**: header, footer and classification text support `{title}`, `{filename}`, `{author}`, `{date}`, `{time}` and `{fm.key}` (any frontmatter field), resolved at export time
 - **PDF bookmarks**: clickable outline (H1/H2/H3) generated automatically in the PDF, visible in any PDF reader's sidebar
@@ -43,12 +31,19 @@ Configuration is now layered: **the theme carries the defaults, the note overrid
 - **Merge ordering**: sort notes of a merged export with the `order` frontmatter key
 - **Quick export**: "Export note as PDF with last settings" skips the modal entirely
 - **Edit theme shortcut**: "Edit theme" button in the export modal opens the theme editor without losing your overrides
-- **Logo**: displayed on cover page + small version in the top-right corner of subsequent pages
 - **Pagination**: configurable footer format (`{page}` / `{pages}`, via paged.js CSS counters)
-- **Legal notice**: optional block at the end of the document
+- **Legal notice**: optional block with individual content- and styling-options in front of the toc
 - **CSS Paged Media**: rendered via paged.js (running headers, margin boxes, page counters)
 - **Embedded fonts**: reference font files from your vault (woff2, woff, ttf, otf) and they are inlined into the PDF — same rendering on every machine, even if the font is not installed
 - **Offline**: paged.js and the Inter / JetBrains Mono fonts are bundled locally. Exporting never touches the network, so a document can be exported air-gapped and the act of exporting it leaks nothing
+- **Operon-Task WikiLink Overlay-Chips**: converting into tables with taskname, assignees and due date (the visibility of the three chips must be configured in the Operon plugin)
+
+
+## Limitations
+The merged-export function has not yet been tested.
+Tests were conducted exclusively for the export of individual notes.
+Installing this plugin alongside the "Rhino PDF Export for Obsidian" plugin is not recommended.
+
 
 ## Installation
 

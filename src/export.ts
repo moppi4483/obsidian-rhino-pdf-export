@@ -219,6 +219,6 @@ export async function exportNoteToPdf(req: ExportRequest): Promise<void> {
   const coverInfo = coverInfoRows(fm, coverInfoKeys);
   const html = buildHtml(bodyHtml, title, theme, assets, vars, coverInfo);
 
-  const meta = theme.includeMetadata ? makePdfMetadata(title, fm) : undefined;
+  const meta = theme.includeMetadata ? makePdfMetadata(title, fm, vars) : undefined;
   await generatePdf(html, outputPath, meta);
 }

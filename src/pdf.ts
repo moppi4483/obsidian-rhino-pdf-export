@@ -132,8 +132,8 @@ function applyPdfMetadata(pdfDoc: PDFDocument, meta: PdfMetadata): void {
   if (meta.author) pdfDoc.setAuthor(meta.author);
   if (meta.subject) pdfDoc.setSubject(meta.subject);
   if (meta.keywords && meta.keywords.length > 0) pdfDoc.setKeywords(meta.keywords);
-  pdfDoc.setProducer("Rhino PDF Export for Obsidian");
-  pdfDoc.setCreator("Rhino PDF Export for Obsidian");
+  pdfDoc.setProducer("Configureable PDF Export for Obsidian");
+  pdfDoc.setCreator("Configureable PDF Export for Obsidian");
 }
 
 /**

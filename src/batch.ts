@@ -14,6 +14,8 @@ import {
   makeDocVars,
   makePdfMetadata,
   coverInfoRows,
+  escapeHtml,
+  resolveTextVariables,
   type MergedSection,
 } from "./render";
 import { generatePdf } from "./pdf";
@@ -389,6 +391,8 @@ export class BatchExportModal extends Modal {
             h1: noteTheme.pageBreakBeforeH1,
             h2: noteTheme.pageBreakBeforeH2,
             h3: noteTheme.pageBreakBeforeH3,
+            h4: false,
+            h5: false,
           },
         });
       } catch (err: unknown) {
@@ -401,7 +405,7 @@ export class BatchExportModal extends Modal {
     const mergedTitle = folderName;
     const vars = makeDocVars(mergedTitle, folderName, {});
     const html = buildMergedHtml(sections, mergedTitle, theme, assets, vars);
-    const meta = theme.includeMetadata ? makePdfMetadata(mergedTitle, {}) : undefined;
+    const meta = theme.includeMetadata ? makePdfMetadata(mergedTitle, {}, vars) : undefined;
     await generatePdf(html, result.filePath, meta);
 
     progressBar.value = mdFiles.length;
