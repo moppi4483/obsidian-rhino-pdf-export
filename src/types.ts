@@ -124,9 +124,18 @@ export interface PdfTheme {
   protocolContractorParticipantValue: string;
   protocolDateText: string;
   protocolDateValue: string;
+  protocolDateFormat: string;
   protocolLocationText: string;
   protocolLocationValue: string;
-
+  protocolTaskTableHeaderTask: string;
+  protocolTaskTableHeaderAssignee: string;
+  protocolTaskTableHeaderDue: string;
+  protocolTaskTableWIPStatus: string;
+  protocolTaskTableWIPStatusLegendTitle: string;
+  protocolTaskTableWIPStatusLegendPlannedText: string;
+  protocolTaskTableWIPStatusLegendInProgressText: string;
+  protocolTaskTableWIPStatusLegendFinishedText: string;
+  protocolTaskTableWIPStatusLegendCanceledText: string;
 
   // Header (page 2+)
   showHeaderLogo: boolean;

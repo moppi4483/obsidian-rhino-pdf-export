@@ -674,7 +674,46 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addLabelOutputRow(c, theme, "Contractor of the meeting", "protocolContractorText", "protocolContractorValue");
     this.addLabelOutputRow(c, theme, "Contractor-participants of the meeting", "protocolContractorParticipantText", "protocolContractorParticipantValue");
     this.addLabelOutputRow(c, theme, "Date of the meeting", "protocolDateText", "protocolDateValue");
+    this.addText(c, "Date format", () => theme.protocolDateFormat, (v) => { theme.protocolDateFormat = v.trim(); }, {
+      desc: "Format-string for date-values in the protocol",
+      placeholder: "YYYY-MM-DD",
+    });
     this.addLabelOutputRow(c, theme, "Location of the meeting", "protocolLocationText", "protocolLocationValue");
+
+    this.addText(c, "Table header for the column \"task\"", () => theme.protocolTaskTableHeaderTask, (v) => { theme.protocolTaskTableHeaderTask = v.trim(); }, {
+      placeholder: "Task",
+    });
+    this.addText(c, "Table header for the column \"assignee\"", () => theme.protocolTaskTableHeaderAssignee, (v) => { theme.protocolTaskTableHeaderAssignee = v.trim(); }, {
+      placeholder: "Assignee",
+    });
+    this.addText(c, "Table header for the column \"due date\"", () => theme.protocolTaskTableHeaderDue, (v) => { theme.protocolTaskTableHeaderDue = v.trim(); }, {
+      placeholder: "Due",
+    });
+    this.addText(c, "Values for the work-in-progress state of the operon-tasks", () => theme.protocolTaskTableWIPStatus, (v) => { theme.protocolTaskTableWIPStatus = v.trim(); }, {
+      desc: "multiple values possible - use the seperator \",\"",
+      placeholder: "wip, work in progress",
+    });
+
+    this.addText(c, "Legend-title", () => theme.protocolTaskTableWIPStatusLegendTitle, (v) => { theme.protocolTaskTableWIPStatusLegendTitle = v.trim(); }, {
+      desc: "Title for the legend of the task-status",
+      placeholder: "Legend",
+    });
+    this.addText(c, "Description for 📅", () => theme.protocolTaskTableWIPStatusLegendPlannedText, (v) => { theme.protocolTaskTableWIPStatusLegendPlannedText = v.trim(); }, {
+      desc: "Value for the description of the state-icon 📅 in the legend",
+      placeholder: "Planned",
+    });
+    this.addText(c, "Description for ⏳", () => theme.protocolTaskTableWIPStatusLegendInProgressText, (v) => { theme.protocolTaskTableWIPStatusLegendInProgressText = v.trim(); }, {
+      desc: "Value for the description of the state-icon ⏳ in the legend",
+      placeholder: "In progress",
+    });
+    this.addText(c, "Description for ✅", () => theme.protocolTaskTableWIPStatusLegendFinishedText, (v) => { theme.protocolTaskTableWIPStatusLegendFinishedText = v.trim(); }, {
+      desc: "Value for the description of the state-icon ✅ in the legend",
+      placeholder: "Completed",
+    });
+    this.addText(c, "Description for ❌", () => theme.protocolTaskTableWIPStatusLegendCanceledText, (v) => { theme.protocolTaskTableWIPStatusLegendCanceledText = v.trim(); }, {
+      desc: "Value for the description of the state-icon ❌ in the legend",
+      placeholder: "Canceled",
+    });
   }
 
   private renderHeaderFooterSection(c: HTMLElement, theme: PdfTheme) {

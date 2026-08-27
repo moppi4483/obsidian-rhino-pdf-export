@@ -18,23 +18,28 @@ function bundledFontFaces(theme: PdfTheme): string {
     .join("\n");
 }
 
+
 /**
- * Konvertiert einen Datum-String im Format "YYYY-MM-DD" in "dd.mm.yyyy".
- * Entspricht der Eingabestring nicht diesem Format, wird er unverändert zurückgegeben.
- *
- * @param {string} dateString - Datum im Format "YYYY-MM-DD", z. B. "2026-08-13"
- * @returns {string} Datum im Format "dd.mm.yyyy", oder der unveränderte Eingabestring, falls ungültig
+ * 
+ * @param dateString string with the format YYYY-MM-DD
+ * @param format string for formatting the return value of the date
+ * @returns 
  */
-export function formatDateToGerman(dateString: string): string {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+function formatDate(dateString, format) {
+  format = format != "" ? format : "YYYY-MM-DD";
 
-  if (!match) {
-    return dateString;
+  if (dateString != "") {
+    const [year, month, day] = dateString.split('-');
+    
+    return format
+      .replace('YYYY', year)
+      .replace('MM', month)
+      .replace('DD', day)
+      .replace('M', String(Number(month)))
+      .replace('D', String(Number(day)));
+  } else {
+    return "";
   }
-
-  const [, year, month, day] = match;
-
-  return `${day}.${month}.${year}`;
 }
 
 /**
@@ -397,10 +402,13 @@ img {
     padding: 0px 5px;
 }
 .h2-content h2 {
+    font-size: ${theme.h2FontSize};
+    font-weight: ${theme.h2FontWeight};
+    color: ${theme.h2FontColor};
+    font-style: ${theme.h2FontStyle};
     background: ${a};
     margin: 0px -5px;
     padding: 0px 5px;
-    color: white;
 }
 h2 {
   font-size: ${theme.h2FontSize};
@@ -908,6 +916,18 @@ a {
 .task-table th * {
     text-align: left !important;
 }
+.task-table-legend {
+  margin: 0px;
+  font-size: 9pt;
+  border: none;
+  text-align:left;
+}
+.task-table-legend * {
+  margin: 0px;
+  font-size: 9pt;
+  border: none;
+  text-align: left;
+}
 ${theme.watermarkText ? `
 /* --- Watermark --- */
 .rhino-watermark {
@@ -1096,7 +1116,7 @@ function buildCover(
   const dateLoc = `
     <tr>
       <td>${escapeHtml(theme.protocolDateText)}</td>
-      <td>${escapeHtml(formatDateToGerman(resolveTextVariables(theme.protocolDateValue, vars)))}</td>
+      <td>${escapeHtml(formatDate(resolveTextVariables(theme.protocolDateValue, vars), theme.protocolDateFormat))}</td>
       <td>${escapeHtml(theme.protocolLocationText)}</td>
       <td>${escapeHtml(resolveTextVariables(theme.protocolLocationValue, vars))}</td>
     </tr>
@@ -1368,7 +1388,7 @@ export function buildHtml(
     processedBody = wrapH2Sections(processedBody);
   }
 
-  processedBody = convertOperonTasksToHTMLTable(processedBody);
+  processedBody = convertOperonTasksToHTMLTable(processedBody, theme);
   processedBody = fixInternalHeadingLinks(processedBody);
 
   const body = [
@@ -1506,7 +1526,7 @@ export function buildMergedHtml(
     toc = buildTocHtml(allHeadings, theme.tocTitle || "Table of Contents");
   }
 
-  sectionsHtml = convertOperonTasksToHTMLTable(sectionsHtml);
+  sectionsHtml = convertOperonTasksToHTMLTable(sectionsHtml, theme);
   sectionsHtml = fixInternalHeadingLinks(sectionsHtml);
 
   const body = [
@@ -1874,7 +1894,7 @@ export function escapeHtml(str: string): string {
 }
 
 
-function convertOperonTasksToHTMLTable(html) {
+function convertOperonTasksToHTMLTable(html, theme: PdfTheme) {
   const TASK_SELECTOR = ".operon-task-wikilink-reading";
   const TASK_LABEL_SELECTOR = ".operon-task-wikilink-label";
 
@@ -1970,6 +1990,62 @@ function convertOperonTasksToHTMLTable(html) {
       task,
       root: getTaskRoot(task)
     }));
+
+
+  /**
+   * Ermittelt den Status eines einzelnen Operon-Tasks anhand seines DOM-Elements.
+   *
+   * @param {Element} taskElement - Das DOM-Element eines Operon-Tasks
+   *   (z.B. der Knoten mit data-operon-task-wikilink-wrapper="true").
+   * @param {string[]} inArbeitKeywords - Liste von Zeichenketten (auch mehrwortig),
+   *   die den Status "in Arbeit" markieren, wenn sie dem Teil hinter dem Punkt
+   *   im Label neben lucide-align-start-horizontal entsprechen (Vergleich
+   *   ist case-insensitive).
+   * @returns {number} 0 = abgebrochen, 1 = geplant, 2 = in Arbeit, 3 = abgeschlossen
+   */
+  function getOperonTaskStatus(taskElement, inArbeitKeywords = []) {
+    // 1. abgeschlossen
+    if (
+      taskElement.querySelector('.lucide-circle-check-big') ||
+      taskElement.querySelector('.lucide-check-check')
+    ) {
+      return 3;
+    }
+
+    // 2. abgebrochen
+    if (taskElement.querySelector('.lucide-square-x')) {
+      return 0;
+    }
+
+    // 3. geplant / in Arbeit: Label hinter dem Icon lucide-align-start-horizontal
+    const icon = taskElement.querySelector('.lucide-align-start-horizontal');
+
+    if (icon) {
+      const chip = icon.closest('.operon-chip');
+      const labelEl = chip
+        ? chip.querySelector('.operon-inline-compact-chip-label')
+        : null;
+
+      if (labelEl) {
+        const fullLabel = labelEl.textContent.trim();
+        const dotIndex = fullLabel.indexOf('.');
+        const relevantPart =
+          dotIndex >= 0 ? fullLabel.slice(dotIndex + 1).trim() : fullLabel;
+
+        // Case-insensitiver Vergleich
+        const relevantPartLower = relevantPart.toLowerCase();
+        const isInArbeit = inArbeitKeywords.some(
+          keyword => keyword.toLowerCase() === relevantPartLower
+        );
+
+        if (isInArbeit) {
+          return 2; // in Arbeit
+        }
+      }
+    }
+
+    return 1; // geplant (Default, falls nichts anderes zutrifft)
+  }
 
 
   // ============================================================
@@ -2234,11 +2310,15 @@ function convertOperonTasksToHTMLTable(html) {
       }
     }
 
+    const wipValues = theme.protocolTaskTableWIPStatus.split(',').map(item => item.trim());
+    const status = getOperonTaskStatus(task, wipValues);
+
 
     return {
       aufgabe,
       verantwortliche,
-      termin
+      termin,
+      status
     };
   }
 
@@ -2292,14 +2372,21 @@ function convertOperonTasksToHTMLTable(html) {
         "tr"
       );
 
+    const statusHeader =
+      doc.createElement(
+        "th"
+      );
 
+    statusHeader.textContent =
+      "\u00A0";
+    
     const aufgabeHeader =
       doc.createElement(
         "th"
       );
 
     aufgabeHeader.textContent =
-      "Aufgabe";
+      theme.protocolTaskTableHeaderTask;
 
 
     const verantwortlichHeader =
@@ -2308,7 +2395,7 @@ function convertOperonTasksToHTMLTable(html) {
       );
 
     verantwortlichHeader.textContent =
-      "Verantwortlich";
+      theme.protocolTaskTableHeaderAssignee;
 
     verantwortlichHeader.style.width =
       "35%";
@@ -2320,11 +2407,14 @@ function convertOperonTasksToHTMLTable(html) {
       );
 
     terminHeader.textContent =
-      "Termin";
+      theme.protocolTaskTableHeaderDue;
 
     terminHeader.style.width =
       "15%";
 
+    headerRow.appendChild(
+      statusHeader
+    );
 
     headerRow.appendChild(
       aufgabeHeader
@@ -2373,6 +2463,32 @@ function convertOperonTasksToHTMLTable(html) {
           "tr"
         );
 
+
+      // ----------------------------------------------------
+      // Status
+      // ----------------------------------------------------
+      const statusCell =
+        doc.createElement(
+          "td"
+        );
+
+      switch(data.status) {
+        case 0:
+          statusCell.textContent ="❌";
+          break;
+
+        case 1:
+          statusCell.textContent ="📅";
+          break;
+
+        case 2:
+          statusCell.textContent ="⏳";
+          break;
+        
+        case 3:
+          statusCell.textContent ="✅";
+          break;
+      }
 
       // ----------------------------------------------------
       // Aufgabe
@@ -2452,12 +2568,16 @@ function convertOperonTasksToHTMLTable(html) {
         );
 
       terminCell.textContent =
-        formatDateToGerman(data.termin);
+        formatDate(data.termin, theme.protocolDateFormat);
 
 
       // ----------------------------------------------------
       // Zeile zusammensetzen
       // ----------------------------------------------------
+      row.appendChild(
+        statusCell
+      );
+
       row.appendChild(
         aufgabeCell
       );
@@ -2511,6 +2631,7 @@ function convertOperonTasksToHTMLTable(html) {
   // Die neu erzeugten Tabellen bleiben erhalten, da ihre
   // Klassen keinen Bestandteil "operon" enthalten.
   // ============================================================
+  /*
   const elementsToRemove = [
     ...doc.querySelectorAll("*")
   ].filter(element =>
@@ -2520,7 +2641,28 @@ function convertOperonTasksToHTMLTable(html) {
           .toLowerCase()
           .includes("operon")
     )
-  );
+  );*/
+
+  const elementsToRemove = [
+      ...doc.querySelectorAll("*")
+    ].reduce((acc, element) => {
+      // Prüfen, ob das aktuelle Element "operon" im Klassennamen hat
+      const hasOperon = [...element.classList].some(className =>
+        className.toLowerCase().includes("operon")
+      );
+
+      if (hasOperon) {
+        acc.push(element);
+
+        // Prüfen, ob das direkt nachfolgende Element ein <br> ist
+        const nextEl = element.nextElementSibling;
+        if (nextEl && nextEl.tagName.toLowerCase() === "br") {
+          acc.push(nextEl);
+        }
+      }
+
+      return acc;
+    }, []);
 
 
   elementsToRemove.forEach(
@@ -2533,10 +2675,32 @@ function convertOperonTasksToHTMLTable(html) {
   );
 
 
+  let retVal = doc.documentElement.outerHTML;
+
+
+  // ============================================================
+  // Legende für Stati einfügen, sofern Aufgabentabelle vorhanden
+  // ============================================================
+  if (doc.querySelector(".task-table")) {
+    retVal = retVal + `
+        <h5>${theme.protocolTaskTableWIPStatusLegendTitle}</h5>
+        <table class="task-table-legend">
+          <tr>
+            <td>📅</td><td>${theme.protocolTaskTableWIPStatusLegendPlannedText}</td>
+            <td>⏳</td><td>${theme.protocolTaskTableWIPStatusLegendInProgressText}</td>
+            <td>✅</td><td>${theme.protocolTaskTableWIPStatusLegendFinishedText}</td>
+            <td>❌</td><td>${theme.protocolTaskTableWIPStatusLegendCanceledText}</td>
+          </t>
+        </table>
+      </div>
+    `;
+  }
+  
+
   // ============================================================
   // Fertiges HTML zurückgeben
   // ============================================================
-  return doc.documentElement.outerHTML;
+  return retVal;
 }
 
 function fixInternalHeadingLinks(htmlString) {
