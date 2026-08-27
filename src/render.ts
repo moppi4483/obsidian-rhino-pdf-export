@@ -975,8 +975,8 @@ function buildRunningFooter(theme: PdfTheme, vars: DocVars): string {
     ? `<div class="running-footer-pagination">${buildPagination(theme.paginationFormat)}</div>`
     : "";
   const footerContentText = theme.footerText
-    ? `<div class="running-footer-text"><span style="font-size: 7pt;">Projektname: </span>${escapeHtml(resolveTextVariables(theme.footerText, vars))}</div>`
-    : `<div class="running-footer-text"><span style="font-size: 7pt;">&nbsp;</span>&nbsp;</div>`;
+    ? `<div class="running-footer-text">${escapeHtml(resolveTextVariables(theme.footerText, vars))}</div>`
+    : `<div class="running-footer-text">&nbsp;</div>`;
   return `${footerContentPage}\n ${footerContentText}`;
 }
 
