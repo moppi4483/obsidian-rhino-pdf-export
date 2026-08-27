@@ -1331,26 +1331,28 @@ export function buildHtml(
   // Table of contents (extract headings + inject anchor IDs into the body)
   let toc = "";
   let processedBody = bodyHtml;
+  let extracted  = extractHeadings(bodyHtml);
+  processedBody = extracted.html;
+
   if (theme.showToc) {
-    const extracted = extractHeadings(bodyHtml);
-    processedBody = extracted.html;
     toc = buildTocHtml(extracted.headings, theme.tocTitle || "Table of Contents");
   }
 
   const lofHeadings: { level: number; text: string; id: string }[] = [];
   const lotHeadings: { level: number; text: string; id: string }[] = [];
 
+  extracted = extractCaptions(processedBody, theme.lofKeyword);
+  processedBody = extracted.html;
   if (theme.showLof) {
-    const extracted = extractCaptions(processedBody, theme.lofKeyword);
-    processedBody = extracted.html;
     for (const h of extracted.headings) {
       // Bump everything to H3 since section title is already H2
       lofHeadings.push({ level: 1, text: h.text, id: h.id });
     }
   }
+
+  extracted = extractCaptions(processedBody, theme.lotKeyword);
+  processedBody = extracted.html;
   if (theme.showLot) {
-    const extracted = extractCaptions(processedBody, theme.lotKeyword);
-    processedBody = extracted.html;
     for (const h of extracted.headings) {
       // Bump everything to H3 since section title is already H2
       lotHeadings.push({ level: 1, text: h.text, id: h.id });
