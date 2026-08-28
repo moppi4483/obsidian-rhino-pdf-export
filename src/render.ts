@@ -2771,13 +2771,15 @@ function fixInternalHeadingLinks(htmlString) {
  * @param body 
  * @returns 
  */
-function arrowReplace(body: string): string {
-  body = body.replaceAll("-->", "&rarr;");
-  body = body.replaceAll("<->", "&harr;");
-  body = body.replaceAll("<--", "&larr;");
-  body = body.replaceAll("==>", "&rArr;");
-  body = body.replaceAll("<=>", "&hArr;");
-  body = body.replaceAll("<==", "&lArr;");
+function arrowReplace(text: string): string {
+    const arrowMapper = {
+        '--&gt;': '&rarr;',   
+        '&lt;-&gt;': '&harr;',   
+        '&lt;--': '&larr;',   
+        '==&gt;': '&rArr;',   
+        '&lt;=&gt;': '&hArr;',  
+        '&lt;==': '&lArr;'   
+    };
 
-  return body;
+    return text.replace(/==&gt;|&lt;=&gt;|&lt;==|--&gt;|&lt;-&gt;|&lt;--/g, (match) => arrowMapper[match]);
 }
