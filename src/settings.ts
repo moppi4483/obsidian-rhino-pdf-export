@@ -267,6 +267,19 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     }
   }
 
+
+  private openMainTypoEditor(theme: PdfTheme) {
+    const { containerEl } = this;
+    containerEl.empty();
+
+    new Setting(containerEl).setName(`Edit: ${theme.name} main-typography`).setHeading();
+    new Setting(containerEl).addButton((btn) => {
+      btn.setButtonText("Back").onClick(() => this.openThemeEditor(theme));
+    });
+    
+    this.renderMainTypographySection(containerEl, theme);
+  }
+
   // --- Theme editor ---------------------------------------------------------
   // Sections follow the order things appear in the document.
 
@@ -277,6 +290,10 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     new Setting(containerEl).setName(`Edit: ${theme.name}`).setHeading();
     new Setting(containerEl).addButton((btn) => {
       btn.setButtonText("Back").onClick(() => this.refresh());
+    });
+    
+    new Setting(containerEl).addButton((btn) => {
+      btn.setButtonText("Edit main-typography").onClick(() => this.openMainTypoEditor(theme));
     });
 
     this.addText(containerEl, "Theme name", () => theme.name, (v) => { theme.name = v; });
@@ -296,7 +313,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
     this.renderPageSection(containerEl, theme);
     this.renderCustomFonts(containerEl, theme);
-    this.renderMainTypographySection(containerEl, theme);
+    //this.renderMainTypographySection(containerEl, theme);
     this.renderCoverSection(containerEl, theme);
     this.renderLegalSection(containerEl, theme);
     this.renderTocSection(containerEl, theme);

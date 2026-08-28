@@ -1391,6 +1391,8 @@ export function buildHtml(
   processedBody = convertOperonTasksToHTMLTable(processedBody, theme);
   processedBody = fixInternalHeadingLinks(processedBody);
 
+  processedBody = arrowReplace(processedBody);
+
   const body = [
     buildRunningHeader(theme, vars, logoDataUri),
     buildRunningFooter(theme, vars),
@@ -2755,4 +2757,27 @@ function fixInternalHeadingLinks(htmlString) {
   }
 
   return doc.documentElement.outerHTML;
+}
+
+/**
+ * Replacement of arrows with HTML-code
+ *  --> in  &rarr;
+ *  <-- in  &rarr;
+ *  <-> in  &harr;
+ *  ==> in  &rArr;  
+ *  <== in  &lArr;
+ *  <=> in  &hArr;
+ * 
+ * @param body 
+ * @returns 
+ */
+function arrowReplace(body: string): string {
+  body = body.replaceAll("-->", "&rarr;");
+  body = body.replaceAll("<->", "&harr;");
+  body = body.replaceAll("<--", "&larr;");
+  body = body.replaceAll("==>", "&rArr;");
+  body = body.replaceAll("<=>", "&hArr;");
+  body = body.replaceAll("<==", "&lArr;");
+
+  return body;
 }
