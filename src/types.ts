@@ -23,26 +23,48 @@ export interface PdfTheme {
   primaryColor: string;
   accentColor: string;
   
+  listItemColor: string;
+
   h2FontSize: string;
   h2FontColor: string;
   h2FontStyle: "normal" | "oblique" | "italic";
   h2FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  h2MarginTop: string;
+  h2MarginRight: string;
+  h2MarginBottom: string;
+  h2MarginLeft: string;
   h3FontSize: string;
   h3FontColor: string;
   h3FontStyle: "normal" | "oblique" | "italic";
   h3FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  h3MarginTop: string;
+  h3MarginRight: string;
+  h3MarginBottom: string;
+  h3MarginLeft: string;
   h4FontSize: string;
   h4FontColor: string;
   h4FontStyle: "normal" | "oblique" | "italic";
   h4FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  h4MarginTop: string;
+  h4MarginRight: string;
+  h4MarginBottom: string;
+  h4MarginLeft: string;
   h5FontSize: string;
   h5FontColor: string;
   h5FontStyle: "normal" | "oblique" | "italic";
   h5FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  h5MarginTop: string;
+  h5MarginRight: string;
+  h5MarginBottom: string;
+  h5MarginLeft: string;
   h6FontSize: string;
   h6FontColor: string;
   h6FontStyle: "normal" | "oblique" | "italic";
   h6FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  h6MarginTop: string;
+  h6MarginRight: string;
+  h6MarginBottom: string;
+  h6MarginLeft: string;
 
   // Logo (relative path in vault, or empty)
   logoPath: string;
@@ -95,6 +117,8 @@ export interface PdfTheme {
   titleFontColor: string;
   titleFontStyle: "normal" | "oblique" | "italic";
   titleFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  titleVerticalAlign: "top" | "bottom";
+  titleHeight: string;
   subtitle: string;
   subtitleFontSize: string;
   subtitleFontColor: string;
@@ -142,6 +166,8 @@ export interface PdfTheme {
   showHeaderOn1stPage: boolean;
   showFooterOn1stPage: boolean;
   headerLogoHeight: string; // CSS value, e.g. "12mm"
+  headerLogoWidth: string;
+  headerLogoPosition: "left" | "right";
   headerText: string; // supports {title}, {date}
   header1FontSize: string;
   header1FontColor: string;
@@ -152,6 +178,11 @@ export interface PdfTheme {
   header2FontColor: string;
   header2FontStyle: "normal" | "oblique" | "italic";
   header2FontWeight: "normal" | "bold" | "bolder" | "lighter";
+  headerTextBoxHeight: string;
+  headerTextMarginTop: string;
+  headerTextMarginRight: string;
+  headerTextMarginBottom: string;
+  headerTextMarginLeft: string;
 
   // Footer
   showPagination: boolean;
@@ -160,11 +191,16 @@ export interface PdfTheme {
   paginationFontColor: string;
   paginationFontStyle: "normal" | "oblique" | "italic";
   paginationFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  paginationRightIndent: string;
   footerText: string; // supports {title}, {date}
   footerFontSize: string;
   footerFontColor: string;
   footerFontStyle: "normal" | "oblique" | "italic";
   footerFontWeight: "normal" | "bold" | "bolder" | "lighter";
+  footerTextMarginTop: string;
+  footerTextMarginRight: string;
+  footerTextMarginBottom: string;
+  footerTextMarginLeft: string;
 
   // External links: how to render the URL in the PDF
   urlDisplay: "off" | "inline" | "footnote";
@@ -238,6 +274,8 @@ export interface PdfTheme {
   legalEditorial: string;
   legalAuthorText: string;
   legalAuthor: string;
+  legalCreationInfoText: string;
+  legalCreationInfo: string;
   legalPhotoCreditText: string;
   legalPhotoCredit: string;
 

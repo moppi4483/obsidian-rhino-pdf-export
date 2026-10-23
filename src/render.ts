@@ -124,7 +124,8 @@ body {
   position: running(headertext);
   line-height: 1;
   padding: 0px 0 0 0px;
-  margin: -50px 100px 0 -17px;
+  
+  margin: ${theme.headerTextMarginTop ? theme.headerTextMarginTop : `0mm`} ${theme.headerLogoPosition == "right" ? (theme.headerLogoWidth ? theme.headerLogoWidth : `0mm`) : (theme.headerTextMarginRight ? theme.headerTextMarginRight : `0mm`)} ${theme.headerTextMarginBottom ? theme.headerTextMarginBottom : `0mm`} ${theme.headerLogoPosition == "left" ? (theme.headerLogoWidth ? theme.headerLogoWidth : `0mm`) : (theme.headerTextMarginLeft ? theme.headerTextMarginLeft : `0mm`)};
   height: 100px;
   display: inline-flex;
   /* flex-direction: column; */
@@ -167,9 +168,9 @@ body {
   color: ${theme.paginationFontColor};
   font-weight: ${theme.paginationFontWeight};
   font-style: ${theme.paginationFontStyle};
-  margin: 0 0 0 -60px;
-  padding: 20px 0 0 0;
-  width: 80px;
+  margin: ${theme.footerTextMarginTop ? theme.footerTextMarginTop : `0mm`} ${theme.footerTextMarginRight ? theme.footerTextMarginRight : `0mm`} ${theme.footerTextMarginBottom ? theme.footerTextMarginBottom : `0mm`} ${theme.paginationRightIndent ? `-` + theme.paginationRightIndent : `0mm`};
+  padding: 8mm 0 0 0;
+  width: 20mm;
   text-align: right;
   white-space: nowrap;
 }
@@ -187,15 +188,15 @@ body {
   font-weight: ${theme.footerFontWeight};
   font-style: ${theme.footerFontStyle};
   color: ${theme.footerFontColor};
-  margin: 0 0 0 -18;
-  padding: 20px 0 0 0;
+  margin: ${theme.footerTextMarginTop ? theme.footerTextMarginTop : `0mm`} ${theme.footerTextMarginRight ? theme.footerTextMarginRight : `0mm`} ${theme.footerTextMarginBottom ? theme.footerTextMarginBottom : `0mm`} ${theme.footerTextMarginLeft ? theme.footerTextMarginLeft : `0mm`};
+  padding: 8mm 0 0 0;
   display: flex;
   text-align: left;
   white-space: nowrap;
   justify-content: flex-start;
   align-content: flex-start;
   align-items: flex-start;
-  height:35px;
+  /*height:35px;*/
 }
 .running-footer-text span {
     margin-left: -18px;
@@ -280,9 +281,9 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
 .coverTitleContainer {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Richtet den Inhalt nach unten aus */
+  justify-content: ${theme.titleVerticalAlign == "top" ? `flex-start` : `flex-end`}; 
   align-items: flex-start; 
-  height: 22mm;
+  height: ${theme.titleHeight};
   padding: 0;
   margin: 0mm;
 }
@@ -375,6 +376,7 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
   font-family: ${theme.bodyFont};
   font-size: ${theme.bodyFontSize};
   line-height: 1.15;
+  padding: 2mm 0mm;
   color: ${p};
   text-align: left;
   vertical-align: top;
@@ -384,13 +386,16 @@ h3::before { content: counter(rh2) "." counter(rh3) " "; }
   padding: 0 0;
 }
 .coverProtocolTable {
-  margin-top: 30pt;
-  margin-bottom: 30pt;
+  margin-top: 22pt;
+  margin-bottom: 22pt;
   padding: 0 0;
 }
 
 /* --- Images --- */
 img {
+  display: block;
+  margin: auto;
+  padding-top: 20px;
   max-width: 100%;
   height: auto;
 }
@@ -410,6 +415,59 @@ img {
     margin: 0px -5px;
     padding: 0px 5px;
 }
+h2, h3, h4, h5 {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* Unterüberschriften */
+    h3, h4, h5 {
+        break-before: avoid !important;
+        page-break-before: avoid !important;
+    }
+
+    /* Überschriften, auf die weitere Überschriften folgen */
+    
+    h2:has(+ h3),
+    h3:has(+ h4),
+    h4:has(+ h5) {
+        break-after: avoid !important;
+    }
+
+    /* Absätze direkt nach Überschriften */
+    h2 + p,
+    h3 + p,
+    h4 + p,
+    h5 + p {
+        orphans: 3;
+        widows: 3;
+    }
+
+li {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+ul > li,
+    ol > li {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    /* Ersten Eintrag mit dem zweiten zusammenhalten */
+    ul > li:first-child:not(:last-child),
+    ol > li:first-child:not(:last-child) {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+    }
+
+    /* Letzten Eintrag mit dem vorletzten zusammenhalten */
+    ul > li:last-child:not(:first-child),
+    ol > li:last-child:not(:first-child) {
+        break-before: avoid !important;
+        page-break-before: avoid !important;
+    }
+
 h2 {
   font-size: ${theme.h2FontSize};
   font-weight: ${theme.h2FontWeight};
@@ -417,36 +475,40 @@ h2 {
   font-style: ${theme.h2FontStyle};
   /* border-bottom: 2px solid ${a}; */
   /*padding-bottom: 3mm;*/
+  margin: ${theme.h2MarginTop ? theme.h2MarginTop : `0mm`} ${theme.h2MarginRight ? theme.h2MarginRight : `0mm`} ${theme.h2MarginBottom ? theme.h2MarginBottom : `0mm`} ${theme.h2MarginLeft ? theme.h2MarginLeft : `0mm`};
+}
+.pagedjs_page_content > div > h2:first-child {
   margin-top: 0mm;
-  margin-bottom: 3mm;
-  page-break-after: avoid;
 }
 h3 {
   font-size: ${theme.h3FontSize};
   font-weight: ${theme.h3FontWeight};
   color: ${theme.h3FontColor};
   font-style: ${theme.h3FontStyle};
-  margin-top: 7mm;
-  margin-bottom: 3mm;
-  page-break-after: avoid;
+  margin: ${theme.h3MarginTop ? theme.h3MarginTop : `0mm`} ${theme.h3MarginRight ? theme.h3MarginRight : `0mm`} ${theme.h3MarginBottom ? theme.h3MarginBottom : `0mm`} ${theme.h3MarginLeft ? theme.h3MarginLeft : `0mm`};
+}
+.pagedjs_page_content > div > h3:first-child {
+  margin-top: 0mm;
 }
 h4 {
   font-size: ${theme.h4FontSize};
   font-weight: ${theme.h4FontWeight};
   color: ${theme.h4FontColor};
   font-style: ${theme.h4FontStyle};
-  margin-top: 7mm;
-  margin-bottom: 3mm;
-  page-break-after: avoid;
+  margin: ${theme.h4MarginTop ? theme.h4MarginTop : `0mm`} ${theme.h4MarginRight ? theme.h4MarginRight : `0mm`} ${theme.h4MarginBottom ? theme.h4MarginBottom : `0mm`} ${theme.h4MarginLeft ? theme.h4MarginLeft : `0mm`};
+}
+.pagedjs_page_content > div > h4:first-child {
+  margin-top: 0mm;
 }
 h5 {
   font-size: ${theme.h5FontSize};
   font-weight: ${theme.h5FontWeight};
   color: ${theme.h5FontColor};
   font-style: ${theme.h5FontStyle};
-  margin-top: 7mm;
-  margin-bottom: 3mm;
-  page-break-after: avoid;
+  margin: ${theme.h5MarginTop ? theme.h5MarginTop : `0mm`} ${theme.h5MarginRight ? theme.h5MarginRight : `0mm`} ${theme.h5MarginBottom ? theme.h5MarginBottom : `0mm`} ${theme.h5MarginLeft ? theme.h5MarginLeft : `0mm`};
+}
+.pagedjs_page_content > div > h5:first-child {
+  margin-top: 0mm;
 }
 h6 {
   font-size: ${theme.h6FontSize};
@@ -455,7 +517,6 @@ h6 {
   font-style: ${theme.h6FontStyle};
   margin-top: 0mm;
   margin-bottom: 7mm;
-  page-break-before: avoid;
   text-align:center;
 }
 ${theme.pageBreakBeforeH1 || theme.pageBreakBeforeH2 || theme.pageBreakBeforeH3 ? `
@@ -467,25 +528,28 @@ ${theme.pageBreakBeforeH3 ? "h3 { break-before: page; page-break-before: always;
 .cover h1, .cover h2, .cover h3,
 .toc h1, .toc h2, .toc h3 { break-before: avoid; page-break-before: avoid; }
 ` : ""}
-
+.toc li {  list-style-type: none; }
 p { margin: 2mm 0; text-align: justify; }
 ul, ol { margin: 2mm 0 2mm 5mm; padding-left: 5mm; }
 li { margin-bottom: 1.5mm; }
+ul li { list-style-type: disc; }
+li::marker { color: ${theme.listItemColor}; }
 
 blockquote {
-  background: linear-gradient(135deg, #f0f4fa 0%, #e8f4f0 100%);
+  background: rgb(0, 63, 87);
   border-left: 4px solid ${a};
   margin: 4mm 0;
   padding: 3mm 5mm;
   border-radius: 0 4px 4px 0;
-  font-size: 9.5pt;
-  color: #333;
+  font-size: ${theme.bodyFontSize};
+  font-family: ${theme.bodyFont};
+  color: #FFF;
 }
-blockquote strong { color: ${p}; }
+blockquote strong { color: #FFF; }
 
 code {
   font-family: ${theme.codeFont};
-  background: #f0f4fa;
+  background: rgb(192, 167, 143);
   color: ${p};
   padding: 0.5mm 1.5mm;
   border-radius: 3px;
@@ -523,10 +587,14 @@ table {
   font-size: 9pt;
   /*page-break-inside: avoid;*/
 }
-thead { background: ${p}; color: white; }
+thead { background: ${p}; color: white; break-after: avoid; }
 th { padding: 2.5mm 3mm; text-align: left; font-weight: bold; font-size: 9pt; }
 td { padding: 2mm 3mm; border-bottom: 1px solid #e0e0e0; }
 tr:nth-child(even) { background: #f7f9fc; }
+tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 
 hr {
   border: none;
@@ -1195,6 +1263,13 @@ function buildLegal(theme: PdfTheme, vars: DocVars) {
         <p>${escapeHtml(resolveTextVariables(theme.legalAuthor, vars))}</p>
       `;
   }
+    let creationInfo = "";
+  if (escapeHtml(resolveTextVariables(theme.legalCreationInfo, vars)) != "") {
+    creationInfo = `
+        <h5>${escapeHtml(resolveTextVariables(theme.legalCreationInfoText, vars))}</h5>
+        <p>${escapeHtml(resolveTextVariables(theme.legalCreationInfo, vars))}</p>
+      `;
+  }
   let photoCredit = "";
   if (escapeHtml(resolveTextVariables(theme.legalPhotoCredit, vars)) != "") {
     photoCredit = `
@@ -1222,6 +1297,7 @@ function buildLegal(theme: PdfTheme, vars: DocVars) {
 
     ${editorial}
     ${author}
+    ${creationInfo}
     ${photoCredit}
     
     <p>&nbsp;</p>

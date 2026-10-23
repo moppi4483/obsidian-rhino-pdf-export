@@ -374,6 +374,9 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     }); 
     this.addElementStylingRow(c, theme, "Font-format for plain-text in the whole document", "bodyFontSize", "", "bodyFontStyle", "bodyFontWeight");
     this.addElementStylingRow(c, theme, "Font-format for links in plain-text", "", "linkFontColor", "linkFontStyle", "linkFontWeight", "linkFontUnderline");
+    this.addColor(c, "List-item color", () => theme.listItemColor, (v) => { theme.listItemColor = v; }, {
+      desc: "Color of the bullet or number of an list-item",
+    }); 
     this.addText(c, "Code font", () => theme.codeFont, (v) => { theme.codeFont = v; });
     
     
@@ -392,13 +395,22 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       cls: "setting-item-description",
     });
     this.addToggle(c, "Before heading 1", () => theme.pageBreakBeforeH1, (v) => { theme.pageBreakBeforeH1 = v; });
-    this.addElementStylingRow(c, theme, "Font-format for 1st-level-headers (used in case of ", "h1FontSize", "h1FontColor", "h1FontStyle", "h1FontWeight");  
+    this.addElementStylingRow(c, theme, "Font-format for 1st-level-headers (used in case of ", "h1FontSize", "h1FontColor", "h1FontStyle", "h1FontWeight");
+
     this.addToggle(c, "Before heading 2", () => theme.pageBreakBeforeH2, (v) => { theme.pageBreakBeforeH2 = v; });
     this.addElementStylingRow(c, theme, "Font-format for 2nd-level-headers", "h2FontSize", "h2FontColor", "h2FontStyle", "h2FontWeight");
+    this.addPaddingMarginRow(c, theme, "Margin of the 2nd-level-headers", "h2MarginTop", "h2MarginRight", "h2MarginBottom", "h2MarginLeft");
+
     this.addToggle(c, "Before heading 3", () => theme.pageBreakBeforeH3, (v) => { theme.pageBreakBeforeH3 = v; });
     this.addElementStylingRow(c, theme, "Font-format for 3rd-level-headers", "h3FontSize", "h3FontColor", "h3FontStyle", "h3FontWeight");
+    this.addPaddingMarginRow(c, theme, "Margin of the 3rd-level-headers", "h3MarginTop", "h3MarginRight", "h3MarginBottom", "h3MarginLeft");
+
     this.addElementStylingRow(c, theme, "Font-format for 4th-level-headers", "h4FontSize", "h4FontColor", "h4FontStyle", "h4FontWeight");
+    this.addPaddingMarginRow(c, theme, "Margin of the 4th-level-headers", "h4MarginTop", "h4MarginRight", "h4MarginBottom", "h4MarginLeft");
+
     this.addElementStylingRow(c, theme, "Font-format for 5th-level-headers", "h5FontSize", "h5FontColor", "h5FontStyle", "h5FontWeight"); 
+    this.addPaddingMarginRow(c, theme, "Margin of the 5th-level-headers", "h5MarginTop", "h5MarginRight", "h5MarginBottom", "h5MarginLeft");
+
     this.addElementStylingRow(c, theme, "Font-format for 6th-level-headers (picture & table caption in combination with \"Caption Numbering\"-plugin)", "h6FontSize", "h6FontColor", "h6FontStyle", "h6FontWeight"); 
   }
 
@@ -586,6 +598,19 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addText(c, "Title", () => theme.title, (v) => { theme.title = v; });
     this.addElementStylingRow(c, theme, "Font-format for title-text", "titleFontSize", "titleFontColor", "titleFontStyle", "titleFontWeight");
 
+    this.addDropdown(
+      c,
+      "External links",
+      [["top", "Top"], ["bottom", "Bottom"]],
+      () => theme.titleVerticalAlign,
+      (v) => { theme.titleVerticalAlign = v as PdfTheme["titleVerticalAlign"]; },
+      { desc: "How to display the address of external links in the PDF" }
+    );
+    this.addText(c, "Title text box height", () => theme.titleHeight, (v) => { theme.titleHeight = v; }, {
+      desc: "nessesary, if title text box vertical align = bottom"
+    });
+    
+
     this.addText(c, "Subtitle", () => theme.subtitle, (v) => { theme.subtitle = v; });
     this.addElementStylingRow(c, theme, "Font-format for subtitle-text", "subtitleFontSize", "subtitleFontColor", "subtitleFontStyle", "subtitleFontWeight");
 
@@ -742,6 +767,15 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
 
     this.addToggle(c, "Header logo (page 2+)", () => theme.showHeaderLogo, (v) => { theme.showHeaderLogo = v; });
     this.addLength(c, "Header logo height", () => theme.headerLogoHeight, (v) => { theme.headerLogoHeight = v; });
+    this.addLength(c, "Header logo width", () => theme.headerLogoWidth, (v) => { theme.headerLogoWidth = v; });
+    this.addDropdown(
+      c,
+      "Header logo position",
+      [["left", "Left"], ["right", "Right"]],
+      () => theme.headerLogoPosition,
+      (v) => { theme.headerLogoPosition = v as PdfTheme["headerLogoPosition"]; }
+    );
+
 
     this.addText(c, "Header-text (line 1)", () => theme.headerText, (v) => { theme.headerText = v; }, {
       desc: vars,
@@ -754,16 +788,20 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
       placeholder: "{subtitle}",
     });
     this.addElementStylingRow(c, theme, "Font-format for header-text (line 2)", "header2FontSize", "header2FontColor", "header2FontStyle", "header2FontWeight");
+    this.addPaddingMarginRow(c, theme, "Margin of the header-text-box", "headerTextMarginTop", "headerTextMarginRight", "headerTextMarginBottom", "headerTextMarginLeft");
 
     this.addToggle(c, "Pagination", () => theme.showPagination, (v) => { theme.showPagination = v; });
     this.addText(c, "Pagination format", () => theme.paginationFormat, (v) => { theme.paginationFormat = v; }, {
       desc: 'Use {page} and {pages}, e.g. "{page} / {pages}" or "Page {page} of {pages}"',
     });
     this.addElementStylingRow(c, theme, "Font-format for pagination", "paginationFontSize", "paginationFontColor", "paginationFontStyle", "paginationFontWeight");
+    this.addText(c, "Right indention of the pagination block", () => theme.paginationRightIndent, (v) => { theme.paginationRightIndent = v; });
     
     this.addText(c, "Footer text", () => theme.footerText, (v) => { theme.footerText = v; }, { desc: vars });
     this.addElementStylingRow(c, theme, "Font-format for footer-text", "footerFontSize", "footerFontColor", "footerFontStyle", "footerFontWeight");
-    
+    this.addPaddingMarginRow(c, theme, "Margin of the footer-text-box", "footerTextMarginTop", "footerTextMarginRight", "footerTextMarginBottom", "footerTextMarginLeft");
+
+
     this.addDropdown(
       c,
       "External links",
@@ -840,6 +878,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     
     this.addLabelOutputRow(c, theme, "Legal editorial", "legalEditorialText", "legalEditorial");
     this.addLabelOutputRow(c, theme, "Legal author", "legalAuthorText", "legalAuthor");
+    this.addLabelOutputRow(c, theme, "Legal author", "legalCreationInfoText", "legalCreationInfo");
     this.addLabelOutputRow(c, theme, "Legal photo credit", "legalPhotoCreditText", "legalPhotoCredit");
   }
 
@@ -1074,5 +1113,48 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
           break;
       }
     }
+  }
+
+  private addPaddingMarginRow(c: HTMLElement, theme: PdfTheme, caption: string, top: string, right: string, bottom: string, left: string) {
+    const setting = new Setting(c)
+      .setName(caption) 
+      .setDesc("top, right, bottom, left")
+      .setClass("rhino-margins-row");
+
+    setting.addText((t) => {
+      t.setPlaceholder("0mm")
+      t.setValue(theme[top])
+      t.onChange(async (v) => {
+        theme[top] = v.trim();
+        this.save();
+      });
+    });
+    
+    setting.addText((t) => {
+      t.setPlaceholder("0mm")
+      t.setValue(theme[right])
+      t.onChange(async (v) => {
+        theme[right] = v.trim();
+        this.save();
+      });
+    });
+    
+    setting.addText((t) => {
+      t.setPlaceholder("0mm")
+      t.setValue(theme[bottom])
+      t.onChange(async (v) => {
+        theme[bottom] = v.trim();
+        this.save();
+      });
+    });
+
+    setting.addText((t) => {
+      t.setPlaceholder("0mm")
+      t.setValue(theme[left])
+      t.onChange(async (v) => {
+        theme[left] = v.trim();
+        this.save();
+      });
+    });
   }
 }
