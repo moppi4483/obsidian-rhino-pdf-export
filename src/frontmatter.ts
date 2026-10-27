@@ -23,6 +23,7 @@ type FieldSpec =
 const FIELD_SPECS: Partial<Record<keyof PdfTheme, FieldSpec>> = {
   primaryColor: { kind: "color" },
   accentColor: { kind: "color" },
+  secondaryColor: { kind: "color" },
   listItemColor: { kind: "color" },  
   h2FontSize: { kind: "text" },
   h2FontColor: { kind: "color" },

@@ -299,7 +299,7 @@ export class ThemedPdfSettingTab extends PluginSettingTab {
     this.addText(containerEl, "Theme name", () => theme.name, (v) => { theme.name = v; });
     this.addColor(containerEl, "Primary color", () => theme.primaryColor, (v) => { theme.primaryColor = v; });
     this.addColor(containerEl, "Accent color", () => theme.accentColor, (v) => { theme.accentColor = v; });
-    
+    this.addColor(containerEl, "Secondary color", () => theme.secondaryColor, (v) => { theme.secondaryColor = v; });
     
     
     /* this.addText(containerEl, "Logo", () => theme.logoPath, (v) => { theme.logoPath = v.trim(); }, {

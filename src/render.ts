@@ -415,6 +415,13 @@ img {
     margin: 0px -5px;
     padding: 0px 5px;
 }
+.h2-content thead {
+    background: ${theme.secondaryColor};
+    color: #FFF;
+}
+.h2-content table {
+    border: 1px solid ${theme.secondaryColor};
+}
 h2, h3, h4, h5 {
         break-after: avoid !important;
         page-break-after: avoid !important;
@@ -584,11 +591,19 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin: 4mm 0;
-  font-size: 9pt;
+  font-family: ${theme.bodyFont};
+  font-size: ${theme.bodyFontSize};
+  font-weight: ${theme.bodyFontWeight};
+  font-style: ${theme.bodyFontStyle};
   /*page-break-inside: avoid;*/
 }
-thead { background: ${p}; color: white; break-after: avoid; }
-th { padding: 2.5mm 3mm; text-align: left; font-weight: bold; font-size: 9pt; }
+thead { background: ${a}; color: white; break-after: avoid; }
+th { 
+  padding: 2.5mm 3mm; 
+  text-align: left; 
+  font-weight: bold; 
+  font-size: ${theme.bodyFontSize};
+}
 td { padding: 2mm 3mm; border-bottom: 1px solid #e0e0e0; }
 tr:nth-child(even) { background: #f7f9fc; }
 tr {

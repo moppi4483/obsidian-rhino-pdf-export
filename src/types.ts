@@ -22,6 +22,7 @@ export interface PdfTheme {
   // Colors
   primaryColor: string;
   accentColor: string;
+  secondaryColor: string;
   
   listItemColor: string;
 

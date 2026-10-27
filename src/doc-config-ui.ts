@@ -10,20 +10,17 @@ export type DocField =
   | "additionalContent"
   | "showCover"
   | "coverImagePath"
+  | "showLegal"
   | "legalText"
-  | "legalCompany"
-  | "legalDepartment1"
-  | "legalDepartment2"
-  | "legalStreet"
-  | "legalCity"
-  | "legalTelephone"
-  | "legalMail"
-  | "legalWebLink"
-  | "legalWebLinkAlt"
   | "showToc"
+  | "showHeaderOn1stPage"
+  | "showFooterOn1stPage"
   | "headerText"
   | "headerText2"
   | "footerText"
+  | "pageBreakBeforeH1"
+  | "pageBreakBeforeH2"
+  | "pageBreakBeforeH3"
   | "watermarkText"
   | "classificationText";
 
@@ -39,20 +36,17 @@ const FIELD_UI: Record<DocField, FieldUI> = {
   additionalContent: { name: "Additional content (sub-subtitle)", type: "text", desc: "Shown under the subtitle on the cover" },
   showCover: { name: "Cover page", type: "toggle" },
   coverImagePath: { name: "Cover Image", type: "text" },
+  showLegal: { name: "Legal page", type: "toggle" },
   legalText: { name: "Legal notice text", type: "text" },
-  legalCompany: { name: "Legal Company", type: "text" },
-  legalDepartment1: { name: "Legal Department (Main)", type: "text" },
-  legalDepartment2: { name: "Legal Department (Sub)", type: "text" },
-  legalStreet: { name: "Legal Department Street", type: "text" },
-  legalCity: { name: "Legal Department City", type: "text" },
-  legalTelephone: { name: "Legal Department Telephone", type: "text" },
-  legalMail: { name: "Legal Department E-Mail", type: "text" },
-  legalWebLink: { name: "Legal Department Link", type: "text" },
-  legalWebLinkAlt: { name: "Legal Department Link (Alt-Text)", type: "text" },
   showToc: { name: "Table of contents", type: "toggle" },
+  showHeaderOn1stPage: { name: "Header on 1st page", type: "toggle" },
+  showFooterOn1stPage: { name: "Footer an 1st page", type: "toggle" },
   headerText: { name: "Header text (line 1)", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
   headerText2: { name: "Header text (line 2)", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
   footerText: { name: "Footer text", type: "text", desc: "Variables: {title}, {filename}, {author}, {date}, {time}, {fm.key}" },
+  pageBreakBeforeH1: { name: "Page break before H1", type: "toggle" },
+  pageBreakBeforeH2: { name: "Page break before H2", type: "toggle" },
+  pageBreakBeforeH3: { name: "Page break before H3", type: "toggle" },
   watermarkText: { name: "Watermark", type: "text", desc: "Leave empty to disable" },
   classificationText: { name: "Classification banner", type: "text", desc: "Centered on every page. Leave empty to disable." },
 };
